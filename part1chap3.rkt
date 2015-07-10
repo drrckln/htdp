@@ -124,29 +124,30 @@
 ; moves the car by 3 pixels every time the clock ticks
 ; given: 20, expect: 23
 ; given: 78, expect: 81
-;(check-expect (tock 20) 23)
-;(check-expect (tock 78) 81)
-;(define (tock ws)
-;  (+ ws 3))
+(check-expect (tock 20) 23)
+(check-expect (tock 78) 81)
+(define (tock ws)
+  (+ ws 3))
 
 ; WorldState -> WorldState
 ; launches the program from some initial state
 (define (main ws)
   (big-bang ws
             [on-tick tock]
+            [on-mouse hyper]
             [to-draw render]
             [stop-when ender]))
 
 ; WorldState -> Image
 ; places the car onto a scene according to the given world state
-;(define (render ws)
-;  (place-image CAR ws Y-CAR BACKGROUND))
+(define (render ws)
+  (place-image CAR ws Y-CAR BACKGROUND))
 
 ; WorldState -> Boolean
 ; determines when to end the program, at that point returning 't
 (define (ender ws)
   (cond
-    [(>= (- (* ws 3) (/ (image-width CAR) 2)) (image-width BACKGROUND)) #t]
+    [(>= (- ws (/ (image-width CAR) 2)) (image-width BACKGROUND)) #t]
     [else #f]))
 
 ; AnimationState is a Number
@@ -154,11 +155,23 @@
 
 ; AnimationState -> AnimationState
 ; determines number of clock ticks since beginning
-(define (tock ws)
-  (add1 ws))
+;(define (tock ws)
+;  (add1 ws))
 
 ; AnimationState -> Image
 ; places the car onto a scene dependent on number of clock ticks so far
-(define (render ws)
-  (place-image CAR (* 3 ws) (+ Y-CAR (sin ws)) BACKGROUND))
+;(define (render ws)
+;  (place-image CAR (* 3 ws) (+ Y-CAR (sin ws)) BACKGROUND))
+
+; WorldState Number Number String -> WorldState
+; places the car at the x coordinate if me is "button-down"
+; given: 21 10 20 "enter"
+; expected: 21
+(check-expect (hyper 21 10 20 "enter") 21)
+(check-expect (hyper 42 10 20 "button-down") 10)
+(check-expect (hyper 42 10 20 "move") 42)
+(define (hyper x-position-of-car x-mouse y-mouse me)
+  (cond
+    [(string=? "button-down" me) x-mouse]
+    [else x-position-of-car]))
 
