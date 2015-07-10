@@ -96,9 +96,16 @@
                              0
                              WHEEL-RADIUS
                              BOTH-WHEELS))
-(define BACKGROUND (empty-scene 500 40))
+(define tree
+  (underlay/xy (circle 10 'solid 'green)
+               9 15
+               (rectangle 2 20 'solid 'brown)))
+(define BACKGROUND (place-image tree 150 30 (empty-scene 500 40)))
+(define Y-CAR (- (image-height BACKGROUND) (/ (image-height CAR) 2)))
+
+
 ; WorldState is a Number
-; interpretation the number of pixels between the left border and the car
+; interpretation the number of pixels between the left border and the car's right border
 
 ; render
 ; clock-tick-handler
@@ -109,22 +116,49 @@
 ; WorldState -> Image
 ; places the image of the car x pixels from the left margin of
 ; the BACKGROUND image
-(define (render x)
-  BACKGROUND)
+; (define (render x)
+;   BACKGROUND)
 
 ; WorldState -> WorldState
 ; adds 3 to x to move the car right
 ; moves the car by 3 pixels every time the clock ticks
 ; given: 20, expect: 23
 ; given: 78, expect: 81
-(check-expect (tock 20) 23)
-(check-expect (tock 78) 81)
-(define (tock ws)
-  (+ ws 3))
+;(check-expect (tock 20) 23)
+;(check-expect (tock 78) 81)
+;(define (tock ws)
+;  (+ ws 3))
 
 ; WorldState -> WorldState
 ; launches the program from some initial state
 (define (main ws)
   (big-bang ws
             [on-tick tock]
-            [to-draw render]))
+            [to-draw render]
+            [stop-when ender]))
+
+; WorldState -> Image
+; places the car onto a scene according to the given world state
+;(define (render ws)
+;  (place-image CAR ws Y-CAR BACKGROUND))
+
+; WorldState -> Boolean
+; determines when to end the program, at that point returning 't
+(define (ender ws)
+  (cond
+    [(>= (- (* ws 3) (/ (image-width CAR) 2)) (image-width BACKGROUND)) #t]
+    [else #f]))
+
+; AnimationState is a Number
+; interpretation the number of clock ticks since the animation started
+
+; AnimationState -> AnimationState
+; determines number of clock ticks since beginning
+(define (tock ws)
+  (add1 ws))
+
+; AnimationState -> Image
+; places the car onto a scene dependent on number of clock ticks so far
+(define (render ws)
+  (place-image CAR (* 3 ws) (+ Y-CAR (sin ws)) BACKGROUND))
+
