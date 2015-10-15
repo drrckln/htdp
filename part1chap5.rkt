@@ -45,3 +45,59 @@
 ; make-CD, CD-artist, CD-title, CD-price, and CD?
 ; (define-struct sweater [material size producer]) produces
 ; make-sweater, sweater-material, sweater-size, sweater-producer, and sweater?
+
+(define-struct ball [location velocity])
+
+; Exercise 68
+(define SPEED 3)
+(define-struct balld [location direction])
+(make-balld 10 "up")
+(make-balld 4 "down")
+
+(define-struct vel [deltax deltay])
+(define ball1 (make-ball (make-posn 30 40) (make-vel -10 5)))
+
+; Exercise 69
+; this is known as a flat representation, rather than nested
+(define-struct ballf [x y deltax deltay])
+(make-ballf 30 40 -10 5)
+
+(define-struct centry [name home office cell])
+
+(define-struct phone [area number])
+
+(make-centry "Shriram Fisler"
+             (make-phone 207 "363-2421")
+             (make-phone 101 "776-1099")
+             (make-phone 208 "112-9981"))
+
+; Exercise 70
+; (centry-name (make-centry n h o c)) == n
+; (centry-home (make-centry n h o c)) == h
+; (centry-office (make-centry n h o c)) == o
+; (centry-cell (make-centry n h o c)) == c
+; (phone-area (make-phone a n)) == a
+; (phone-number (make-phone a n)) == n
+(phone-area
+ (centry-office
+  (make-centry
+   "Shriram Fisler"
+   (make-phone 207 "363-2421")
+   (make-phone 101 "776-1099")
+   (make-phone 208 "112-9981"))))
+; (centry-office (make-centry n h o c)) == o
+;(phone-area
+; (make-phone 101 "776-1099"))
+; (phone-area (make-phone a n)) == a
+;101
+
+; Exercise 71
+(define HEIGHT 200)
+(define MIDDLE (quotient HEIGHT 2))
+(define WIDTH 400)
+(define CENTER (quotient WIDTH 2))
+
+(define-struct game [left-player right-player ball])
+
+(define game0
+  (make-game MIDDLE MIDDLE (make-posn CENTER CENTER)))
