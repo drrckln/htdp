@@ -266,3 +266,38 @@
 ; interpretation is a dog with properties owner's name, dog name, age, and happiness level
 ; #false, (make-posn 40 59)
 
+(define-struct r3 [x y z])
+; R3 is (make-r3 Number Number Number)
+
+(define ex1 (make-r3 1 2 13))
+(define ex2 (make-r3 -1 0 3))
+
+; R3 -> Number
+; interpretation takes coord, an R3, and computes the distance to origin
+(define (r3dist coord)
+  (sqrt (+ (sqr (r3-x coord))
+           (sqr (r3-y coord))
+           (sqr (r3-z coord)))))
+
+(check-expect (r3dist ex1) (sqrt (+ (sqr 1)
+                                    (sqr 2)
+                                    (sqr 13))))
+(check-expect (r3dist ex2) (sqrt (+ (sqr -1)
+                                    (sqr 0)
+                                    (sqr 3))))
+(check-expect (r3dist (make-r3 0 0 0)) 0)
+(check-expect (r3dist (make-r3 3 4 0)) 5)
+(check-expect (r3dist (make-r3 0 3 4)) 5)
+(check-expect (r3dist (make-r3 4 0 3)) 5)
+
+; Exercise 80
+(define (f-movie m)
+  (... (movie-title m) ... (movie-director m) ... (movie-year m) ...))
+(define (f-person p)
+  (... (person-name p) ... (person-hair p) ... (person-eyes p) ... (person-phone p) ... ))
+(define (f-pet p)
+  (... (pet-name p) ... (pet-number p) ...))
+(define (f-CD cd)
+  (... (CD-artist cd) ... (CD-title cd) ... (CD-price cd) ...))
+(define (f-sweater s)
+  (... (sweater-material s) ... (sweater-size s) ... (sweater-color s) ...))
