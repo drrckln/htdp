@@ -212,3 +212,57 @@
 
 (check-expect (posn+ p1 v1) p2)
 (check-expect (posn+ p1 v2) (make-posn 17 77))
+
+; A BS is one of:
+; - "hello",
+; - "world", or
+; - pi.
+
+; Exercise 76
+; A movie is a structure: (make-movie String String String)
+; where the first string is the title of the movie,
+; the second the producer's name, and
+; the third the year the movie was produced.
+
+; A person is a structure: (make-person String String String String)
+; 1st is name of the person
+; 2nd is the hair color of the person
+; 3rd is eye color
+; 4th is phone number
+
+; A pet is a structure: (make-pet String PosNumber)
+; 1st is the name of the pet
+; 2nd is the age of the pet, a positive number
+
+; a CD is a structure: (make-CD String String Number)
+; 1st being the artist's name
+; 2nd the title of the album
+; 3rd being the price
+
+; A structure is a sweater: (make-sweater String String String)
+; 1st being the material
+; 2nd the size of the sweater
+; 3rd the producer
+
+; Exercise 77
+; A TimePoint is a structure: (make-TimePoint Hour Minute Second)
+; interpretation time since midnight
+; an Hour is an interval; a PositiveInteger from 0 to 23
+; a Minute is an interval; PositiveInteger from 0 to 59
+; a Second is an interval; PositiveInteger from 0 to 59
+
+; Exercise 78
+; a 3Word is one of:
+; - a structure: (make-3Word Letter Letter Letter)
+; - #false
+; where Letter is one of the following 1Strings:
+; - a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
+
+; Exercise 79
+; "white", "orange", "red", "blue"
+; 74
+; (make-person "Jim" "Bow" #true), and no it is not
+; (make-dog "Jim Bow" "Spot" 7 89)
+; interpretation is a dog with properties owner's name, dog name, age, and happiness level
+; #false, (make-posn 40 59)
+
