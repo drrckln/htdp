@@ -101,3 +101,76 @@
 
 (define game0
   (make-game MIDDLE MIDDLE (make-posn CENTER CENTER)))
+
+; Exercise 72
+; (define-struct centry [name home office cell])
+; A centry is a structure: (make-centry String String String String)
+; interpretation
+; the name, home phone number, office phone number, and cell phone number as Strings
+
+; (define-struct phone# [area switch num])
+; A phone# is a structure: (make-phone# [Area Switch Num])
+; Area is a Positive Number 001 to 999
+; Switch is a Positive Number 001 to 999
+; Num is a Positive Number 0001 to 9999
+; interpretation Area is area code, Switch is phone switch exchange
+; Num is phone with respect to neighborhood
+
+; visual constants
+(define MTS (empty-scene 100 100))
+(define DOT (circle 3 "solid" "red"))
+
+; The state of the world is represented by a Posn
+
+; Posn -> Posn
+(define (main p0)
+  (big-bang p0
+            [on-tick x+]
+            [on-mouse reset-dot]
+            [to-draw scene+dot]))
+
+; Posn -> Image
+; adds a red spot to MTS at p
+(define (scene+dot p)
+  (place-image DOT (posn-x p) (posn-y p) MTS))
+
+(check-expect (scene+dot (make-posn 10 20))
+              (place-image DOT 10 20 MTS))
+(check-expect (scene+dot (make-posn 88 73))
+              (place-image DOT 88 73 MTS))
+
+; Posn -> Posn
+; increases the x-coordinate of p by 3
+(define (x+ p)
+  (make-posn (+ (posn-x p) 3) (posn-y p)))
+
+(check-expect (x+ (make-posn 10 10))
+              (make-posn 13 10))
+(check-expect (x+ (make-posn 43 0))
+              (make-posn 46 0))
+
+; Exercise 73
+; Posn Number -> Posn
+; takes a Posn p and Number n, and produces a Posn like p with n in the x-field
+(define (posn-up-x p n)
+  (make-posn n (posn-y p)))
+
+(check-expect (posn-up-x (make-posn 10 14) 7)
+              (make-posn 7 14))
+(check-expect (posn-up-x (make-posn 34 10) 3)
+              (make-posn 3 10))
+
+; Posn Number Number MouseEvt -> Posn
+; for mouse clicks, (make-posn x y); otherwise p
+(define (reset-dot p x y me)
+  (cond
+    [(mouse=? "button-down" me) (make-posn x y)]
+    [else p]))
+
+
+
+(check-expect (reset-dot (make-posn 10 20) 29 31 "button-down")
+              (make-posn 29 31))
+(check-expect (reset-dot (make-posn 10 20) 29 31 "button-up")
+              (make-posn 10 20))
+
