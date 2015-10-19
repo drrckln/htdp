@@ -311,3 +311,14 @@
 ;  (+ (* 60 60 (TimePoint-Hour t))
 ;     (* 60 (TimePoint-Minute t))
 ;     (TimePoint-Second t)))
+
+; Exercise 82
+; 3Word -> 3Word (I misinterpreted 3Word)
+; interpretation takes two 3Word w1 w2 and returns a 3Word that keeps the same letters if the same,
+; otherwise uses #false in the field
+(define-struct 3Word [a b c])
+(define (compare-word w1 w2)
+   (make-3Word (string=? (3Word-a w1) (3Word-a w2))
+               (string=? (3Word-b w1) (3Word-b w2))
+               (string=? (3Word-c w1) (3Word-c w2))))
+
