@@ -301,3 +301,13 @@
   (... (CD-artist cd) ... (CD-title cd) ... (CD-price cd) ...))
 (define (f-sweater s)
   (... (sweater-material s) ... (sweater-size s) ... (sweater-color s) ...))
+
+; Exercise 81
+; TimePoint -> Number
+; interpretation takes a time structure t and figures out the number of seconds
+; (check-expect (time->seconds (make-TimePoint 0 0 3)) 3)
+; (check-expect (time->seconds (make-TimePoint 0 1 0)) 60)
+; (define (time->seconds t)
+;  (+ (* 60 60 (TimePoint-Hour t))
+;     (* 60 (TimePoint-Minute t))
+;     (TimePoint-Second t)))
