@@ -322,3 +322,11 @@
                (string=? (3Word-b w1) (3Word-b w2))
                (string=? (3Word-c w1) (3Word-c w2))))
 
+;(define-struct space-game [ufo tank])
+; space-game is a structure: (make-space-game [Number Number])
+; where the first field corresponds to the y coordinate for the UFO
+; and the second field to the x coordinate for the tank
+
+; SpaceGame is (make-space-game Posn Number).
+; interpretation (make-space-game (make-posn ux uy) tx) means that the
+; UFO is currently at (ux, uy) and the tank's x-coordinate is tx
