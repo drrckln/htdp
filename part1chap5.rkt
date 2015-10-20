@@ -1,9 +1,9 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-beginner-reader.ss" "lang")((modname part1chap5) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname part1chap5) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 (require 2htdp/image)
 (require 2htdp/universe)
-
+#|
 ; computes the distance of a-posn to the origin
 (check-expect (distance-to-0 (make-posn 0 5)) 5)
 (check-expect (distance-to-0 (make-posn 7 0)) 7)
@@ -330,3 +330,134 @@
 ; SpaceGame is (make-space-game Posn Number).
 ; interpretation (make-space-game (make-posn ux uy) tx) means that the
 ; UFO is currently at (ux, uy) and the tank's x-coordinate is tx
+|#
+
+(define-struct editor [pre post])
+; Editor = (make-editor String String)
+; interpretation (make-editor s t) means the text in the editor is
+; (string-append s t) with the cursor displayed between s and t
+
+(define WIDTH 200)
+
+; Exercise 83
+; Editor -> Image
+; interpretation (render (make-editor s t)) produces an image
+; of the pre-text and post-text, on an empty scene of 200x20 pixels,
+; with a cursor between them.
+(define (render e)
+  (overlay/align "left" "center"
+                 (beside (text (editor-pre e) 11 "black")
+                         CURSOR
+                         (text (editor-post e) 11 "black"))
+                 (empty-scene 200 20)))
+
+(check-expect (render (make-editor "hello " "world"))
+              (overlay/align "left" "center"
+                             (beside (text "hello " 11 "black")
+                                     CURSOR
+                                     (text "world" 11 "black"))
+                             (empty-scene WIDTH 20)))
+
+(define CURSOR (rectangle 1 20 "solid" "red"))
+
+; Exercise 84
+; Editor KeyEvent -> Editor
+; interpretation (edit ed ke) modifies ed depending on the keystroke
+; "\b" deletes the character to the left of the cursor
+; 1Strings are appended to the pre-field of ed
+; "left" and "right" move the cursor one character
+; "\t" and "\r" are ignored
+; all else is ignored
+(define (edit ed ke)
+  (cond
+    [(string=? "left"  ke) (make-editor (string-remove-last (editor-pre ed))
+                                        (string-append (string-last (editor-pre ed)) (editor-post ed)))]
+    [(string=? "right" ke) (make-editor (string-append (editor-pre ed) (string-first (editor-post ed)))
+                                        (string-rest (editor-post ed)))]
+    [(string=? "\b"    ke) (make-editor (string-remove-last (editor-pre ed)) (editor-post ed))]
+    [(or (string=? "\t" ke)
+         (string=? "\r" ke)) ed]
+    [(= (string-length ke) 1) (cond
+                                [(>= (image-width (text (string-append (editor-pre ed) (editor-post ed)) 11 "black"))
+                                     (- WIDTH 1))
+                                 ed]
+                                [else (make-editor (string-append (editor-pre ed) ke) (editor-post ed))])]
+    [else ed]))
+
+(check-expect (edit (make-editor "hell" "o world") "\b")
+              (make-editor "hel" "o world"))
+(check-expect (edit (make-editor "hello " "world") "\b")
+              (make-editor "hello" "world"))
+(check-expect (edit (make-editor "" "world") "\b")
+              (make-editor "" "world"))
+(check-expect (edit (make-editor "hello " "world") "a")
+              (make-editor "hello a" "world"))
+(check-expect (edit (make-editor "hello " "world") "b")
+              (make-editor "hello b" "world"))
+(check-expect (edit (make-editor "hello " "world") "left")
+              (make-editor "hello" " world"))
+(check-expect (edit (make-editor "" "world") "left")
+              (make-editor "" "world"))
+(check-expect (edit (make-editor "hello " "world") "right")
+              (make-editor "hello w" "orld"))
+(check-expect (edit (make-editor "hello" "") "right")
+              (make-editor "hello" ""))
+(check-expect (edit (make-editor "hello " "world") "\t")
+              (make-editor "hello " "world"))
+(check-expect (edit (make-editor "hello " "world") "\r")
+              (make-editor "hello " "world"))
+
+; String -> String
+; string-remove-last s removes the last char of the string
+; remains empty string if empty string originally
+(define (string-remove-last s)
+  (cond
+    [(= (string-length s) 0) ""]
+    [else (substring s 0 (- (string-length s) 1))]))
+
+(check-expect (string-remove-last "") "")
+(check-expect (string-remove-last "hello") "hell")
+
+; String -> String
+; string-last s returns the last char of the string
+; empty string if empty
+(define (string-last s)
+  (cond
+    [(= (string-length s) 0) ""]
+    [else (substring s (- (string-length s) 1))]))
+
+(check-expect (string-last "bye") "e")
+(check-expect (string-last "") "")
+
+; String -> String
+; (string-first s) returns the 1String at the front of the string
+; empty string if empty
+(define (string-first s)
+  (cond
+    [(= (string-length s) 0) ""]
+    [else (substring s 0 1)]))
+
+(check-expect (string-first "") "")
+(check-expect (string-first "bye") "b")
+
+; String -> String
+; (string-rest s) returns the string missing the first char
+; empty string if empty
+(define (string-rest s)
+  (cond
+    [(= (string-length s) 0) ""]
+    [else (substring s 1)]))
+
+(check-expect (string-rest "") "")
+(check-expect (string-rest "bye") "ye")
+
+; Exercise 85
+; String -> Editor
+(define (run s)
+  (big-bang (make-editor s "")
+            [to-draw render]
+            [on-key edit]))
+
+; Exercise 86
+; done
+
