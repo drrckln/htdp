@@ -461,3 +461,88 @@
 ; Exercise 86
 ; done
 
+; Exercise 87
+(define-struct editor2 [string index])
+; Editor2 is a structure: (make-editor2 String Number)
+; interpretation (make-editor2 s i) means the text is s
+; the cursor to be displayed at index i
+
+; Editor2 -> Image
+; interpretation takes an Editor2 and creates the Image with
+; the internal string field and cursor at the index field
+(define (render2 e)
+  (overlay/align "left" "center"
+                 (beside (text (substring (editor2-string e) 0 (editor2-index e)) 11 "black")
+                         CURSOR
+                         (text (substring (editor2-string e) (editor2-index e)) 11 "black"))
+                 (empty-scene WIDTH 20)))
+
+(check-expect (render2 (make-editor2 "hello world" 6))
+              (overlay/align "left" "center"
+                             (beside (text "hello " 11 "black")
+                                     CURSOR
+                                     (text "world" 11 "black"))
+                             (empty-scene WIDTH 20)))
+
+; Editor2 KeyEvent -> Editor2
+; (edit2 ed ke) adds ke to ed's string field if it's a 1String, unless backspace
+; tab and return are ignored, and "left" and "right" move the cursor.
+(define (edit2 ed ke)
+  (cond
+    [(string=? "left"  ke) (make-editor2 (editor2-string ed) (left1  (editor2-index ed)))]
+    [(string=? "right" ke) (make-editor2 (editor2-string ed) (right1 (editor2-index ed) (string-length (editor2-string ed))))]
+    [(string=? "\b"    ke) (make-editor2 (backspace (editor2-string ed) (editor2-index ed)) (left1 (editor2-index ed)))]
+    [(or (string=? "\t" ke) (string=? "\r" ke)) ed]
+    [(= (string-length ke) 1) (cond
+                                [(>= (image-width (text (editor2-string ed) 11 "black")) (- WIDTH 1)) ed]
+                                [else (make-editor2 (insertion (editor2-string ed) ke (editor2-index ed))
+                                                    (right1 (editor2-index ed)
+                                                            (+ (string-length (editor2-string ed)) 1)))])]
+    [else ed]))
+
+; Number -> Number
+; (left i) takes an index i and subtracts 1, with a boundary at 0
+(define (left1 i)
+  (cond
+    [(= i 0) 0]
+    [else (- i 1)]))
+
+(check-expect (left1 0) 0)
+(check-expect (left1 10) 9)
+
+; Number Number -> Number
+; (right i max) increments i by 1, but not beyond the max
+(define (right1 i max)
+  (cond
+    [(or (= i max) (= i (- max 1))) max]
+    [else (+ i 1)]))
+
+(check-expect (right1 10 10) 10)
+(check-expect (right1 4  10) 5)
+
+; String Number -> String
+; (backspace str i) removes the character left of i and returns the resulting String
+(define (backspace str i)
+  (cond
+    [(= i 0) str]
+    [else (string-append (substring str 0 (- i 1))
+                         (substring str i))]))
+
+(check-expect (backspace "hello" 0) "hello")
+(check-expect (backspace "hello" 1) "ello")
+
+; String String Number -> String
+; (insertion str char i) takes the string and inserts the char at index i
+(define (insertion str char i)
+  (string-append (substring str 0 i)
+                 char
+                 (substring str i)))
+
+(check-expect (insertion "hello" "a" 2) "heallo")
+
+; String -> Editor2
+(define (run2 s)
+  (big-bang (make-editor2 s 0)
+            [to-draw render2]
+            [on-key edit2]))
+
