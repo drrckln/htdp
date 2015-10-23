@@ -203,7 +203,7 @@
 ; UFO Number-> UFO
 ; moves the UFO down and to the x position horizontal
 (define (move-ufo u x)
-  (make-posn x
+  (make-posn (modulo (+ x (posn-x u)) WIDTH)
              (+ (posn-y u) UFO-SPEED)))
 
 ; Tank -> Tank
@@ -227,7 +227,9 @@
 ; create a random number in case a UFO should perform a horizontal jump
 (check-random (create-random-number 0) (random WIDTH))
 (define (create-random-number w)
-  (random WIDTH))
+  (cond
+    [(>= (random 2) 1) (random WIDTH)]
+    [else (* -1 (random WIDTH))]))
 
 ; testing random function!
 (check-expect (si-move-proper (make-aim (make-posn 20 10) (make-tank 28 -3)) 10)
