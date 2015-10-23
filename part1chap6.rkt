@@ -10,6 +10,8 @@
 (define TANK (rectangle 20 15 "solid" "green"))
 (define TANK-HEIGHT (image-height TANK))
 (define UFO (ellipse 30 15 125 "blue"))
+(define UFO-SPEED 5)
+(define MISSILE-SPEED (* -2 UFO-SPEED))
 (define WIDTH 150)
 (define HEIGHT 300)
 (define BACKGROUND (empty-scene WIDTH HEIGHT))
@@ -83,3 +85,138 @@
                                        100
                                        (- 200 (/ TANK-HEIGHT 2))
                                        (empty-scene 200 200))))
+
+; Exercise 97
+; Location is one of:
+; - Posn
+; - Number
+; interpretation Posn are positions on the Cartesian plane,
+; Numbers are positions on either the x- or the y-axis.
+
+(define R 10)
+; Location -> Boolean
+; (in-reach? l) determines whether l's distance is less than R
+(define (in-reach? l)
+  (cond
+    [(posn? l) (cond
+                 [(< (dist l) R) #true]
+                 [else #false])]
+    [(number? l) (cond
+                   [(< (abs l) R) #true]
+                   [else #false])]))
+
+; Posn -> Number
+; determines the distance of a Posn to origin
+(define (dist p)
+  (sqrt (+ (sqr (posn-x p))
+           (sqr (posn-y p)))))
+
+
+(check-expect (in-reach? (make-posn 3 4)) #true)
+(check-expect (in-reach? (make-posn 10 1)) #false)
+(check-expect (in-reach? (make-posn -3 4)) #true)
+(check-expect (in-reach? 10) #false)
+(check-expect (in-reach? -11) #false)
+(check-expect (in-reach? -4) #true)
+
+; SIGS -> Image
+; adds TANK, UFO, and possibly the MISSILE to the BACKGROUND
+(define (si-render s)
+  (cond
+    [(aim? s) (tank-render (aim-tank s) (ufo-render (aim-ufo s) BACKGROUND))]
+    [(fired? s) (tank-render (fired-tank s)
+                             (ufo-render (fired-ufo s)
+                                         (missile-render (fired-missile s) BACKGROUND)))]))
+
+; Exercise 98
+; they are the same result when the Tank and the UFO don't overlap
+
+; Tank Image -> Image
+; adds t to the given image im
+(define (tank-render t im)
+  (place-image TANK
+               (tank-loc t) (- HEIGHT (/ TANK-HEIGHT 2))
+               im))
+
+; UFO Image -> Image
+; adds u to the given image im
+(define (ufo-render u im)
+  (place-image UFO
+               (posn-x u) (posn-y u)
+               im))
+
+; Missile Image -> Image
+; adds m to the given image im
+(define (missile-render m im)
+  (place-image MISSILE
+               (posn-x m) (posn-y m)
+               im))
+
+; Exercise 99
+; SIGS -> Boolean
+; #true when UFO lands or missile hits UFO
+(define (si-game-over? sigs)
+  (cond
+    [(and (aim? sigs)
+          (landed? (aim-ufo sigs)))
+          #true]
+    [(and (fired? sigs)
+          (hit? (fired-ufo sigs) (fired-missile sigs)))
+     #true]
+    [else #false]))
+
+; UFO -> Boolean
+; determines whether the UFO has landed
+(define (landed? u)
+  (>= (posn-y u)
+      (- HEIGHT (/ (image-height UFO) 2))))
+
+; UFO Missile -> Boolean
+; determines wheter the missile is close enough to the UFO to hit
+(define (hit? u m)
+  (< (near u m) 5))
+
+; Posn Posn -> Number
+; determines the distance between two Posns
+(define (near a b)
+  (sqrt (+ (sqr (- (posn-x a) (posn-x b)))
+           (sqr (- (posn-y a) (posn-y b))))))
+
+; SIGS -> Image
+; places GAME OVER on the final image
+(define (si-render-final sigs)
+  (overlay/align "middle" "middle"
+                 (text "GAME OVER" 25 "solid" "indigo")
+                 (si-render sigs)))
+
+; Exercise 100
+; SIGS -> SIGS
+; move all objects according to their velocity
+(define (si-move s)
+  (cond
+    [(aim? s) (make-aim (move-ufo (aim-ufo s))
+                        (move-tank (aim-tank s)))]
+    [(fired? s) (make-fired (move-ufo (fired-ufo s))
+                            (move-tank (fired-tank s))
+                            (move-missile (fired-missile s)))]))
+
+; UFO -> UFO
+; moves the UFO down and randomly horizontal
+(define (move-ufo u)
+  (make-posn (random WIDTH)
+             (+ (posn-y u) UFO-SPEED)))
+
+; Tank -> Tank
+; moves the tank x coord, leaves vel the same
+(define (move-tank t)
+  (make-tank (+ (tank-loc t) (tank-vel t))
+             (tank-vel t)))
+
+; Missile -> Missile
+; moves the Missile upward, leaving x coord the same
+(define (move-missile m)
+  (make-posn (posn-x m)
+             (+ (posn-y m) MISSILE-SPEED)))
+
+;(define (si-move w)
+;  (si-move-proper w (create-random-number w)))
