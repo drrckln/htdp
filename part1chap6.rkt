@@ -190,20 +190,20 @@
                  (si-render sigs)))
 
 ; Exercise 100
-; SIGS -> SIGS
+; SIGS Number -> SIGS
 ; move all objects according to their velocity
-(define (si-move s)
+(define (si-move-proper s r)
   (cond
-    [(aim? s) (make-aim (move-ufo (aim-ufo s))
+    [(aim? s) (make-aim (move-ufo (aim-ufo s) r)
                         (move-tank (aim-tank s)))]
-    [(fired? s) (make-fired (move-ufo (fired-ufo s))
+    [(fired? s) (make-fired (move-ufo (fired-ufo s) r)
                             (move-tank (fired-tank s))
                             (move-missile (fired-missile s)))]))
 
-; UFO -> UFO
-; moves the UFO down and randomly horizontal
-(define (move-ufo u)
-  (make-posn (random WIDTH)
+; UFO Number-> UFO
+; moves the UFO down and to the x position horizontal
+(define (move-ufo u x)
+  (make-posn x
              (+ (posn-y u) UFO-SPEED)))
 
 ; Tank -> Tank
@@ -218,5 +218,17 @@
   (make-posn (posn-x m)
              (+ (posn-y m) MISSILE-SPEED)))
 
-;(define (si-move w)
-;  (si-move-proper w (create-random-number w)))
+; SIGS -> SIGS
+; move all objects according to their velocities
+(define (si-move w)
+  (si-move-proper w (create-random-number w)))
+
+; SIGS -> Number
+; create a random number in case a UFO should perform a horizontal jump
+(check-random (create-random-number 0) (random WIDTH))
+(define (create-random-number w)
+  (random WIDTH))
+
+; testing random function!
+(check-expect (si-move-proper (make-aim (make-posn 20 10) (make-tank 28 -3)) 10)
+              (make-aim (make-posn 10 15) (make-tank 25 -3)))
