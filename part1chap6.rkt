@@ -228,7 +228,7 @@
 (check-random (create-random-number 0)
               (cond
                 [(>= (random 2) 1) (random WIDTH)]
-                [else (* -1 (random WIDTH)))
+                [else (* -1 (random WIDTH))]))
 (define (create-random-number w)
   (cond
     [(>= (random 2) 1) (random WIDTH)]
@@ -236,7 +236,7 @@
 
 ; testing random function!
 (check-expect (si-move-proper (make-aim (make-posn 20 10) (make-tank 28 -3)) 10)
-              (make-aim (make-posn 10 15) (make-tank 25 -3)))
+              (make-aim (make-posn 30 15) (make-tank 25 -3)))
 
 ; Exercise 101
 ; SIGS KeyEvent -> SIGS
@@ -252,14 +252,14 @@
     [(fired? s) (cond
                   [(string=? "left"  ke) (make-fired (fired-ufo s) (tank-left  (fired-tank s)) (fired-missile s))]
                   [(string=? "right" ke) (make-fired (fired-ufo s) (tank-right (fired-tank s)) (fired-missile s))]
-                  [else s]]))
+                  [else s])]))
 
 (check-expect (si-control (make-aim (make-posn 20 10) (make-tank 30 -3))
                           "a")
               (make-aim (make-posn 20 10) (make-tank 30 -3)))
-(check-expect (si-control (make-fired (make-posn 20 10) (make-tank 30 -3) (make-missile 30 25))
+(check-expect (si-control (make-fired (make-posn 20 10) (make-tank 30 -3) (make-posn 30 25))
                           "a")
-              (make-fired (make-posn 20 10) (make-tank 30 -3) (make-missile 30 25)))
+              (make-fired (make-posn 20 10) (make-tank 30 -3) (make-posn 30 25)))
 (check-expect (si-control (make-aim (make-posn 20 10) (make-tank 30 -3))
                           "left")
               (make-aim (make-posn 20 10) (make-tank 30 -3)))
@@ -274,22 +274,22 @@
               (make-aim (make-posn 20 10) (make-tank 30 3)))
 (check-expect (si-control (make-aim (make-posn 20 10) (make-tank 30 -3))
                           " ")
-              (make-fired (make-posn 20 10) (make-tank 30 -3) (make-missile 30 (- HEIGHT TANK-HEIGHT))))
-(check-expect (si-control (make-fired (make-posn 20 10) (make-tank 30 -3) (make-missile 30 25))
+              (make-fired (make-posn 20 10) (make-tank 30 -3) (make-posn 30 (- HEIGHT TANK-HEIGHT))))
+(check-expect (si-control (make-fired (make-posn 20 10) (make-tank 30 -3) (make-posn 30 25))
                           "left")
-              (make-fired (make-posn 20 10) (make-tank 30 -3) (make-missile 30 25)))
-(check-expect (si-control (make-fired (make-posn 20 10) (make-tank 30 3) (make-missile 30 25))
+              (make-fired (make-posn 20 10) (make-tank 30 -3) (make-posn 30 25)))
+(check-expect (si-control (make-fired (make-posn 20 10) (make-tank 30 3) (make-posn 30 25))
                           "left")
-              (make-fired (make-posn 20 10) (make-tank 30 -3) (make-missile 30 25)))
-(check-expect (si-control (make-fired (make-posn 20 10) (make-tank 30 -3) (make-missile 30 25))
+              (make-fired (make-posn 20 10) (make-tank 30 -3) (make-posn 30 25)))
+(check-expect (si-control (make-fired (make-posn 20 10) (make-tank 30 -3) (make-posn 30 25))
                           "right")
-              (make-fired (make-posn 20 10) (make-tank 30 3) (make-missile 30 25)))
-(check-expect (si-control (make-fired (make-posn 20 10) (make-tank 30 3) (make-missile 30 25))
+              (make-fired (make-posn 20 10) (make-tank 30 3) (make-posn 30 25)))
+(check-expect (si-control (make-fired (make-posn 20 10) (make-tank 30 3) (make-posn 30 25))
                           "right")
-              (make-fired (make-posn 20 10) (make-tank 30 3) (make-missile 30 25)))
-(check-expect (si-control (make-fired (make-posn 20 10) (make-tank 30 3) (make-missile 30 25))
+              (make-fired (make-posn 20 10) (make-tank 30 3) (make-posn 30 25)))
+(check-expect (si-control (make-fired (make-posn 20 10) (make-tank 30 3) (make-posn 30 25))
                           " ")
-              (make-fired (make-posn 20 10) (make-tank 30 3) (make-missile 30 25)))
+              (make-fired (make-posn 20 10) (make-tank 30 3) (make-posn 30 25)))
 
 ; Tank -> Tank
 ; changes velocity left
@@ -308,4 +308,4 @@
 ; Tank -> Missile
 ; creates instance of missile beginning to fire
 (define (fire t)
-  (make-missile (tank-loc t) (- HEIGHT TANK-HEIGHT)))
+  (make-posn (tank-loc t) (- HEIGHT TANK-HEIGHT)))
