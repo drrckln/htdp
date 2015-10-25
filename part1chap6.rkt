@@ -9,11 +9,12 @@
 (define MISSILE (triangle 8 "solid" "black"))
 (define TANK (rectangle 20 15 "solid" "green"))
 (define TANK-HEIGHT (image-height TANK))
+(define TANK-SPEED 6)
 (define UFO (ellipse 30 15 125 "blue"))
-(define UFO-SPEED 5)
-(define MISSILE-SPEED (* -2 UFO-SPEED))
-(define WIDTH 150)
-(define HEIGHT 300)
+(define UFO-SPEED 3)
+(define MISSILE-SPEED (* -3 UFO-SPEED))
+(define WIDTH 300)
+(define HEIGHT 600)
 (define BACKGROUND (empty-scene WIDTH HEIGHT))
 
 
@@ -135,7 +136,7 @@
 ; adds t to the given image im
 (define (tank-render t im)
   (place-image TANK
-               (tank-loc t) (- HEIGHT (/ TANK-HEIGHT 2))
+               (modulo (tank-loc t) WIDTH) (- HEIGHT (/ TANK-HEIGHT 2))
                im))
 
 ; UFO Image -> Image
@@ -163,6 +164,9 @@
     [(and (fired? sigs)
           (hit? (fired-ufo sigs) (fired-missile sigs)))
      #true]
+    [(and (fired? sigs)
+          (landed? (fired-ufo sigs)))
+     #true]
     [else #false]))
 
 ; UFO -> Boolean
@@ -186,7 +190,7 @@
 ; places GAME OVER on the final image
 (define (si-render-final sigs)
   (overlay/align "middle" "middle"
-                 (text "GAME OVER" 25 "solid" "indigo")
+                 (text "GAME OVER" 25 "indigo")
                  (si-render sigs)))
 
 ; Exercise 100
@@ -236,7 +240,7 @@
 
 ; testing random function!
 (check-expect (si-move-proper (make-aim (make-posn 20 10) (make-tank 28 -3)) 10)
-              (make-aim (make-posn 30 15) (make-tank 25 -3)))
+              (make-aim (make-posn 30 (+ 10 UFO-SPEED)) (make-tank 25 -3)))
 
 ; Exercise 101
 ; SIGS KeyEvent -> SIGS
@@ -309,3 +313,11 @@
 ; creates instance of missile beginning to fire
 (define (fire t)
   (make-posn (tank-loc t) (- HEIGHT TANK-HEIGHT)))
+
+; SIGS -> SIGS
+(define (si-main s)
+  (big-bang s
+            [to-draw si-render]
+            [on-tick si-move]
+            [on-key si-control]
+            [stop-when si-game-over? si-render-final]))
