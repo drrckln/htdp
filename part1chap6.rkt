@@ -12,6 +12,7 @@
 (define TANK-SPEED 6)
 (define UFO (ellipse 30 15 125 "blue"))
 (define UFO-SPEED 3)
+(define UFO-WARP 15)
 (define MISSILE-SPEED (* -3 UFO-SPEED))
 (define WIDTH 300)
 (define HEIGHT 600)
@@ -178,7 +179,7 @@
 ; UFO Missile -> Boolean
 ; determines wheter the missile is close enough to the UFO to hit
 (define (hit? u m)
-  (< (near u m) 5))
+  (<= (near u m) (image-width UFO)))
 
 ; Posn Posn -> Number
 ; determines the distance between two Posns
@@ -229,14 +230,17 @@
 
 ; SIGS -> Number
 ; create a random number in case a UFO should perform a horizontal jump
+; decides whether to jump left or right, jumping by UFO-WARP distance
 (check-random (create-random-number 0)
               (cond
-                [(>= (random 2) 1) (random WIDTH)]
-                [else (* -1 (random WIDTH))]))
+                [(>= (random 10) 8) UFO-WARP]
+                [(>= (random 10) 8) (* -1 UFO-WARP)]
+                [else 0]))
 (define (create-random-number w)
   (cond
-    [(>= (random 2) 1) (random WIDTH)]
-    [else (* -1 (random WIDTH))]))
+    [(>= (random 20) 19) UFO-WARP]
+    [(>= (random 20) 19) (* -1 UFO-WARP)]
+    [else 0]))
 
 ; testing random function!
 (check-expect (si-move-proper (make-aim (make-posn 20 10) (make-tank 28 -3)) 10)
