@@ -250,8 +250,8 @@
                 [(string=? " "     ke) (make-fired (aim-ufo s) (aim-tank s) (fire (aim-tank s)))]
                 [else s])]
     [(fired? s) (cond
-                  [(string=? "left"  ke) ]
-                  [(string=? "right" ke) ]
+                  [(string=? "left"  ke) (make-fired (fired-ufo s) (tank-left  (fired-tank s)) (fired-missile s))]
+                  [(string=? "right" ke) (make-fired (fired-ufo s) (tank-right (fired-tank s)) (fired-missile s))]
                   [else s]]))
 
 (check-expect (si-control (make-aim (make-posn 20 10) (make-tank 30 -3))
@@ -294,14 +294,18 @@
 ; Tank -> Tank
 ; changes velocity left
 (define (tank-left t)
-  )
+  (cond
+    [(> (tank-vel t) 0) (make-tank (tank-loc t) (* -1 (tank-vel t)))]
+    [else t]))
 
 ; Tank -> Tank
 ; changes velocity right
 (define (tank-right t)
-  )
+  (cond
+    [(< (tank-vel t) 0) (make-tank (tank-loc t) (* -1 (tank-vel t)))]
+    [else t]))
 
 ; Tank -> Missile
 ; creates instance of missile beginning to fire
 (define (fire t)
-  )
+  (make-missile (tank-loc t) (- HEIGHT TANK-HEIGHT)))
