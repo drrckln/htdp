@@ -325,3 +325,36 @@
             [on-tick si-move]
             [on-key si-control]
             [stop-when si-game-over? si-render-final]))
+
+; SIGS.v2 -> Image
+; renders the given game state and added it to BACKGROUND
+(define (si-render.v2 s)
+  (tank-render (fired-tank s)
+               (ufo-render (fired-ufo s)
+                           (missile-render.v2 (fired-missile s)
+                                              BACKGROUND))))
+
+(define-struct sigs [ufo tank missile])
+; SIGS.v2 (short for version 2)
+; is (make-sigs UFO Tank MissileOrNot)
+; interpretation represents the state of the space invader game
+
+; A MissileOrNot is one of:
+; - #false
+; - Posn
+; interpretation #false means the missile hasn't been fired yet;
+; Posn says the missile has been fired and is at the specified location.
+
+; Exercise 102
+; MissileOrNot Image -> Image
+; adds the missile iamge to sc for m
+(define (missile-render.v2 m scene)
+  (cond
+    [(boolean? m) scene]
+    [(posn? m) (place-image MISSILE (posn-x m) (posn-y m) scene)]))
+
+(check-expect (missile-render.v2 #false BACKGROUND) BACKGROUND)
+(check-expect (missile-render.v2 (make-posn 32 (- HEIGHT TANK-HEIGHT 10)) BACKGROUND)
+              (place-image MISSILE 32 (- HEIGHT TANK-HEIGHT 10) BACKGROUND))
+
+; Exercise 103
