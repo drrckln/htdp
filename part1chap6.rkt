@@ -329,9 +329,9 @@
 ; SIGS.v2 -> Image
 ; renders the given game state and added it to BACKGROUND
 (define (si-render.v2 s)
-  (tank-render (fired-tank s)
-               (ufo-render (fired-ufo s)
-                           (missile-render.v2 (fired-missile s)
+  (tank-render (sigs-tank s)
+               (ufo-render (sigs-ufo s)
+                           (missile-render.v2 (sigs-missile s)
                                               BACKGROUND))))
 
 (define-struct sigs [ufo tank missile])
@@ -358,3 +358,66 @@
               (place-image MISSILE 32 (- HEIGHT TANK-HEIGHT 10) BACKGROUND))
 
 ; Exercise 103
+
+; SIGS.v2 -> SIGS.v2
+; moves all objects by their designated velocities
+(define (si-move.v2 s)
+  (si-move-proper.v2 s (create-random-number s)))
+
+; SIGS.v2 Number -> SIGS.v2
+; referentially transparent version of si-move.v2
+; moves all objects, including the UFO horizontally by random number r
+(define (si-move-proper.v2 s r)
+  (make-sigs (move-ufo (sigs-ufo s) r)
+             (move-tank (sigs-tank s))
+             (move-missile.v2 (sigs-missile s))))
+
+(check-expect (si-move-proper.v2 (make-sigs (make-posn 20 10)
+                                     (make-tank 20 -3)
+                                     #false)
+              10)
+              (make-sigs (make-posn (modulo 30 WIDTH) (+ 10 UFO-SPEED))
+                         (make-tank 17 -3)
+                         #false))
+
+; Missile -> Missile
+; moves the missile if it exists
+(define (move-missile.v2 m)
+  (cond
+    [(boolean? m) #false]
+    [(posn? m) (make-posn (posn-x m)
+                          (+ (posn-y m) MISSILE-SPEED))]))
+
+; SIGS.v2 -> Boolean
+; #true when UFO lands or missile hits UFO
+(define (si-game-over.v2? sigs)
+  (cond
+    [(landed? (sigs-ufo sigs)) #true]
+    [(boolean? (sigs-missile sigs)) #false]
+    [(hit? (sigs-ufo sigs) (sigs-missile sigs)) #true]
+    [(landed? (sigs-ufo sigs)) #true]
+    [else #false]))
+
+; SIGS.v2 KeyEvent -> SIGS.v2
+; "left" makes the tank move left, "right" to the right
+; pressing space fires the missile if it hasn't been launched yet
+(define (si-control.v2 s ke)
+  (cond
+    [(string=? "left"  ke) (make-sigs (sigs-ufo s) (tank-left  (sigs-tank s)) (sigs-missile s))]
+    [(string=? "right" ke) (make-sigs (sigs-ufo s) (tank-right (sigs-tank s)) (sigs-missile s))]
+    [(string=? " "     ke) (make-sigs (sigs-ufo s) (sigs-tank s) (fire (sigs-tank s)))]
+    [else s]))
+
+; SIGS.v2 -> Image
+; places GAME OVER on the final image
+(define (si-render-final.v2 sigs)
+  (overlay/align "middle" "middle"
+                 (text "GAME OVER" 25 "indigo")
+                 (si-render.v2 sigs)))
+
+(define (si-main.v2 s)
+  (big-bang s
+            [on-tick si-move.v2]
+            [to-draw si-render.v2]
+            [on-key si-control.v2]
+            [stop-when si-game-over.v2? si-render-final.v2]))
