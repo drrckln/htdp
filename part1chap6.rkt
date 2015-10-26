@@ -233,8 +233,8 @@
 ; decides whether to jump left or right, jumping by UFO-WARP distance
 (check-random (create-random-number 0)
               (cond
-                [(>= (random 10) 8) UFO-WARP]
-                [(>= (random 10) 8) (* -1 UFO-WARP)]
+                [(>= (random 20) 19) UFO-WARP]
+                [(>= (random 20) 19) (* -1 UFO-WARP)]
                 [else 0]))
 (define (create-random-number w)
   (cond
@@ -351,7 +351,7 @@
 (define (missile-render.v2 m scene)
   (cond
     [(boolean? m) scene]
-    [(posn? m) (place-image MISSILE (posn-x m) (posn-y m) scene)]))
+    [(posn? m) (place-image MISSILE (modulo (posn-x m) WIDTH) (posn-y m) scene)]))
 
 (check-expect (missile-render.v2 #false BACKGROUND) BACKGROUND)
 (check-expect (missile-render.v2 (make-posn 32 (- HEIGHT TANK-HEIGHT 10)) BACKGROUND)
