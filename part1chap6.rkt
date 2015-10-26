@@ -421,3 +421,20 @@
             [to-draw si-render.v2]
             [on-key si-control.v2]
             [stop-when si-game-over.v2? si-render-final.v2]))
+
+; Exercise 104
+; a Person is one of:
+; Student (make-student String String Number)
+; - (make-student [first last gpa])
+; Professor (make-professor String String Boolean)
+; - (make-professor [first last tenure?])
+; Staff (make-staff String String String)
+; - (make-staff [first last salary-group])
+
+; Person -> ?
+; (define (function p)
+;   (cond
+;     [(student? p) (... (student-first p) ... (student-last p) ... (student-gpa p) ...)]
+;     [(professor? p) (... (professor-first p) ... (professor-last p) ... (professor-tenure? p) ...)]
+;     [(staff? p) (... (staff-first p) ... (staff-last p) ... (staff-salary-group p)...)]))
+
