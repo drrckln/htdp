@@ -438,3 +438,52 @@
 ;     [(professor? p) (... (professor-first p) ... (professor-last p) ... (professor-tenure? p) ...)]
 ;     [(staff? p) (... (staff-first p) ... (staff-last p) ... (staff-salary-group p)...)]))
 
+; Exercise 105
+(define-struct spider [rem-legs space])
+; A Spider is (make-spider Number Number)
+; - (make-spider [rem-legs space])
+(define-struct elephant [space])
+; An Elephant is (make-elephant Number)
+; - (make-elephant [space])
+(define-struct boa [length girth])
+; A Boa is (make-boa Number Number)
+; - (make-boa [length girth])
+(define-struct armadillo [tail? space])
+; A Armadillo is (make-armadillo Boolean Number)
+; - (make-armadillo [tail? space])
+; A ZooAnimal is one of:
+; - Spider
+; - Elephant
+; - Boa
+; - Armadillo
+
+; ZooAnimal -> ?
+(define (fzanimal zanimal)
+  (cond
+    [(spider? zanimal) (... (spider-rem-legs zanimal) ... (spider-space zanimal) ...)]
+    [(elephant? zanimal) (... (elephant-space zanimal) ...)]
+    [(boa? zanimal) (... (boa-length zanimal) ... (boa-girth zanimal) ...)]
+    [(armadillo? zanimal) (... (armadillo-tail? zanimal) ... (armadillo-space zanimal) ...)]))
+
+; ZooAnimal Number -> Boolean
+; (fits animal volume) determines whether the animal can fit in the volume given
+(define (fits a v)
+  (cond
+    [(spider? a) (>= (spider-space a) v)]
+    [(elephant? a) (>= (elephant-space a) v)]
+    [(boa? a) (>= (* (boa-length a) (boa-girth a)) v)]
+    [(armadillo? a) (>= (armadillo-space a) v)]))
+
+; Exercise 106
+(define-struct vehicle [capacity license mpg])
+; A Vehicle is (make-vehicle Number String Number)
+; interpretation (make-vehicle [capacity license mpg])
+
+; Vehicle -> ?
+(define (fvehicle v)
+  (... (vehicle-capacity v) ... (vehicle-license v) ... (vehicle-mpg v) ...))
+
+; Exercise 107
+; -3, -5 .. 3 and 5 units distance from the top, on the Y axis
+; 4, 6, 4 or 6 on the x-axis, distance from the left
+; (make-posn 3 5) 3 left and 5 down, (make-posn 7 4) 7 from left and 4 down
