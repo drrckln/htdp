@@ -262,7 +262,7 @@
 -1 -1 2 1 #"\0"
 0 -1 1 #"\0"
 1.0 0 -1 -1 -1 -1 -1 -1 1 0 0 0 0 0 0.0 0.0 0.0 1.0 1.0 1.0 65 105 225 0
-0 0 -1 -1           0 4616 0 4 3 85
+0 0 -1 -1           0 4665 0 4 3 85
 (
  #";; The first three lines of this file were inserted by DrRacket. The"
  #"y record metadata"
@@ -5605,5 +5605,67 @@
 0 0 24 3 1 #" "
 0 0 14 3 13 #"another-value"
 0 0 24 3 4 #")]))"
+0 0 24 29 1 #"\n"
+0 0 24 29 1 #"\n"
+0 0 17 3 14 #"; Exercise 117"
+0 0 24 29 1 #"\n"
+0 0 17 3 39 #"; x is a variable, a variable is a expr"
+0 0 24 29 1 #"\n"
+0 0 17 3 56 #"; (= x y), = is a primitive, x and y are expr (variable)"
+0 0 24 29 1 #"\n"
+0 0 17 3 51 #"; (= (= y z) 0) middle is an expr, = is a primitive"
+0 0 24 29 1 #"\n"
+0 0 24 29 1 #"\n"
+0 0 17 3 14 #"; Exercise 118"
+0 0 24 29 1 #"\n"
+0 0 17 3 70
+(
+ #"; (3 + 4) first element is a value, not primitive|variable|cond|defi"
+ #"ne"
+) 0 0 24 29 1 #"\n"
+0 0 17 3 58
+#"; number? is not in parens, and is not a variable or value"
+0 0 24 29 1 #"\n"
+0 0 17 3 78
+(
+ #"; (l) is a variable, should not be enclosed unless there are other e"
+ #"xpressions"
+) 0 0 24 29 1 #"\n"
+0 0 17 3 15 #"; (x) same deal"
+0 0 24 29 1 #"\n"
+0 0 24 29 1 #"\n"
+0 0 17 3 14 #"; Exercise 119"
+0 0 24 29 1 #"\n"
+0 0 17 3 42 #"; (define (f x) x) follows the define form"
+0 0 24 29 1 #"\n"
+0 0 17 3 82
+(
+ #"; (define (f x) y) same? y is a variable, which is an expression, an"
+ #"d 2+ variables"
+) 0 0 24 29 1 #"\n"
+0 0 17 3 15 #"; in the middle"
+0 0 24 29 1 #"\n"
+0 0 17 3 78
+(
+ #"; (define (f x y) 3) 3 is a value, which is an expr. fits the define"
+ #" structure"
+) 0 0 24 29 1 #"\n"
+0 0 24 29 1 #"\n"
+0 0 17 3 14 #"; Exercise 120"
+0 0 24 29 1 #"\n"
+0 0 17 3 51 #"; (define (f \"x\") x) \"x\" is a value, not a variable"
+0 0 24 29 1 #"\n"
+0 0 17 3 47 #"; (define (f x y z) (x)) (x) is an invalid expr"
+0 0 24 29 1 #"\n"
+0 0 17 3 54 #"; (define (f) 10) you need 2+ variables in the parens!"
+0 0 24 29 1 #"\n"
+0 0 24 29 1 #"\n"
+0 0 17 3 14 #"; Exercise 121"
+0 0 24 29 1 #"\n"
+0 0 17 3 57 #"; 1. (x) ILLEGAL, x is a lone variable enclosed in parens"
+0 0 24 29 1 #"\n"
+0 0 17 3 24 #"; 2. (+ 1 (not x)) LEGAL"
+0 0 24 29 1 #"\n"
+0 0 17 3 45 #"; 3. (+ 1 2 3) LEGAL, expr.. + is a primitive"
 0 0 24 29 1 #"\n"
 0           0
