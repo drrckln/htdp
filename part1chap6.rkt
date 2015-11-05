@@ -60,7 +60,7 @@
 0 12 90 -1 90 -1 3 -1 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 255 255 255 1 -1 0 9
 #"Standard\0"
 0 75 16 #"Source Code Pro\0"
-0 12 90 -1 90 -1 3 -1 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 255 255 255 1 -1 2 1
+0 13 90 -1 90 -1 3 -1 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 255 255 255 1 -1 2 1
 #"\0"
 0 -1 1 #"\0"
 1 0 -1 -1 -1 -1 -1 -1 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 -1 -1 2 24
@@ -262,7 +262,7 @@
 -1 -1 2 1 #"\0"
 0 -1 1 #"\0"
 1.0 0 -1 -1 -1 -1 -1 -1 1 0 0 0 0 0 0.0 0.0 0.0 1.0 1.0 1.0 65 105 225 0
-0 0 -1 -1           0 5332 0 4 3 85
+0 0 -1 -1           0 5374 0 4 3 85
 (
  #";; The first three lines of this file were inserted by DrRacket. The"
  #"y record metadata"
@@ -6335,4 +6335,54 @@
 0 0 24 3 1 #" "
 0 0 14 3 8 #"exp-else"
 0 0 24 3 2 #"])"
+0 0 24 29 1 #"\n"
+0 0 24 29 1 #"\n"
+0 0 17 3 14 #"; Exercise 125"
+0 0 24 29 1 #"\n"
+0 0 17 3 54 #"; PRICE is 5, then SALES-TAX is 0.4, then TOTAL is 5.4"
+0 0 24 29 1 #"\n"
+0 0 17 3 63
+#"; yes, you cannot call fahrenheit->celsius before it is defined"
+0 0 24 29 1 #"\n"
+0 0 17 3 10 #"; no error"
+0 0 24 29 1 #"\n"
+0 0 24 29 1 #"\n"
+0 0 17 3 14 #"; Exercise 126"
+0 0 24 29 1 #"\n"
+0 0 17 3 64
+#"; (define-struct oops []) is legal?? I guess it can be 0+ fields"
+0 0 24 29 1 #"\n"
+0 0 17 3 73
+(
+ #"; (define-struct child [parents dob date]) is legal, follows the tem"
+ #"plate"
+) 0 0 24 29 1 #"\n"
+0 0 17 3 79
+(
+ #"; (define-struct (child person) [dob date]) is illegal, cannot have "
+ #"expr as 1st"
+) 0 0 24 29 1 #"\n"
+0 0 24 29 1 #"\n"
+0 0 17 3 14 #"; Exercise 127"
+0 0 24 29 1 #"\n"
+0 0 17 3 31 #"; (make-point 1 2 3) is a value"
+0 0 24 29 1 #"\n"
+0 0 17 3 48 #"; (make-point (make-point 1 2 3) 4 5) is a value"
+0 0 24 29 1 #"\n"
+0 0 17 3 37 #"; (make-point (+ 1 2) 3 4) is a value"
+0 0 24 29 1 #"\n"
+0 0 24 29 1 #"\n"
+0 0 17 3 14 #"; Exercise 128"
+0 0 24 29 1 #"\n"
+0 0 17 3 41 #"; (number? (make-ball 1 2 3 4)) => #false"
+0 0 24 29 1 #"\n"
+0 0 17 3 53 #"; (ball-speed-y (make-ball (+ 1 2) (+ 3 3) 2 3)) => 3"
+0 0 24 29 1 #"\n"
+0 0 17 3 47 #"; (ball-y (make-ball (+ 1 2) (+ 3 3) 2 3)) => 6"
+0 0 24 29 1 #"\n"
+0 0 17 3 49 #"; (ball-x (make-posn 1 2)) => error, expects ball"
+0 0 24 29 1 #"\n"
+0 0 17 3 41 #"; (ball-speed-y 5) => error, expects ball"
+0 0 24 29 1 #"\n"
+0 0 24 29 1 #"\n"
 0           0
