@@ -13,8 +13,31 @@
 (define (how-many alos)
   (cond
     [(empty? alos) 0]
-    [else (... (first alos) ... (how-many (rest alos)) ...)])
+    [else (+ (how-many (rest alos)) 1)]))
 
 (check-expect (how-many '()) 0)
 (check-expect (how-many (cons "a" '())) 1)
 (check-expect (how-many (cons "b" (cons "a" '()))) 2)
+
+; Exercise 138
+; this is because they are using the same single data definition
+
+; Exercise 139
+; A List-of-amounts is one of:
+; - '()  ^----------------------------------|
+; - (cons PositiveNumber List-of-amounts) <-|
+; interpretation a List-of-amounts represents some amounts of money
+'()
+(cons 10 '())
+(cons 13 (cons 10 '()))
+
+; List-of-amounts -> PositiveNumber
+; computes the sum of the amounts in alom
+(define (sum alom)
+  (cond
+    [(empty? alom) 0]
+    [else (+ (first alom) (sum (rest alom)))]))
+
+(check-expect (sum '()) 0)
+(check-expect (sum (cons 10 '())) 10)
+(check-expect (sum (cons 13 (cons 10 '()))) 23)
