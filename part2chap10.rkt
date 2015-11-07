@@ -41,3 +41,39 @@
 (check-expect (sum '()) 0)
 (check-expect (sum (cons 10 '())) 10)
 (check-expect (sum (cons 13 (cons 10 '()))) 23)
+
+; Exercise 140
+; A List-of-numbers is one of:
+; - '()
+; - (cons Number List-of-numbers)
+
+; List-of-numbers -> Boolean
+; determines whether all numbers in alon are positive numbers
+(define (pos? alon)
+  (cond
+    [(empty? alon) #true]
+    [else (and (> (first alon) 0)
+               (pos? (rest alon)))]))
+
+(check-expect (pos? '()) #true)
+(check-expect (pos? (cons 5 '())) #true)
+(check-expect (pos? (cons -3 '())) #false)
+(check-expect (pos? (cons -3 (cons 5 '()))) #false)
+(check-expect (pos? (cons 3 (cons 5 '()))) #true)
+
+; List-of-numbers ->
+; produces sum if alon is also a List-of-amounts, otherwise error
+(define (checked-sum alon)
+  (cond
+    [(empty? alon) 0]
+    [else (cond
+            [(pos? alon) (sum alon)]
+            [else (error "there are nonpositive numbers")])]))
+
+(check-expect (checked-sum '()) 0)
+(check-error (checked-sum (cons -4 '())))
+(check-expect (checked-sum (cons 4 '())) 4)
+(check-expect (checked-sum (cons 5 (cons 4 '()))) 9)
+(check-error (checked-sum (cons -5 (cons 4 '()))))
+
+; sum computes, for an element of List-of-numbers, the sum of the numbers..
