@@ -61,12 +61,12 @@
 (check-expect (pos? (cons -3 (cons 5 '()))) #false)
 (check-expect (pos? (cons 3 (cons 5 '()))) #true)
 
-; List-of-numbers ->
+; List-of-numbers -> PositiveNumber or Error
 ; produces sum if alon is also a List-of-amounts, otherwise error
 (define (checked-sum alon)
   (cond
     [(empty? alon) 0]
-    [else (cond
+    [else (cond ; could just use if statement here
             [(pos? alon) (sum alon)]
             [else (error "there are nonpositive numbers")])]))
 
@@ -77,3 +77,39 @@
 (check-error (checked-sum (cons -5 (cons 4 '()))))
 
 ; sum computes, for an element of List-of-numbers, the sum of the numbers..
+
+; Exercise 141
+; List-of-boolean is one of:
+; - '()
+; - (cons Boolean List-of-boolean)
+
+; List-of-boolean -> Boolean
+; determines whether alob is all true
+(define (all-true alob)
+  (cond
+    [(empty? alob) #true]
+    [else (and (first alob)
+               (all-true (rest alob)))]))
+
+(check-expect (all-true '()) #true)
+(check-expect (all-true (cons #true '())) #true)
+(check-expect (all-true (cons #false '())) #false)
+(check-expect (all-true (cons #true (cons #true '()))) #true)
+(check-expect (all-true (cons #false (cons #true '()))) #false)
+(check-expect (all-true (cons #true (cons #false '()))) #false)
+
+; List-of-boolean -> Boolean
+; determines whether alob has single #true value
+
+(define (one-true alob)
+  (cond
+    [(empty? alob) #false]
+    [else (or (first alob)
+              (one-true (rest alob)))]))
+
+(check-expect (one-true '()) #false)
+(check-expect (one-true (cons #true '())) #true)
+(check-expect (one-true (cons #false '())) #false)
+(check-expect (one-true (cons #true (cons #false '()))) #true)
+(check-expect (one-true (cons #false (cons #false '()))) #false)
+(check-expect (one-true (cons #true (cons #false '()))) #true)
