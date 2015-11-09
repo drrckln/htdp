@@ -113,3 +113,9 @@
 (check-expect (one-true (cons #true (cons #false '()))) #true)
 (check-expect (one-true (cons #false (cons #false '()))) #false)
 (check-expect (one-true (cons #true (cons #false '()))) #true)
+
+; Exercise 142
+(define (cat l)
+  (cond
+    [(empty? l) ""]
+    [else (string-append (first l) (cat (rest l)))]))
