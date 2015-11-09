@@ -154,9 +154,9 @@
 
 ; List-of-temperatures -> Number
 ; computes the average temperature
-(define (average alot)
-  (/ (sum alot)
-     (how-many alot)))
+;(define (average alot)
+;  (/ (sum alot)
+;     (how-many alot)))
 
 (check-expect (average (cons 1 (cons 2 (cons 3 '())))) 2)
 
@@ -184,3 +184,107 @@
 
 (check-error (checked-average '()))
 (check-expect (checked-average (cons 1 (cons 2 (cons 3 '())))) 2)
+
+; A NEList-of-temperatures is one of:
+; - (cons CTemperature '())
+; - (cons CTemperature NEList-of-temperatures)
+; interpretation non-empty lists of measured temperatures
+
+(cons -273 '()) ; clause that does NOT use a self-reference
+
+; NEList-of-temperatures -> Number
+; computes the averages temperature
+
+;(check-expect (average (cons 1 (cons 2 (cons 3 '())))) 2)
+
+; now this version just works
+(define (average anelot)
+  (/ (ne-sum anelot)
+     (ne-how-many anelot)))
+
+; Exercise 145
+; sum would not work because NEList-of-temperatures would never reach the base-case of the empty list
+; you'd have to rewrite what the base case iss. It becomes a partial function. Same problem w/ how-many.
+; (sum (cons 3 (cons 2 '()))) => (+ 3 (+ 2 (sum '()))) => sum '() breaks
+
+; NEList-of-temperatures -> Number
+; computes the sum of the given temperatures
+(check-expect (ne-sum (cons 1 (cons 2 (cons 3 '())))) 6)
+(define (ne-sum anelot)
+  (cond
+    [(empty? (rest anelot)) (first anelot)] ; doesn't include (rest anelot) because we know it's '()
+    [(cons? (rest anelot))
+     (+ (first anelot) (ne-sum (rest anelot)))]))
+
+; Exercise 146
+; NEList-of-temperatures -> Boolean
+; produces #true if the temperatures are sorted in descending order
+; eg second is smaller than first, third smaller than second, so on.
+(define (sorted>? anelot)
+  (cond
+    [(empty? (rest anelot)) #true]
+    [(cons? (rest anelot))
+     (and (> (first anelot) (first (rest anelot)))
+          (sorted>? (rest anelot)))]))
+
+(check-expect (sorted>? (cons 2 '())) #true)
+(check-expect (sorted>? (cons 3 (cons 2 '()))) #true)
+(check-expect (sorted>? (cons 2 (cons 3 '()))) #false)
+(check-expect (sorted>? (cons 5 (cons 3 (cons 4 '())))) #false)
+(check-expect (sorted>? (cons 5 (cons 4 (cons 3 '())))) #true)
+
+; Exercise 147
+; NEList-of-temperatures -> Number
+; determines how many temperatures are in anelot
+(define (ne-how-many anelot)
+  (cond
+    [(empty? (rest anelot)) 1]
+    [(cons? (rest anelot))
+     (+ 1 (ne-how-many (rest anelot)))]))
+
+(check-expect (ne-how-many (cons 2 '())) 1)
+(check-expect (ne-how-many (cons 3 (cons 2 '()))) 2)
+
+; Exercise 148
+; A NEList-of-Booleans is one of:
+; - (cons Boolean '())
+; - (cons Boolean NEList-of-Booleans)
+
+; NEList-of-Booleans -> Boolean
+; determines whether all are true
+(define (ne-all-true anelob)
+  (cond
+    [(empty? (rest anelob)) (first anelob)]
+    [(cons? (rest anelob))
+     (and (first anelob)
+          (ne-all-true (rest anelob)))]))
+
+(check-expect (ne-all-true (cons #true '())) #true)
+(check-expect (ne-all-true (cons #false '())) #false)
+(check-expect (ne-all-true (cons #true (cons #true (cons #true '())))) #true)
+(check-expect (ne-all-true (cons #false (cons #true (cons #true '())))) #false)
+(check-expect (ne-all-true (cons #true (cons #false (cons #true '())))) #false)
+(check-expect (ne-all-true (cons #true (cons #true (cons #false '())))) #false)
+
+; NEList-of-Booleans -> Boolean
+; determines whether one value is true
+(define (ne-one-true anelob)
+  (cond
+    [(empty? (rest anelob)) (first anelob)]
+    [(cons? (rest anelob))
+     (or (first anelob)
+         (ne-one-true (rest anelob)))]))
+
+(check-expect (ne-one-true (cons #true '())) #true)
+(check-expect (ne-one-true (cons #false '())) #false)
+(check-expect (ne-one-true (cons #true (cons #true (cons #true '())))) #true)
+(check-expect (ne-one-true (cons #false (cons #true (cons #true '())))) #true)
+(check-expect (ne-one-true (cons #true (cons #false (cons #true '())))) #true)
+(check-expect (ne-one-true (cons #true (cons #true (cons #false '())))) #true)
+(check-expect (ne-one-true (cons #false (cons #false (cons #false '())))) #false)
+
+; Exercise 149
+; I'm not sure.. the NE versions of functions seem more complex, but you get the checking.
+; Actually they're not really more complex, just more verbose due to different base case.
+; It's probably better to use data definitions that have non-empty lists, depending on the
+; type of functions you will be building on it.
