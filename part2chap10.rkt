@@ -119,3 +119,18 @@
   (cond
     [(empty? l) ""]
     [else (string-append (first l) (cat (rest l)))]))
+
+; Exercise 143
+; ImageOrFalse is one of:
+; - Image
+; - #false
+
+; List-of-images PositiveNumber -> ImageOrFalse
+(define (ill-sized? loi n)
+  (cond
+    [(empty? loi) #false]
+    [else (cond
+            [(and (= (image-height (first loi)) n)
+                  (= (image-width  (first loi)) n))
+             (first loi)]
+            [else (ill-sized? (rest loi) n)])]))
