@@ -288,3 +288,55 @@
 ; Actually they're not really more complex, just more verbose due to different base case.
 ; It's probably better to use data definitions that have non-empty lists, depending on the
 ; type of functions you will be building on it.
+
+; A N is one of:
+; - 0
+; - (add1 N)
+; interpretation represents the natural numbers or counting numbers
+; church numerals?
+; add1 is like a constructor, and sub1 the "selector"
+; then for each clause -- zero? positive?
+
+; N String -> List-of-strings
+; creates a list of n strings s
+
+(check-expect (copier 2 "hello") (cons "hello" (cons "hello" '())))
+(check-expect (copier 0 "hello") '())
+
+(define (copier n s)
+  (cond
+    [(zero? n) '()]
+    [(positive? n) (cons s (copier (sub1 n) s))]))
+
+; Exercise 150
+; IT DOES WORK
+
+(define (copier.v2 n s)
+  (cond
+    [(zero? n) '()]
+    [else (cons s (copier.v2 (sub1 n) s))]))
+
+; copier says NOPE, all clauses exhausted
+; copier.v2 goes on infinitely
+
+; Exercise 151
+; N -> Number
+; computes (+ n pi) without using +
+
+(check-within (add-to-pi 3) (+ 3 pi) 0.001)
+
+(define (add-to-pi n)
+  (cond
+    [(zero? n) pi]
+    [(positive? n) (add1 (add-to-pi (sub1 n)))]))
+
+; the skeleton uses check-within since pi is irrational and this can cause imprecisions
+
+; N Number -> Number
+; adds a natural n to arbitrary number x, without +
+(define (add n x)
+  (cond
+    [(zero? n) x]
+    [(positive? n) (add1 (add (sub1 n) x))]))
+
+(check-within (add 10 pi) (+ 10 pi) 0.001)
