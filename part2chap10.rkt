@@ -340,3 +340,12 @@
     [(positive? n) (add1 (add (sub1 n) x))]))
 
 (check-within (add 10 pi) (+ 10 pi) 0.001)
+
+; Exercise 152
+; N Number -> Number
+(define (multiply n x)
+  (cond
+    [(zero? n) 0]
+    [(positive? n) (+ x (multiply (sub1 n) x))]))
+
+(check-within (multiply 3 pi) (* 3 pi) 0.001)
