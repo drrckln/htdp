@@ -357,7 +357,7 @@
   (cond
     [(zero? n) (error "no copies?")]
     [(and (positive? n)
-          (= n 1))
+          (= n (add1 0)))
      img]
     [(positive? n) (above img (col (sub1 n) img))]))
 
