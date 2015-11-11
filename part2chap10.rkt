@@ -349,3 +349,16 @@
     [(positive? n) (+ x (multiply (sub1 n) x))]))
 
 (check-within (multiply 3 pi) (* 3 pi) 0.001)
+
+; Exercise 153
+; N Img -> Img
+; produces a column of n copies of img
+(define (col n img)
+  (cond
+    [(zero? n) (error "no copies?")]
+    [(and (positive? n)
+          (= n 1))
+     img]
+    [(positive? n) (above img (col (sub1 n) img))]))
+
+; row just uses "beside" instead of "above"
