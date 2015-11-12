@@ -359,7 +359,7 @@
     [(and (positive? n)
           (= n (add1 0)))
      img]
-    [(positive? n) (above img (col (sub1 n) img))]))
+    [(positive? n) (beside img (col (sub1 n) img))]))
 
 ; N Img -> Img
 ; produces a row of n copies of img
@@ -369,6 +369,23 @@
     [(and (positive? n)
           (= n (add1 0)))
      img]
-    [(positive? n) (beside img (col (sub1 n) img))]))
+    [(positive? n) (above img (row (sub1 n) img))]))
 
 ; row just uses "beside" instead of "above"
+
+; Exercise 154
+(define LECTURE-HALL (place-image (col 8 (row 18 (square 10 "outline" "black")))
+                                  40 90
+                                  (empty-scene 80 180)))
+
+; List-of-Posn -> Img
+; produces image of the lecture hall with red dots
+(define (add-balloons lop)
+  (cond
+    [(empty? lop) LECTURE-HALL]
+    [(cons? lop) (place-image (circle 3 "solid" "red")
+                              (posn-x (first lop))
+                              (posn-y (first lop))
+                              (add-balloons (rest lop)))]))
+
+(check-expect (add-balloons '()) LECTURE-HALL)
