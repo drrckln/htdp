@@ -361,4 +361,14 @@
      img]
     [(positive? n) (above img (col (sub1 n) img))]))
 
+; N Img -> Img
+; produces a row of n copies of img
+(define (row n img)
+  (cond
+    [(zero? n) (error "no copies?")]
+    [(and (positive? n)
+          (= n (add1 0)))
+     img]
+    [(positive? n) (beside img (col (sub1 n) img))]))
+
 ; row just uses "beside" instead of "above"
