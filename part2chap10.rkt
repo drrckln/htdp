@@ -389,3 +389,48 @@
                               (add-balloons (rest lop)))]))
 
 (check-expect (add-balloons '()) LECTURE-HALL)
+
+(define-struct layer [color doll])
+
+; An RD (russian doll) is one of:
+; - String
+; - (make-layer String RD)
+
+"red"
+(make-layer "green" "red")
+(make-layer "yellow" (make-layer "green" "red"))
+(make-layer "pink" (make-layer "black" "white"))
+
+; RD -> Number
+; how many dolls are part of an-rd
+(define (depth an-rd)
+  (cond
+    [(string? an-rd) 1]
+    [(layer? an-rd)
+     (+ (depth (layer-doll an-rd)) 1)]))
+
+(check-expect (depth "red") 1)
+(check-expect (depth (make-layer "yellow" (make-layer "green" "red"))) 3)
+
+; Exercise 155
+; RD -> String
+; produces a string of all colors
+(define (colors an-rd)
+  (cond
+    [(string? an-rd) an-rd]
+    [(layer? an-rd)
+     (string-append (layer-color an-rd) ", " (colors (layer-doll an-rd)))]))
+
+(check-expect (colors (make-layer "yellow" (make-layer "green" "red")))
+              "yellow, green, red")
+
+; Exercise 156
+; RD -> String
+; produces the color of the innermost doll of an-rd
+(define (inner an-rd)
+  (cond
+    [(string? an-rd) an-rd]
+    [(layer? an-rd) (inner (layer-doll an-rd))]))
+
+(check-expect (inner "red") "red")
+(check-expect (inner (make-layer "yellow" "blue")) "blue")
