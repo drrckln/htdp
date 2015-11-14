@@ -509,3 +509,24 @@
             [to-draw to-image]))
 ; main starts with a state and then updates the state
 ; as a function of time and keyevents, I guess
+
+; Exercise 158
+; Yes that all works!
+
+; Exercise 159
+; ShotWorld -> ShotWorld
+; moves each shot up a pixel but eliminates those above the canvas
+(define (tock2 w)
+  (cond
+    [(empty? w) '()]
+    [else (cond
+            [(>= 0 (first w)) (tock2 (rest w))]
+            [else (cons (sub1 (first w)) (tock2 (rest w)))])]))
+
+(check-expect (tock2 '()) '())
+(check-expect (tock2 (cons 10 '()))
+              (cons 9 '()))
+(check-expect (tock2 (cons 20 (cons 10 '())))
+              (cons 19 (cons 9 '())))
+(check-expect (tock2 (cons -1 (cons 20 (cons 10 '()))))
+              (cons 19 (cons 9 '())))
