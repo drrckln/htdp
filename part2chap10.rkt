@@ -2,6 +2,7 @@
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname part2chap10) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 (require 2htdp/image)
+(require 2htdp/universe)
 ; by the first clause
 '()
 ; by the second clause and the preceding example
@@ -434,3 +435,77 @@
 
 (check-expect (inner "red") "red")
 (check-expect (inner (make-layer "yellow" "blue")) "blue")
+
+; physical constants
+(define HEIGHT 80)
+(define WIDTH 100)
+(define XSHOTS (/ WIDTH 2))
+
+; graphical constants
+(define BACKGROUND (empty-scene WIDTH HEIGHT))
+(define SHOT (triangle 3 "solid" "red"))
+
+; A List-of-shots is one of:
+; - '()
+; - (cons Shot List-of-shots)
+; interpretation the collection of shots fired and moving straight up
+
+; A Shot is a Number.
+; interpretation the number represents the shot's y-coordinate
+
+; alternate
+; A ShotWorld is a List-of-numbers.
+; interpretation each number represents the y-coordinate of a shot
+
+; ShotWorld -> Image
+; adds each y on w at (MID, y) to the background image
+(define (to-image w)
+  (cond
+    [(empty? w) BACKGROUND]
+    [else (place-image SHOT XSHOTS (first w) (to-image (rest w)))]))
+
+(check-expect (to-image '()) BACKGROUND)
+(check-expect (to-image (cons 10 '()))
+              (place-image SHOT XSHOTS 10 BACKGROUND))
+(check-expect (to-image (cons 20 (cons 10 '())))
+              (place-image SHOT XSHOTS 20
+                           (place-image SHOT XSHOTS 10 BACKGROUND)))
+
+; ShotWorld -> ShotWorld
+; moves each shot up by one pixel
+(define (tock w)
+  (cond
+    [(empty? w) '()]
+    [(cons? w) (cons (sub1 (first w)) (tock (rest w)))]))
+
+(check-expect (tock '()) '())
+(check-expect (tock (cons 10 '()))
+              (cons 9 '()))
+(check-expect (tock (cons 20 (cons 10 '())))
+              (cons 19 (cons 9 '())))
+
+; ShotWorld KeyEvent -> ShotWorld
+; adds a shot to the world if the space bar was hit
+(define (keyh w ke)
+  (cond
+    [(string=? " " ke) (cons HEIGHT w)]
+    [else w]))
+
+(check-expect (keyh '() "a") '())
+(check-expect (keyh '() " ") (cons HEIGHT '()))
+(check-expect (keyh (cons 10 '()) "z")
+              (cons 10 '()))
+(check-expect (keyh (cons 10 '()) " ")
+              (cons HEIGHT (cons 10 '())))
+
+
+; Exercise 157
+; tests added
+; ShotWorld -> ShotWorld
+(define (main w0)
+  (big-bang w0
+            [on-tick tock]
+            [on-key keyh]
+            [to-draw to-image]))
+; main starts with a state and then updates the state
+; as a function of time and keyevents, I guess
