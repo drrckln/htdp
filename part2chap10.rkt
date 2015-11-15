@@ -530,3 +530,41 @@
               (cons 19 (cons 9 '())))
 (check-expect (tock2 (cons -1 (cons 20 (cons 10 '()))))
               (cons 19 (cons 9 '())))
+
+; Exercise 160
+(define-struct pair [balloon# lob])
+; A Pair is a structure (make-pair N List-of-posns)
+; a List-of-posns is one of:
+; - '()
+; - (cons Posn List-of-posns)
+; interpretation (make-pair n lob) means n
+; balloons must yet be thrown and the thrown balloons landed at lob
+
+; N -> Pair
+(define (riot n)
+  (big-bang (make-pair n '())
+            [on-tick tock-balloon 1]
+            [to-draw draw-balloons]
+            [stop-when no-balloons?]))
+
+; Pair -> Image
+; draws the balloons in the list of balloons in the pair
+(define (draw-balloons p)
+  (add-balloons (pair-lob p)))
+
+; Pair -> Pair
+; every second randomly make a new balloon and add it to pair
+(define (tock-balloon p)
+  (cond
+    [(= (pair-balloon# p) 0) p]
+    [else (make-pair (sub1 (pair-balloon# p))
+                     (cons (make-posn (random (add1 (image-width  LECTURE-HALL)))
+                                      (random (add1 (image-height LECTURE-HALL))))
+                           (pair-lob p)))]))
+
+; Pair -> Boolean
+; #true when no balloons left to throw in p
+(define (no-balloons? p)
+  (cond
+    [(= (pair-balloon# p) 0) #true]
+    [else #false]))
