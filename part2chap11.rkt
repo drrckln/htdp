@@ -64,3 +64,23 @@
   (cond
     [(empty? alod) '()]
     [else (cons (* r (first alod)) (convert-euro* alod r))]))
+
+; Exercise 165
+; List-of-strings -> List-of-strings
+; replaces "robot" with "r2d2"
+(define (subst-robot alos)
+  (cond
+    [(empty? alos) '()]
+    [else (cond
+            [(string=? "robot" (first alos))
+             (cons "r2d2" (subst-robot (rest alos)))]
+            [else (cons (first alos) (subst-robot (rest alos)))])]))
+
+; String String List-of-string -> List-of-string
+; replaces old with new in alos
+(define (substitute new old alos)
+  (cond
+    [(empty? alos) '()]
+    [(string=? old (first alos))
+     (cons new (substitute new old (rest alos)))]
+    [else (cons (first alos) (substitute new old (rest alos)))]))
