@@ -161,3 +161,17 @@
   (cond
     [(empty? lop) '()]
     [else (+ (posn-x (first lop)) (sum (rest lop)))]))
+
+; Exercise 158
+; List-of-Posn -> List-of-Posn
+; translates each posn up by 1
+(define (translate lop)
+  (cond
+    [(empty? lop) '()]
+    [else (cons (move-up (first lop))
+                (translate (rest lop)) ...)]))
+
+; Posn -> Posn
+; moves p up the y axis by 1
+(define (move-up p)
+  (make-posn (posn-x p) (+ (posn-y p) 1)))
