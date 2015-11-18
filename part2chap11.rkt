@@ -153,3 +153,11 @@
     [(empty? an-low) '()]
     [else (cons (create-paycheck (first an-low))
                 (wage*.v4 (rest an-low)))]))
+
+; Exercise 167
+; List-of-Posn -> Number
+; produces the sum of all the x-coordinates
+(define (sum lop)
+  (cond
+    [(empty? lop) '()]
+    [else (+ (posn-x (first lop)) (sum (rest lop)))]))
