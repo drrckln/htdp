@@ -84,3 +84,72 @@
     [(string=? old (first alos))
      (cons new (substitute new old (rest alos)))]
     [else (cons (first alos) (substitute new old (rest alos)))]))
+
+(define-struct work [employee rate hours])
+; Work is a structure: (make-work String Number Number)
+; interpretation (make-work n r h) combines the name (n)
+; with the pay rate (r) and the number of hours (h) worked.
+
+; Low (list of works) is one of:
+; - '()
+; - (cons Work Low)
+; interpretation an instance of Low represents the hours worked
+; of a number of employees
+
+; (cons (make-work "John" 15.00 34) '())
+; (cons (make-work "Bill" 20.00 15) (cons (make-work "John" 15.00 34) '()))
+
+; Low -> List-of-numbers
+; computes the weekly wages for all given weekly work records
+(define (wage*.v2 an-low)
+  (cond
+    [(empty? an-low) '()]
+    [else (cons (wage.v2 (first an-low))
+                (wage*.v2 (rest an-low)))]))
+
+(check-expect (wage*.v2 (cons (make-work "Robby" 11.95 39) '()))
+              (cons (* 11.95 39) '()))
+
+; Work -> ???
+; a template for functions that process work structures
+(define (for-work w)
+  (... (work-employee w) ... (work-rate w) ... (work-hours w) ...))
+
+; Work -> Number
+; computes the wage for the given work record w
+(define (wage.v2 w)
+  (* (work-rate w) (work-hours w)))
+
+; Exercise 166
+(define-struct pay-check [employee amount])
+
+; Low -> List-of-pay-check
+; consumes list of work records and produces a list of pay checks
+(define (wage*.v3 an-low)
+  (cond
+    [(empty? an-low) '()]
+    [else (cons (create-paycheck (first an-low))
+                (wage*.v3 (rest an-low)))]))
+
+; Work -> Paycheck
+; creates a pay-check instance from a work record
+(define (create-paycheck w)
+  (make-pay-check (work-employee w)
+                  (* (work-rate w) (work-hours w))))
+
+(define-struct employee [name id])
+; Employee is a structure: (make-employee String Number)
+; interpretation (make-employee n id) combines the name (n)
+; with the ID number assigned to him/her.
+
+; Work is now a structure: (make-work Employee Number Number)
+; interpretation (make-work e r h) combines the Employee (e)
+; with the pay rate (r) and the number of hours (h) worked.
+
+; Low -> List-of-pay-check
+; consumes list of (revised) work records and produces a list of (revised) pay checks
+(define (wage*.v4 an-low)
+  (cond
+    [(empty? an-low) '()]
+    [else (cons (create-paycheck (first an-low))
+                (wage*.v4 (rest an-low)))]))
