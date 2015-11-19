@@ -200,3 +200,27 @@
 (define (legal? p)
   (and (<= 0 (posn-x p) 100)
        (<= 0 (posn-y p) 200)))
+
+; Exercise 170
+(define-struct phone [area switch four])
+; A Phone is a structure:
+;   (make-phone Three Three Four)
+; A Three is between 100 and 999
+; A Four is between 1000 and 9999
+
+; List-of-Phone -> List-of-Phone
+; replaces all occurrence of area code 713 with 281
+(define (replace loph)
+  (cond
+    [(empty? loph) '()]
+    [(cons? loph) (cond
+                    [(= 713 (phone-area (first loph)))
+                     (cons (make-phone 281 (phone-switch (first loph)) (phone-four (first loph)))
+                           (replace (rest loph)))]
+                    [else (cons (first loph) (replace (rest loph)))])]))
+
+(check-expect (replace '()) '())
+(check-expect (replace (cons (make-phone 248 355 9793) '()))
+              (cons (make-phone 248 355 9793) '()))
+(check-expect (replace (cons (make-phone 713 282 3445) (cons (make-phone 248 355 9793) '())))
+              (cons (make-phone 281 282 3445) (cons (make-phone 248 355 9793) '())))
