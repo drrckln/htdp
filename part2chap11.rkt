@@ -162,7 +162,7 @@
     [(empty? lop) '()]
     [else (+ (posn-x (first lop)) (sum (rest lop)))]))
 
-; Exercise 158
+; Exercise 168
 ; List-of-Posn -> List-of-Posn
 ; translates each posn up by 1
 (define (translate lop)
@@ -175,3 +175,28 @@
 ; moves p up the y axis by 1
 (define (move-up p)
   (make-posn (posn-x p) (+ (posn-y p) 1)))
+
+; Exercise 169
+; List-of-Posn -> List-of-Posn
+; filters for only 0 <= x <= 100
+; and 0 <= y <= 200
+(define (legal lop)
+  (cond
+    [(empty? lop) '()]
+    [(cons? lop) (cond
+                   [(legal? (first lop)) (cons (first lop) (legal (rest lop)))]
+                   [else (legal (rest lop))])]))
+
+(check-expect (legal '()) '())
+(check-expect (legal (cons (make-posn 30 150) '()))
+              (cons (make-posn 30 150) '()))
+(check-expect (legal (cons (make-posn 30 150) (cons (make-posn 150 100) '())))
+              (cons (make-posn 30 150) '()))
+
+; Posn -> Boolean
+; checks if posn p satisfies
+; 0 <= x <= 100
+; 0 <= y <= 200
+(define (legal? p)
+  (and (<= 0 (posn-x p) 100)
+       (<= 0 (posn-y p) 200)))
