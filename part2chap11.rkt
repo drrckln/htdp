@@ -316,7 +316,7 @@
     [(empty? lls) ""]
     [(cons? lls) (cond
                    [(= (length (rest lls)) 0) (l->string (first lls))]
-                   [else (string-append (l->string (first lls)) "/n" (lls->string (rest lls)))])]))
+                   [else (string-append (l->string (first lls)) "\n" (lls->string (rest lls)))])]))
 
 ; List-of-string -> String
 ; converts a line, ln, to a String
@@ -326,3 +326,27 @@
     [(cons? ln) (cond
                   [(= (length (rest ln)) 0) (first ln)]
                   [else (string-append (first ln) " " (l->string (rest ln)))])]))
+
+; Exercise 173
+; File-Name -> File
+(define (messwith n)
+  (write-file (string-append "no-articles-" n) (lls->string (filter-articles (read-words/line n)))))
+
+; LLS -> LLS
+; filters articles from a list of list of strings
+(define (filter-articles lls)
+  (cond
+    [(empty? lls) '()]
+    [(cons? lls) (cons (rem-articles(first lls)) (filter-articles (rest lls)))]))
+
+; List-of-String -> List-of-String
+; removes articles from ln
+(define (rem-articles ln)
+  (cond
+    [(empty? ln) '()]
+    [(cons? ln) (cond
+                  [(or (string=? (first ln) "a")
+                       (string=? (first ln) "an")
+                       (string=? (first ln) "the"))
+                   (rem-articles (rest ln))]
+                  [else (cons (first ln) (rem-articles (rest ln)))])]))
