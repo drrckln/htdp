@@ -350,3 +350,52 @@
                        (string=? (first ln) "the"))
                    (rem-articles (rest ln))]
                   [else (cons (first ln) (rem-articles (rest ln)))])]))
+
+; Exercise 174
+
+; 1String -> String
+; converts the given 1String into a three-letter numeric string
+
+; 1String -> String
+; auxiliary for stating tests
+(define (code1 c)
+  (number->string (string->int c)))
+
+(check-expect (encode-letter "\t") (string-append "00" (code1 "\t")))
+(check-expect (encode-letter "a") (string-append "0" (code1 "a")))
+(check-expect (encode-letter "z") (code1 "z"))
+
+; converts the letter into a three-letter numeric string, padding zeros as necessary
+(define (encode-letter s)
+  (cond
+    [(< (string->int s) 10) (string-append "00" (code1 s))]
+    [(< (string->int s) 100) (string-append "0" (code1 s))]
+    [else (code1 s)]))
+
+
+; LLS -> LLS
+; maps encode-letter onto lls
+(define (map-encode-letter-3 lls)
+  (cond
+    [(empty? lls) '()]
+    [(cons? lls) (cons (map-encode-letter-2 (first lls)) (map-encode-letter-3 (rest lls)))]))
+
+; List-of-String -> List-of-String
+; maps encode-letter onto los
+(define (map-encode-letter-2 los)
+  (cond
+    [(empty? los) '()]
+    [(cons? los) (cons (map-encode-letter (first los)) (map-encode-letter-2 (rest los)))]))
+
+; String -> String
+; maps encode-letter onto a string
+(define (map-encode-letter s)
+  (cond
+    [(= (string-length s) 1) (encode-letter s)]
+    [else (string-append (encode-letter (substring s 0 1)) (map-encode-letter (substring s 1)))]))
+
+; File-Name -> LLS
+; encodes a lls numerically
+(define (encode-lls n)
+  (map-encode-letter-3 (read-words/line n)))
+  
