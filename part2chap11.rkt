@@ -278,3 +278,51 @@
                                                                         (cons (cons "Piet" (cons "Hein" '())) '())))))))))))))
 
 (read-words/line "ttt.txt")
+
+; LLS -> List-of-Numbers
+; determines the number of words on each line
+(define (words-on-line lls)
+  (cond
+    [(empty? lls) '()]
+    [else
+     (cons (words# (first lls)) ; a list of strings
+     (words-on-line (rest lls)))]))
+
+(define line0 (cons "hello" (cons "world" '())))
+(define line1 '())
+
+(define lls0 '())
+(define lls1 (cons line0 (cons line1 '())))
+(check-expect (words-on-line lls0) '())
+(check-expect (words-on-line lls1) (cons 2 (cons 0 '())))
+
+(define (words# ln)
+  (cond
+    [(empty? ln) 0]
+    [else (+ 1 (words# (rest ln)))]))
+; this is just "length"
+
+; String -> List-of-numbers
+; counts the number of words  on each line in the given file
+(define (file-statistic file-name)
+  (words-on-line
+   (read-words/line file-name)))
+
+; Exercise 172
+; LLS -> String
+; converts a list of lines to a string 
+(define (lls->string lls)
+  (cond
+    [(empty? lls) ""]
+    [(cons? lls) (cond
+                   [(= (length (rest lls)) 0) (l->string (first lls))]
+                   [else (string-append (l->string (first lls)) "/n" (lls->string (rest lls)))])]))
+
+; List-of-string -> String
+; converts a line, ln, to a String
+(define (l->string ln)
+  (cond
+    [(empty? ln) ""]
+    [(cons? ln) (cond
+                  [(= (length (rest ln)) 0) (first ln)]
+                  [else (string-append (first ln) " " (l->string (rest ln)))])]))
