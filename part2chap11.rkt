@@ -398,4 +398,97 @@
 ; encodes a lls numerically
 (define (encode-lls n)
   (map-encode-letter-3 (read-words/line n)))
-  
+
+; Exercise 175
+(define-struct output [1strings words lines])
+
+; File-Name -> Output
+(define (wc n)
+  (make-output (count-1strings (read-words/line n))
+               (count-words (read-words/line n))
+               (count-lines (read-words/line n))))
+
+; LLS -> Number
+; counts number of lines in lls
+(define (count-lines lls)
+  (length lls))
+
+; LLS -> Number
+; counts number of words in lls
+(define (count-words lls)
+  (cond
+    [(empty? lls) 0]
+    [else (+ (length (first lls))
+             (count-words (rest lls)))]))
+
+; LLS -> Number
+; counts number of 1Strings in lls
+(define (count-1strings lls)
+  (cond
+    [(empty? lls) 0]
+    [else (+ (line-1-strings (first lls))
+             (count-1strings (rest lls)))]))
+
+; List-of-Strings -> Number
+; counts number of 1strings in a line
+(define (line-1-strings ln)
+  (cond
+    [(empty? ln) 0]
+    [else (+ (string-length (first ln))
+             (line-1-strings (rest ln)))]))
+
+; Exercise 176
+; A Matrix is one of:
+; - (cons Row '())
+; - (cons Row Matrix)
+; constraint all rows in matrix are of the same length
+
+; An Row is one of:
+; - '()
+; - (cons Number Row)
+
+; 11, 12, 21, 22 should be..
+; (cons (cons 11 (cons 12 '()))
+;       (cons (cons 21 (cons 22 '())) '()))
+
+(define row1 (cons 11 (cons 12 '())))
+(define row2 (cons 21 (cons 22 '())))
+(define mat1 (cons row1 (cons row2 '())))
+
+(define wor1 (cons 11 (cons 21 '())))
+(define wor2 (cons 12 (cons 22 '())))
+(define tam1 (cons wor1 (cons wor2 '())))
+
+; Matrix -> Matrix
+; transpose the items on the given matrix along the diagonal
+
+(check-expect (transpose mat1) tam1)
+
+(define (transpose lln)
+  (cond
+    [(empty? (first lln)) '()] ; if first row is empty then rest of rows must be empty, due to the constraint on matrices 
+    [(cons? lln) (cons (first* lln) (transpose (rest* lln)))]))
+
+; I can't do this because.. I guess.. rest* would throw away info that is required for
+; generating the other lines of the transposed matrix
+; ^- well this is wrong.. but how would I have written first* and rest*???
+; I guess examples would help
+; I couldn't have designed transpose because it says nothing about how to choose (empty? (first lln))
+; which comes down to reading the constraint and selecting a base case
+
+; Matrix -> List-of-numbers
+; produces the first column?
+(define (first* lon)
+  (cond
+    [(empty? lon) '()]
+    [else (cons (first (first lon))
+                (first* (rest lon)))]))
+
+(check-expect (first* mat1) wor1)
+
+; Matrix -> Matrix
+(define (rest* lon)
+  (cond
+    [(empty? lon) '()]
+    [else (cons (rest (first lon))
+                (rest* (rest lon)))]))
