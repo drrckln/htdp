@@ -475,6 +475,8 @@
 ; I guess examples would help
 ; I couldn't have designed transpose because it says nothing about how to choose (empty? (first lln))
 ; which comes down to reading the constraint and selecting a base case
+; design recipe would have you use the differences to formulate a condition per clause
+; the first of which would be (empty? (rest lln))
 
 ; Matrix -> List-of-numbers
 ; produces the first column?
