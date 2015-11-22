@@ -2,6 +2,9 @@
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname part2chap11) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 (require 2htdp/batch-io)
+(require 2htdp/image)
+(require 2htdp/universe)
+
 (define HOURLY 12)
 
 ; Number -> Number
@@ -494,3 +497,180 @@
     [(empty? lon) '()]
     [else (cons (rest (first lon))
                 (rest* (rest lon)))]))
+
+(define-struct editor [pre post])
+; An Editor is (make-editor Lo1S Lo1S)
+; an Lo1S is one of:
+; - empty
+; - (cons 1String Lo1S)
+
+(define good
+  (cons "g" (cons "o" (cons "o" (cons "d" '())))))
+(define all
+  (cons "a" (cons "l" (cons "l" '()))))
+(define lla
+  (cons "l" (cons "l" (cons "a" '()))))
+
+; data example 1:
+(make-editor all good)
+
+; data example 2:
+(make-editor lla good)
+
+; Lo1S -> Lo1S
+; produces a reverse version of the given list
+(define (rev l)
+  (cond
+    [(empty? l) '()]
+    [(empty? (rest l)) l]
+    [else (add-at-end (rev (rest l)) (first l))]))
+
+; Lo1S 1String -> Lo1S
+; creates a new list by adding s to the end of l
+
+(check-expect
+ (add-at-end (cons "c" (cons "b" '())) "a")
+ (cons "c" (cons "b" (cons "a" '()))))
+
+(check-expect
+ (add-at-end '() "a")
+ (cons "a" '()))
+
+(define (add-at-end l s)
+  (cond
+    [(empty? l) (cons s '())]
+    [else (cons (first l) (add-at-end (rest l) s))]))
+
+
+(check-expect (rev (cons "a" (cons "b" (cons "c" '()))))
+              (cons "c" (cons "b" (cons "a" '()))))
+
+; Exercise 177
+; String String -> Editor
+; reversed version
+(define (create-editor s1 s2)
+  (make-editor (reverse (explode s1)) (explode s2)))
+
+; constants
+(define HEIGHT 20) ; the height of the editor
+(define WIDTH 200) ; its width
+(define FONT-SIZE 16) ; the font size
+(define FONT-COLOR "black") ; the font color
+
+; graphical constants
+(define MT (empty-scene WIDTH HEIGHT))
+(define CURSOR (rectangle 1 HEIGHT "solid" "red"))
+
+; Editor -> Image
+(define (editor-render e)
+  MT)
+
+; Editor KeyEvent -> Editor
+(define (editor-kh ed k)
+  (cond
+    [(key=? k "left") (editor-lft ed)]
+    [(key=? k "right") (editor-rgt ed)]
+    [(key=? k "\b") (editor-del ed)]
+    [(key=? k "\t") ed]
+    [(key=? k "\r") ed]
+    [(= (string-length k) 1) (editor-ins ed k)]
+    [else ed]))
+
+; Exercise 178
+; because "\t" and "\r" count as 1Strings, so have length 1 as well
+
+; Exercise 179
+; Editor -> Editor
+; cursor left
+(define (editor-lft ed)
+  (cond
+    [(empty? (editor-pre ed)) ed]
+    [else (make-editor (rest (editor-pre ed))
+                       (cons (first (editor-pre ed))
+                             (editor-post ed)))]))
+
+(check-expect (editor-lft (create-editor "" ""))
+              (create-editor "" ""))
+(check-expect (editor-lft (create-editor "" "ab"))
+              (create-editor "" "ab"))
+(check-expect (editor-lft (create-editor "ab" ""))
+              (create-editor "a" "b"))
+(check-expect (editor-lft (create-editor "ab" "cd"))
+              (create-editor "a" "bcd"))
+
+; Editor -> Editor
+; cursor right
+(define (editor-rgt ed)
+  (cond
+    [(empty? (editor-post ed)) ed]
+    [else (make-editor (cons (first (editor-post ed))
+                             (editor-pre ed))
+                       (rest (editor-post ed)))]))
+
+(check-expect (editor-rgt (create-editor "" ""))
+              (create-editor "" ""))
+(check-expect (editor-rgt (create-editor "" "ab"))
+              (create-editor "a" "b"))
+(check-expect (editor-rgt (create-editor "ab" ""))
+              (create-editor "ab" ""))
+(check-expect (editor-rgt (create-editor "ab" "cd"))
+              (create-editor "abc" "d"))
+
+; Editor -> Editor
+; delete at cursor
+(define (editor-del ed)
+  (cond
+    [(empty? (editor-pre ed)) ed]
+    [else (make-editor (rest (editor-pre ed))
+                       (editor-post ed))]))
+
+(check-expect (editor-del (create-editor "" ""))
+              (create-editor "" ""))
+(check-expect (editor-del (create-editor "" "ab"))
+              (create-editor "" "ab"))
+(check-expect (editor-del (create-editor "ab" ""))
+              (create-editor "a" ""))
+(check-expect (editor-del (create-editor "ab" "cd"))
+              (create-editor "a" "cd"))
+
+; Editor 1String -> Editor
+; inserts s into the editor between pre and post
+; this works with just cons, since our interpretation is that pre is reversed
+(define (editor-ins ed k)
+  (make-editor (cons k (editor-pre ed)) (editor-post ed)))
+
+(check-expect (editor-ins (make-editor '() '()) "e")
+              (make-editor (cons "e" '()) '()))
+(check-expect (editor-ins (make-editor (cons "d" '())
+                                       (cons "f" (cons "g" '())))
+                          "e")
+              (make-editor (cons "e" (cons "d" '()))
+                           (cons "f" (cons "g" '()))))
+
+(check-expect (editor-kh (create-editor "" "") "e")
+              (create-editor "e" ""))
+(check-expect (editor-kh (create-editor "cd" "fgh") "e")
+              (create-editor "cde" "fgh"))
+(check-expect (editor-kh (create-editor "fd" "fdl") "\b")
+              (create-editor "f" "fdl"))
+(check-expect (editor-kh (create-editor "lkj" "dsf") "left")
+              (create-editor "lk" "jdsf"))
+(check-expect (editor-kh (create-editor "lkj" "dsf") "right")
+              (create-editor "lkjd" "sf"))
+(check-expect (editor-kh (create-editor "" "") "left")
+              (create-editor "" ""))
+(check-expect (editor-kh (create-editor "" "") "right")
+              (create-editor "" ""))
+(check-expect (editor-kh (create-editor "" "") "\b")
+              (create-editor "" ""))
+(check-expect (editor-kh (create-editor "" "sf") "left")
+              (create-editor "" "sf"))
+(check-expect (editor-kh (create-editor "ab" "") "right")
+              (create-editor "ab" ""))
+
+; main: String -> Editor
+; launches the editor given some initial string
+(define (main s)
+  (big-bang (create-editor s "")
+            [on-key editor-kh]
+            [to-draw editor-render]))
