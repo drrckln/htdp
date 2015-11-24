@@ -561,9 +561,6 @@
 (define MT (empty-scene WIDTH HEIGHT))
 (define CURSOR (rectangle 1 HEIGHT "solid" "red"))
 
-; Editor -> Image
-(define (editor-render e)
-  MT)
 
 ; Editor KeyEvent -> Editor
 (define (editor-kh ed k)
@@ -674,3 +671,39 @@
   (big-bang (create-editor s "")
             [on-key editor-kh]
             [to-draw editor-render]))
+
+(check-expect
+ (editor-render (create-editor "pre" "post"))
+ (place-image/align
+  (beside (text "pre" FONT-SIZE FONT-COLOR)
+          CURSOR
+          (text "post" FONT-SIZE FONT-COLOR))
+  1 1
+  "left" "top"
+  MT))
+
+; Editor -> Image
+; renders the editor as an image
+(define (editor-render e)
+  (place-image/align
+   (beside (editor-text (reverse (editor-pre e)))
+           CURSOR
+           (editor-text (editor-post e)))
+   1 1
+   "left" "top"
+   MT))
+
+; Exercise 180
+; Lo1S -> Text
+; takes an editor pre or post field and turns it into text
+(define (editor-text s)
+  (cond
+    [(empty? s) (error "blank image")]
+    [else (cond
+            [(= (length s) 1) (text (first s) FONT-SIZE FONT-COLOR)]
+            [else (beside (text (first s) FONT-SIZE FONT-COLOR)
+                  (editor-text (rest s)))])]))
+
+(check-expect
+ (editor-text (cons "p" (cons "o" (cons "s" (cons "t" '())))))
+ (text "post" FONT-SIZE FONT-COLOR))
