@@ -70,3 +70,61 @@
               (list 2 3))
 (check-expect (second (list 1 2 3))
               2)
+
+; List-of-numbers -> List-of-numbers
+; produces a sorted version of alon, descending order
+(define (sort> alon)
+  (cond
+    [(empty? alon) '()]
+    [else (insert (first alon) (sort> (rest alon)))]))
+
+(check-expect (sort> '()) '())
+(check-expect (sort> (list 12 20 -5))
+              (list 20 12 -5))
+(check-expect (sort> (list 3 2 1))
+              (list 3 2 1))
+(check-expect (sort> (list 1 2 3))
+              (list 3 2 1))
+
+; Number List-of-numbers -> List-of-numbers
+; inserts n into the sorted list of numbers alon
+(define (insert n alon)
+  (cond
+    [(empty? alon) (list n)]
+    [else (if (>= n (first alon))
+              (cons n alon)
+              (cons (first alon) (insert n (rest alon))))]))
+
+(check-expect (insert 5 '()) (list 5))
+(check-expect (insert 5 (list 6)) (list 6 5))
+(check-expect (insert 5 (list 4)) (list 5 4))
+(check-expect (insert 12 (list 20 -5)) (list 20 12 -5))
+(check-expect (insert 2 (list 3 1)) (list 3 2 1))
+
+; Exercise 186
+(check-satisfied (sort> (list 12 20 -5)) sorted>?)
+(check-satisfied (sort> (list 3 2 1)) sorted>?)
+(check-satisfied (sort> (list 1 2 3)) sorted>?)
+
+; NEList-of-temperatures -> Boolean
+; produces #true if the temperatures are sorted in descending order
+; eg second is smaller than first, third smaller than second, so on.
+(define (sorted>? anelot)
+  (cond
+    [(empty? (rest anelot)) #true]
+    [(cons? (rest anelot))
+     (and (> (first anelot) (first (rest anelot)))
+          (sorted>? (rest anelot)))]))
+
+; List-of-numbers -> List-of-numbers
+; produces a sorted version of l
+(define (sort>/bad l)
+  '(9 8 7 6 5 4 3 2 1 0))
+
+; well, you can do this
+(check-expect (sort>/bad '()) '())
+; with check-satisfied, though should really write predicate for length
+(check-satisfied (sort>/bad (list 1 2 3)) length3?)
+
+(define (length3? l)
+  (= (length l) 3))
