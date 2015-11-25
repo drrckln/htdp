@@ -54,3 +54,11 @@
               (list '() '() (list 1)))
 (check-expect (cons "a" (cons (list 1) (list #false '())))
               (list "a" (list 1) #false '()))
+
+; Exercise 184
+(check-expect (list (string=? "a" "b") (string=? "c" "c") #false)
+              (list #false #true #false))
+(check-expect (list (+ 10 20) (* 10 20) (/ 10 20))
+              (list 30 200 1/2))
+(check-expect (list "dana" "jane" "mary" "laura")
+              (cons "dana" (cons "jane" (cons "mary" (cons "laura" '())))))
