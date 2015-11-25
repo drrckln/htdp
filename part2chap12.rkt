@@ -62,3 +62,11 @@
               (list 30 200 1/2))
 (check-expect (list "dana" "jane" "mary" "laura")
               (cons "dana" (cons "jane" (cons "mary" (cons "laura" '())))))
+
+; Exercise 185
+(check-expect (first (list 1 2 3))
+              1)
+(check-expect (rest (list 1 2 3))
+              (list 2 3))
+(check-expect (second (list 1 2 3))
+              2)
