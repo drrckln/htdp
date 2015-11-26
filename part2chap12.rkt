@@ -128,3 +128,58 @@
 
 (define (length3? l)
   (= (length l) 3))
+
+; Exercise 187
+(define-struct email [from date message])
+; A Email Message is a structure: 
+;   (make-email String Number String)
+; interpretation (make-email f d m) represents text m sent by
+; f, d seconds after the beginning of time 
+
+; List-of-Email -> List-of-email
+; sorts loe by date, descending order
+(define (email-sort loe)
+  (cond
+    [(empty? loe) '()]
+    [else (insert-email (first loe) (email-sort (rest loe)))]))
+
+(define email1 (make-email "John" 40000 "hello there"))
+(define email2 (make-email "Emily" 38000 "konbanwa"))
+(define email3 (make-email "Tom" 1200 "arggh"))
+(check-expect (email-sort '()) '())
+(check-expect (email-sort (list email2 email3)) (list email2 email3))
+(check-expect (email-sort (list email1)) (list email1))
+(check-expect (email-sort (list email1 email2 email3)) (list email1 email2 email3))
+(check-expect (email-sort (list email3 email2 email1)) (list email1 email2 email3))
+(check-expect (email-sort (list email2 email3 email1)) (list email1 email2 email3))
+
+; Email List-of-Email -> List-of-Email
+; inserts e into a descending sorted list of emails
+(define (insert-email e loe)
+  (cond
+    [(empty? loe) (list e)]
+    [else (if (>= (email-date e) (email-date (first loe)))
+              (cons e loe)
+              (cons (first loe) (insert-email e (rest loe))))]))
+
+(check-expect (insert-email email1 '()) (list email1))
+(check-expect (insert-email email1 (list email2)) (list email1 email2))
+(check-expect (insert-email email2 (list email1)) (list email1 email2))
+(check-expect (insert-email email3 (list email1 email2)) (list email1 email2 email3))
+(check-expect (insert-email email2 (list email1 email3)) (list email1 email2 email3))
+
+; List-of-Email -> List-of-email
+; sorts loe by date, descending order
+(define (email-sort2 loe)
+  (cond
+    [(empty? loe) '()]
+    [else (insert-email2 (first loe) (email-sort (rest loe)))]))
+
+; Email List-of-Email -> List-of-Email
+; inserts e into a descending sorted list of emails
+(define (insert-email2 e loe)
+  (cond
+    [(empty? loe) (list e)]
+    [else (if (string<? (email-from e) (email-from (first loe)))
+              (cons e loe)
+              (cons (first loe) (insert-email e (rest loe))))]))
