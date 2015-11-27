@@ -223,3 +223,28 @@
     [else (if (= (first alon) n)
               #true
               (search-sorted n (rest alon)))]))
+
+; Exercise 190
+; Lo1s -> List-of-Lo1s
+; produces all the prefixes of a lo1s
+(define (prefixes lo1s)
+  (cond
+    [(empty? lo1s) '()]
+    [else (cons lo1s (prefixes (reverse (rest (reverse lo1s)))))]))
+
+(list 1 2 3 4)
+(list 1)
+(list 1 2)
+(list 1 2 3)
+
+; Lo1s -> List-of-Lo1s
+; produces all the suffixes of a lo1s
+(define (suffixes lo1s)
+  (cond
+    [(empty? lo1s) '()]
+    [else (cons lo1s (suffixes (rest lo1s)))]))
+
+(list 1 2 3 4)
+(list 2 3 4)
+(list 3 4)
+(list 4)
