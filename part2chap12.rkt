@@ -183,3 +183,43 @@
     [else (if (string<? (email-from e) (email-from (first loe)))
               (cons e loe)
               (cons (first loe) (insert-email e (rest loe))))]))
+
+; Exercise 188
+(define-struct gp [name score])
+; A GamePlayer is a structure:
+;     (make-gp String Number)
+; interpretation (make-gp p s) represents player p who scored
+; a maximum of s points
+
+; List-of-GP -> List-of-GP
+; sorts list of game players by score, maximum to minimum
+(define (sort-gp logp)
+  (cond
+    [(empty? logp) '()]
+    [else (insert-gp (first logp) (sort-gp (rest logp)))]))
+
+; GamePlayer List-of-GP -> List-of-GP
+; inserts gp into a sorted list of game players, max first
+(define (insert-gp gp logp)
+  (cond
+    [(empty? logp) (list gp)]
+    [else (if (>= (gp-score gp) (gp-score (first logp)))
+              (cons gp logp)
+              (cons (first logp) (insert-gp gp (rest logp))))]))
+
+; Exercise 189
+; Number List-of-numbers -> Boolean
+; determines whether n occurs in alon
+(define (search n alon)
+  (cond
+    [(empty? alon) #false]
+    [else (or (= (first alon) n) (search n (rest alon)))]))
+
+; Number List-of-numbers -> Boolean
+; determines whether n occurs in the sorted alon, max first
+(define (search-sorted n alon)
+  (cond
+    [(empty? alon) #false]
+    [else (if (= (first alon) n)
+              #true
+              (search-sorted n (rest alon)))]))
