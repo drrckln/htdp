@@ -248,3 +248,35 @@
 (list 2 3 4)
 (list 3 4)
 (list 4)
+
+; A Polygon is one of:
+; - (list Posn Posn Posn)
+; - (cons Posn Polygon)
+
+(define MT (empty-scene 50 50))
+
+; Polygon -> Image
+; renders the given polygon p into MT
+(define (render-poly p)
+  MT)
+
+(check-expect
+ (render-poly
+  (list (make-posn 20 0) (make-posn 10 10) (make-posn 30 10)))
+ (scene+line
+  (scene+line
+   (scene+line MT 20 0 10 10 "red")
+   10 10 30 10 "red")
+  30 10 20 0 "red"))
+
+(check-expect
+ (render-poly
+  (list (make-posn 10 10) (make-posn 20 10)
+        (make-posn 20 20) (make-posn 10 20)))
+  (scene+line
+   (scene+line
+    (scene+line
+     (scene+line MT 10 10 20 10 "red")
+     20 10 20 20 "red")
+    20 20 10 20 "red")
+   10 20 10 10 "red"))
