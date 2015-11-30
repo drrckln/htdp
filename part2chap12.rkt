@@ -1,6 +1,8 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-beginner-abbr-reader.ss" "lang")((modname part2chap12) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require 2htdp/image)
+
 ; Exercise 181
 (check-expect (list "a" "b" "c" "d" "e")
               (cons "a" (cons "b" (cons "c" (cons "d" (cons "e" '()))))))
@@ -258,7 +260,16 @@
 ; Polygon -> Image
 ; renders the given polygon p into MT
 (define (render-poly p)
-  MT)
+  (cond
+    [(empty? (rest (rest (rest p))))
+     (render-line
+      (render-line
+       (render-line MT (first p) (second p))
+       (second p) (third p))
+      (third p) (first p))]
+    [else
+     (render-line
+      (render-poly (rest p)) (first p) (second p))]))
 
 (check-expect
  (render-poly
@@ -280,3 +291,10 @@
      20 10 20 20 "red")
     20 20 10 20 "red")
    10 20 10 10 "red"))
+
+; Image Posn Posn -> Image
+; draws a red line from Posn p to Posn q into im
+(define (render-line im p q)
+  (scene+line
+   im (posn-x p) (posn-y p) (posn-x q) (posn-y q) "red"))
+
