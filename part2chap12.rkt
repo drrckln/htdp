@@ -259,17 +259,17 @@
 
 ; Polygon -> Image
 ; renders the given polygon p into MT
-(define (render-poly p)
-  (cond
-    [(empty? (rest (rest (rest p))))
-     (render-line
-      (render-line
-       (render-line MT (first p) (second p))
-       (second p) (third p))
-      (third p) (first p))]
-    [else
-     (render-line
-      (render-poly (rest p)) (first p) (second p))]))
+;(define (render-poly p)
+;  (cond
+;    [(empty? (rest (rest (rest p))))
+;     (render-line
+;      (render-line
+;       (render-line MT (first p) (second p))
+;       (second p) (third p))
+;      (third p) (first p))]
+;    [else
+;     (render-line
+;      (render-poly (rest p)) (first p) (second p))]))
 
 (check-expect
  (render-poly
@@ -305,7 +305,11 @@
 ; NELoP -> Image
 ; connects the dots in p by rendering lines in MT
 (define (connect-dots p)
-  MT)
+  (cond
+    [(empty? (rest p)) MT]
+    [else (render-line (connect-dots (rest p))
+                       (first p)
+                       (second p))]))
 
 (check-expect (connect-dots (list (make-posn 20 0)
                                   (make-posn 10 10)
@@ -322,3 +326,44 @@
                 (scene+line MT 10 10 20 10 "red")
                 20 10 20 20 "red")
                20 20 10 20 "red"))
+
+; Polygon -> Image
+; adds an image of p to MT
+;(define (render-poly p)
+;  (render-line (connect-dots p) (first p) (last p)))
+
+; NELoP -> Posn
+; extracts the last item from p
+(define (last p)
+  (cond
+    [(empty? (rest p)) (first p)]
+    [else (last (rest p))]))
+; (first p) is acceptable because it does produce a Posn,
+; guaranteed because the input is a NELoP.
+
+; Exercise 192
+; It is acceptable to use last on Polygons because they consist of at least 3 Posns
+; You may re-use the template for connect-dots, because NELoP generalizes Polygon
+; Polygon is a subset of NELoP
+
+(check-expect (last (list (make-posn 20 10) (make-posn 30 10)))
+              (make-posn 30 10))
+(check-expect (last (list (make-posn 100 5)))
+              (make-posn 100 5))
+(check-expect (last (list (make-posn 5 5) (make-posn 20 4) (make-posn -4 -3) (make-posn 7 8)))
+              (make-posn 7 8))
+
+; Exercise 193
+; Polygon -> Image
+;(define (render-poly p)
+;  (connect-dots (cons (last p) p)))
+
+(define (render-poly p)
+  (connect-dots (add-at-end (first p) p)))
+
+; Posn Polygon -> Polygon
+; adds p to the end of polygon
+(define (add-at-end p polygon)
+  (cond
+    [(empty? (rest polygon)) (list (first polygon) p)]
+    [else (cons (first polygon) (add-at-end p (rest polygon)))]))
