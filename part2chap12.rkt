@@ -298,3 +298,27 @@
   (scene+line
    im (posn-x p) (posn-y p) (posn-x q) (posn-y q) "red"))
 
+; A NELoP is one of:
+; - (cons Posn '())
+; - (cons Posn NELoP)
+
+; NELoP -> Image
+; connects the dots in p by rendering lines in MT
+(define (connect-dots p)
+  MT)
+
+(check-expect (connect-dots (list (make-posn 20 0)
+                                  (make-posn 10 10)
+                                  (make-posn 30 10)))
+              (scene+line
+               (scene+line MT 20 0 10 10 "red")
+               10 10 30 10 "red"))
+
+; Exercise 191
+(check-expect (connect-dots (list (make-posn 10 10) (make-posn 20 10)
+                                  (make-posn 20 20) (make-posn 10 20)))
+              (scene+line
+               (scene+line
+                (scene+line MT 10 10 20 10 "red")
+                20 10 20 20 "red")
+               20 20 10 20 "red"))
