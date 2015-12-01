@@ -22,16 +22,6 @@
 
 (check-satisfied (alternative-words "rat") all-words-from-rat?)
 
-; List-of-words -> List-of-strings
-; turn all Words in low into Strings
-(define (words->strings low)
-  empty)
-
-; List-of-strings -> List-of-strings
-; pick out all those Strings that occur in the dictionary
-(define (in-dictionary los)
-  empty)
-
 
 ; A Word is either 
 ; – '() or
@@ -39,11 +29,6 @@
 ; interpretation a String as a list of single Strings (letters)
 
 ; A List-of-words is ...
- 
-; Word -> List-of-words
-; find all re-arrangements of word
-(define (arrangements word)
-  (list word))
 
 ; Exercise 195
 ; String -> Word
@@ -55,3 +40,25 @@
 ; convert w to a string
 (define (word->string s)
   (implode s))
+
+; We have in mind:
+; (in-dictionary (arrangements s))
+
+; List-of-strings -> List-of-strings
+; pick out all those Strings that occur in the dictionary
+(define (in-dictionary los)
+  empty)
+
+; Word -> List-of-words
+; find all re-arrangements of word
+(define (arrangements word)
+  (list word))
+
+; Exercise 196
+; List-of-words -> List-of-strings
+; turn all Words in low into Strings
+(define (words->strings low)
+  (cond
+    [(empty? low) '()]
+    [else (cons (word->string (first low))
+                (words->strings (rest low)))]))
