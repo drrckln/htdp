@@ -358,8 +358,8 @@
 ;(define (render-poly p)
 ;  (connect-dots (cons (last p) p)))
 
-(define (render-poly p)
-  (connect-dots (add-at-end (first p) p)))
+;(define (render-poly p)
+;  (connect-dots (add-at-end (first p) p)))
 
 ; Posn Polygon -> Polygon
 ; adds p to the end of polygon
@@ -367,3 +367,18 @@
   (cond
     [(empty? (rest polygon)) (list (first polygon) p)]
     [else (cons (first polygon) (add-at-end p (rest polygon)))]))
+
+; Exercise 194
+; NELoP Posn -> Image
+; connects the dots in p by rendering lines in MT, adding the Posn last
+(define (connect-dots.v2 p last)
+  (cond
+    [(empty? (rest p)) (render-line MT (first p) last)]
+    [else (render-line (connect-dots.v2 (rest p) last)
+                       (first p)
+                       (second p))]))
+
+; Polygon -> Image
+; adds an image of p to MT
+(define (render-poly p)
+  (connect-dots.v2 p (first p)))
