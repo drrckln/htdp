@@ -44,11 +44,6 @@
 ; We have in mind:
 ; (in-dictionary (arrangements s))
 
-; List-of-strings -> List-of-strings
-; pick out all those Strings that occur in the dictionary
-(define (in-dictionary los)
-  empty)
-
 ; Word -> List-of-words
 ; find all re-arrangements of word
 (define (arrangements word)
@@ -62,3 +57,14 @@
     [(empty? low) '()]
     [else (cons (word->string (first low))
                 (words->strings (rest low)))]))
+
+; Exercise 197
+; List-of-strings -> List-of-strings
+; pick out all those Strings that occur in the dictionary
+(define (in-dictionary los)
+  (cond
+    [(empty? los) '()]
+    [else (if (member? (first los) DICTIONARY-AS-LIST)
+              (cons (first los) (in-dictionary (rest los)))
+              (in-dictionary (rest los)))]))
+
