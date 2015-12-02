@@ -44,11 +44,6 @@
 ; We have in mind:
 ; (in-dictionary (arrangements s))
 
-; Word -> List-of-words
-; find all re-arrangements of word
-(define (arrangements word)
-  (list word))
-
 ; Exercise 196
 ; List-of-words -> List-of-strings
 ; turn all Words in low into Strings
@@ -68,3 +63,27 @@
               (cons (first los) (in-dictionary (rest los)))
               (in-dictionary (rest los)))]))
 
+; Exercise 198
+; A List-of-words is either:
+; - '()
+; - (cons Word List-of-words)
+
+; Word examples
+'()
+(cons "a" '())
+(cons "a" (cons "a" '()))
+(cons "b" (cons "a" (cons "a" '())))
+
+; List-of-words examples
+'()
+(cons (list "a") '())
+(cons (list "baaaaa") '())
+(cons (list "boo") (cons "baa" (cons "bee" '())))
+
+(check-expect (arrangements (list "e" "d"))
+              (list (list "e" "d") (list "d" "e")))
+
+; Word -> List-of-words
+; find all re-arrangements of word
+(define (arrangements word)
+  (list word))
