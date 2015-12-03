@@ -2,6 +2,7 @@
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-beginner-abbr-reader.ss" "lang")((modname part2chap13) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 (require 2htdp/batch-io)
+
 (define DICTIONARY-LOCATION "/usr/share/dict/words")
 (define DICTIONARY-AS-LIST (read-lines DICTIONARY-LOCATION))
 
@@ -86,4 +87,49 @@
 ; Word -> List-of-words
 ; find all re-arrangements of word
 (define (arrangements word)
-  (list word))
+  (cond
+    [(empty? word) (list '())]
+    [else (insert-everywhere/in-all-words (first word)
+                                          (arrangements (rest word)))]))
+
+
+; Exercise 199
+; 1String List-of-words -> List-of-words
+; inserts the 1string at every position of every word
+(define (insert-everywhere/in-all-words letter low)
+  (cond
+    [(empty? low) '()]
+    [else (append (insert-everywhere/word letter (first low))
+                  (insert-everywhere/in-all-words letter (rest low)))]))
+
+(check-expect (insert-everywhere/in-all-words "a" '())
+              '())
+(check-expect (insert-everywhere/in-all-words "a" (list (list "b")))
+              (list (list "a" "b") (list "b" "a")))
+(check-expect (insert-everywhere/in-all-words "a" (list (list "b") (list "c")))
+              (list (list "a" "b") (list "b" "a") (list "a" "c") (list "c" "a")))
+(check-expect (insert-everywhere/in-all-words "a" (list (list "e" "r") (list "r" "e")))
+              (list (list "a" "e" "r") (list "e" "a" "r") (list "e" "r" "a")
+                    (list "a" "r" "e") (list "r" "a" "e") (list "r" "e" "a")))
+
+; 1String Word -> NEList-of-words
+; inserts the 1string at every position of the word
+(define (insert-everywhere/word letter word)
+  (cond
+    [(empty? (rest word)) (list (append (list letter) word)
+                                (append word (list letter)))]
+    [else (append (list (cons letter word))
+                  (fmap (first word) (insert-everywhere/word letter (rest word))))]))
+
+(check-expect (insert-everywhere/word "a" (list "b"))
+              (list (list "a" "b") (list "b" "a")))
+(check-expect (insert-everywhere/word "a" (list "e" "r"))
+              (list (list "a" "e" "r") (list "e" "a" "r") (list "e" "r" "a")))
+
+; w List-of-a -> List
+; maps w onto ls
+(define (fmap w ls)
+  (cond
+    [(empty? ls) '()]
+    [else (cons (cons w (first ls)) (fmap w (rest ls)))]))
+    
