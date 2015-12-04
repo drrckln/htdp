@@ -83,12 +83,16 @@
 
 (check-expect (arrangements (list "e" "d"))
               (list (list "e" "d") (list "d" "e")))
+(check-expect (arrangements (list "d"))
+              (list (list "d")))
+(check-expect (arrangements '()) '())
 
 ; Word -> List-of-words
 ; find all re-arrangements of word
 (define (arrangements word)
   (cond
-    [(empty? word) (list '())]
+    [(empty? word) '()]
+    [(empty? (rest word)) (list (list (first word)))]
     [else (insert-everywhere/in-all-words (first word)
                                           (arrangements (rest word)))]))
 
@@ -112,7 +116,7 @@
               (list (list "a" "e" "r") (list "e" "a" "r") (list "e" "r" "a")
                     (list "a" "r" "e") (list "r" "a" "e") (list "r" "e" "a")))
 
-; 1String Word -> NEList-of-words
+; 1String NEWord -> NEList-of-words
 ; inserts the 1string at every position of the word
 (define (insert-everywhere/word letter word)
   (cond
