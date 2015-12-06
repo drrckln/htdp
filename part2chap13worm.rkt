@@ -31,7 +31,8 @@
                        (/ HEIGHT SEGMENT-DIAMETER 2))
             [on-tick tock (/ 1 r)]
             [to-draw render]
-            [on-key heading]))
+            [on-key heading]
+            [stop-when hit-wall? end-screen]))
 
 ; WormState -> Image
 ; places the worm on the MT
@@ -62,3 +63,23 @@
     [(string=? "left" (worm-dir ws)) (make-worm "left" (- (worm-left ws) 2) (worm-top ws))]
     [(string=? "right" (worm-dir ws)) (make-worm "right" (+ (worm-left ws) 2) (worm-top ws))]
     [else ws]))
+
+; Exercise 202
+; WormState -> Boolean
+; determines if the snake hit a wall
+(define (hit-wall? ws)
+  (cond
+    [(or (= (worm-left ws) 0)
+         (= (worm-left ws) (/ WIDTH SEGMENT-DIAMETER)))
+     #true]
+    [(or (= (worm-top ws) 0)
+         (= (worm-top ws) (/ HEIGHT SEGMENT-DIAMETER)))
+     #true]
+    [else #false]))
+
+; WormState -> Image
+(define (end-screen ws)
+  (overlay/xy (text "worm hit border" 20 "black")
+              (* -1 25)
+              (* -1 (- HEIGHT 25))
+              (render ws)))
