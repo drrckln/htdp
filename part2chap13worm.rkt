@@ -15,7 +15,7 @@
 (define MT (empty-scene HEIGHT WIDTH))
 (define SEGMENT (circle SEGMENT-DIAMETER "solid" WORM-COLOR))
 
-(define-struct worm [dir left top])
+;(define-struct worm [dir left top])
 ; trying the logical definition
 ; A WormState is (make-worm Direction Number Number)
 ; interpretation "left" and "top" denote segment-widths from the left and top
@@ -27,55 +27,78 @@
 ; takes in a clock rate
 (define (main r)
   (big-bang (make-worm ""
-                       (/ WIDTH SEGMENT-DIAMETER 2)
-                       (/ HEIGHT SEGMENT-DIAMETER 2))
+                       (list (make-segment (/ WIDTH SEGMENT-DIAMETER 2)
+                                           (/ HEIGHT SEGMENT-DIAMETER 2))))
             [on-tick tock (/ 1 r)]
             [to-draw render]
             [on-key heading]
-            [stop-when hit-wall? end-screen]))
+            [stop-when any-hit-wall? end-screen]))
 
 ; WormState -> Image
 ; places the worm on the MT
 (define (render ws)
-  (place-image SEGMENT
-               (- (* (worm-left ws) SEGMENT-DIAMETER)
-                  (/ SEGMENT-DIAMETER 2))
-               (- (* (worm-top ws) SEGMENT-DIAMETER)
-                  (/ SEGMENT-DIAMETER 2))
-               MT))
+  (cond
+    [(empty? (worm-segments ws)) MT]
+    [else (place-image SEGMENT
+                       (- (* (segment-left (first (worm-segments ws))) SEGMENT-DIAMETER)
+                          (/ SEGMENT-DIAMETER 2))
+                       (- (* (segment-top (first (worm-segments ws))) SEGMENT-DIAMETER)
+                          (/ SEGMENT-DIAMETER 2))
+                       (render (make-worm (worm-dir ws) (rest (worm-segments ws)))))]))
 
 ; WormState KeyEvent -> WormState
 ; changes the heading of the worm
 (define (heading ws ke)
   (cond
-    [(string=? "up" ke) (make-worm "up" (worm-left ws) (worm-top ws))]
-    [(string=? "down" ke) (make-worm "down" (worm-left ws) (worm-top ws))]
-    [(string=? "left" ke) (make-worm "left" (worm-left ws) (worm-top ws))]
-    [(string=? "right" ke) (make-worm "right" (worm-left ws) (worm-top ws))]
+    [(string=? "up" ke) (make-worm "up" (worm-segments ws))]
+    [(string=? "down" ke) (make-worm "down" (worm-segments ws))]
+    [(string=? "left" ke) (make-worm "left" (worm-segments ws))]
+    [(string=? "right" ke) (make-worm "right" (worm-segments ws))]
     [else ws]))
 
 ; WormState -> WormState
 ; movement over time, a diameter per clock tick
 (define (tock ws)
   (cond
-    [(string=? "up" (worm-dir ws)) (make-worm "up" (worm-left ws) (- (worm-top ws) 2))]
-    [(string=? "down" (worm-dir ws)) (make-worm "down" (worm-left ws) (+ (worm-top ws) 2))]
-    [(string=? "left" (worm-dir ws)) (make-worm "left" (- (worm-left ws) 2) (worm-top ws))]
-    [(string=? "right" (worm-dir ws)) (make-worm "right" (+ (worm-left ws) 2) (worm-top ws))]
+    [(string=? "up" (worm-dir ws)) (make-worm "up"
+                                              (cons (make-segment (segment-left (first (worm-segments ws)))
+                                                                  (- (segment-top (first (worm-segments ws))) 2))
+                                                    (reverse (rest (reverse (worm-segments ws))))))]
+    [(string=? "down" (worm-dir ws)) (make-worm "down"
+                                                (cons (make-segment (segment-left (first (worm-segments ws)))
+                                                                    (+ (segment-top (first (worm-segments ws))) 2))
+                                                      (reverse (rest (reverse (worm-segments ws))))))]
+    [(string=? "left" (worm-dir ws)) (make-worm "left"
+                                                (cons (make-segment (- (segment-left (first (worm-segments ws))) 2)
+                                                                    (segment-top (first (worm-segments ws))))
+                                                      (reverse (rest (reverse (worm-segments ws))))))]
+    [(string=? "right" (worm-dir ws)) (make-worm "right"
+                                                 (cons (make-segment (+ (segment-left (first (worm-segments ws))) 2)
+                                                                     (segment-top (first (worm-segments ws))))
+                                                       (reverse (rest (reverse (worm-segments ws))))))]
     [else ws]))
 
 ; Exercise 202
-; WormState -> Boolean
-; determines if the snake hit a wall
+; Segment -> Boolean
+; determines if the snake segment hit a wall
 (define (hit-wall? ws)
   (cond
-    [(or (= (worm-left ws) 0)
-         (= (worm-left ws) (/ WIDTH SEGMENT-DIAMETER)))
+    [(or (= (segment-left ws) 0)
+         (= (segment-left ws) (/ WIDTH SEGMENT-DIAMETER)))
      #true]
-    [(or (= (worm-top ws) 0)
-         (= (worm-top ws) (/ HEIGHT SEGMENT-DIAMETER)))
+    [(or (= (segment-top ws) 0)
+         (= (segment-top ws) (/ HEIGHT SEGMENT-DIAMETER)))
      #true]
     [else #false]))
+
+; Worm -> Boolean
+; determines if the snake hit a wall
+(define (any-hit-wall? ws)
+  (cond
+    [(empty? (worm-segments ws)) #false]
+    [else (or (hit-wall? (first (worm-segments ws)))
+              (any-hit-wall? (make-worm (worm-dir ws)
+                                        (rest (worm-segments ws)))))]))
 
 ; WormState -> Image
 (define (end-screen ws)
@@ -83,3 +106,15 @@
               (* -1 25)
               (* -1 (- HEIGHT 25))
               (render ws)))
+
+; Exercise 203
+(define-struct worm [dir segments])
+; a Worm is (make-worm Direction List-of-Segments)
+; Direction is one of: "up", "down", "left", "right"
+; A List-of-Segments is one of:
+; - '()
+; - (cons Segment List-of-Segments)
+(define-struct segment [left top])
+; A Segment is (make-segment Number Number)
+; where "left" is the number of segments from the left, top etc
+
