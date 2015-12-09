@@ -9,7 +9,7 @@
 (define SEGMENT-DIAMETER 10)
 (define HEIGHT 400)
 (define WIDTH 400)
-(define MAX (/ WIDTH SEGMENT-DIAMETER))
+(define MAX (- (/ WIDTH SEGMENT-DIAMETER) 1))
 (define WORM-COLOR "red")
 (define FOOD-COLOR "green")
 
@@ -205,7 +205,7 @@
 (check-satisfied (food-create (make-posn 1 1)) not-equal-1-1?)
 
 (define (food-create p)
-  (food-check-create p (make-posn (random MAX) (random MAX))))
+  (food-check-create p (make-posn (+ 1 (random MAX)) (+ 1 (random MAX)))))
 
 ; Posn Posn -> Posn
 ; generative recursion
@@ -224,3 +224,5 @@
 ; checks whether two numbers are within 1 of each other
 (define (within-one? x y)
   (<= (abs (- x y)) 1))
+
+(main 10)
