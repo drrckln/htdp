@@ -26,18 +26,20 @@
 ; - "up", "down", "left", or "right"
 ; indicates the worm's bearing/heading
 
-; Rate -> WormState
-; takes in a clock rate
+; Rate -> Number
+; takes in a clock rate, outputs a length score
 (define (main r)
-  (big-bang (make-worm (food-create (make-posn (/ WIDTH SEGMENT-DIAMETER 2)
-                                               (/ HEIGHT SEGMENT-DIAMETER 2)))
-                       ""
-                       (list (make-segment (/ WIDTH SEGMENT-DIAMETER 2)
-                                           (/ HEIGHT SEGMENT-DIAMETER 2))))
-            [on-tick tock (/ 1 r)]
-            [to-draw render]
-            [on-key heading]
-            [stop-when any-hit? end-screen]))
+  (length
+   (worm-segments
+    (big-bang (make-worm (food-create (make-posn (/ WIDTH SEGMENT-DIAMETER 2)
+                                                 (/ HEIGHT SEGMENT-DIAMETER 2)))
+                         ""
+                         (list (make-segment (/ WIDTH SEGMENT-DIAMETER 2)
+                                             (/ HEIGHT SEGMENT-DIAMETER 2))))
+              [on-tick tock (/ 1 r)]
+              [to-draw render]
+              [on-key heading]
+              [stop-when any-hit? end-screen]))))
 
 ; WormState -> Image
 ; places the worm and food on the MT
