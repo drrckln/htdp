@@ -32,7 +32,7 @@
             [on-tick tock (/ 1 r)]
             [to-draw render]
             [on-key heading]
-            [stop-when any-hit-wall? end-screen]))
+            [stop-when any-hit? end-screen]))
 
 ; WormState -> Image
 ; places the worm on the MT
@@ -102,10 +102,15 @@
 
 ; WormState -> Image
 (define (end-screen ws)
-  (overlay/xy (text "worm hit border" 20 "black")
-              (* -1 25)
-              (* -1 (- HEIGHT 25))
-              (render ws)))
+  (cond
+    [(hit-self? ws) (overlay/xy (text "worm hit self" 20 "black")
+                                    (* -1 25)
+                                    (* -1 (- HEIGHT 25))
+                                    (render ws))]
+    [(any-hit-wall? ws) (overlay/xy (text "worm hit border" 20 "black")
+                                    (* -1 25)
+                                    (* -1 (- HEIGHT 25))
+                                    (render ws))]))
 
 ; Exercise 203
 (define-struct worm [dir segments])
@@ -118,3 +123,15 @@
 ; A Segment is (make-segment Number Number)
 ; where "left" is the number of segments from the left, top etc
 
+; Exercise 204
+; Worm -> Boolean
+; determines if the snake hit a wall or itself
+(define (any-hit? ws)
+  (or (any-hit-wall? ws)
+      (hit-self? ws)))
+      
+; Worm -> Boolean
+; determines if the snake will hit itself
+(define (hit-self? ws)
+  (member? (first (worm-segments (tock ws)))
+           (rest (worm-segments ws))))
