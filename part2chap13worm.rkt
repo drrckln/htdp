@@ -9,11 +9,14 @@
 (define SEGMENT-DIAMETER 10)
 (define HEIGHT 400)
 (define WIDTH 400)
+(define MAX (/ WIDTH SEGMENT-DIAMETER))
 (define WORM-COLOR "red")
+(define FOOD-COLOR "green")
 
 ; Graphical constants
 (define MT (empty-scene HEIGHT WIDTH))
 (define SEGMENT (circle SEGMENT-DIAMETER "solid" WORM-COLOR))
+(define FOOD (circle SEGMENT-DIAMETER "solid" FOOD-COLOR))
 
 ;(define-struct worm [dir left top])
 ; trying the logical definition
@@ -26,7 +29,9 @@
 ; Rate -> WormState
 ; takes in a clock rate
 (define (main r)
-  (big-bang (make-worm ""
+  (big-bang (make-worm (food-create (make-posn (/ WIDTH SEGMENT-DIAMETER 2)
+                                               (/ HEIGHT SEGMENT-DIAMETER 2)))
+                       ""
                        (list (make-segment (/ WIDTH SEGMENT-DIAMETER 2)
                                            (/ HEIGHT SEGMENT-DIAMETER 2))))
             [on-tick tock (/ 1 r)]
@@ -35,47 +40,96 @@
             [stop-when any-hit? end-screen]))
 
 ; WormState -> Image
-; places the worm on the MT
+; places the worm and food on the MT
 (define (render ws)
   (cond
-    [(empty? (worm-segments ws)) MT]
+    [(empty? (worm-segments ws)) (place-image FOOD
+                                              (- (* (posn-x (worm-food ws)) SEGMENT-DIAMETER)
+                                                 (/ SEGMENT-DIAMETER 2))
+                                              (- (* (posn-y (worm-food ws)) SEGMENT-DIAMETER)
+                                                 (/ SEGMENT-DIAMETER 2))
+                                              MT)]
     [else (place-image SEGMENT
                        (- (* (segment-left (first (worm-segments ws))) SEGMENT-DIAMETER)
                           (/ SEGMENT-DIAMETER 2))
                        (- (* (segment-top (first (worm-segments ws))) SEGMENT-DIAMETER)
                           (/ SEGMENT-DIAMETER 2))
-                       (render (make-worm (worm-dir ws) (rest (worm-segments ws)))))]))
+                       (render (make-worm (worm-food ws) (worm-dir ws) (rest (worm-segments ws)))))]))
 
 ; WormState KeyEvent -> WormState
 ; changes the heading of the worm
 (define (heading ws ke)
   (cond
-    [(string=? "up" ke) (make-worm "up" (worm-segments ws))]
-    [(string=? "down" ke) (make-worm "down" (worm-segments ws))]
-    [(string=? "left" ke) (make-worm "left" (worm-segments ws))]
-    [(string=? "right" ke) (make-worm "right" (worm-segments ws))]
+    [(string=? "up" ke) (make-worm (worm-food ws) "up" (worm-segments ws))]
+    [(string=? "down" ke) (make-worm (worm-food ws) "down" (worm-segments ws))]
+    [(string=? "left" ke) (make-worm (worm-food ws) "left" (worm-segments ws))]
+    [(string=? "right" ke) (make-worm (worm-food ws) "right" (worm-segments ws))]
     [else ws]))
 
 ; WormState -> WormState
 ; movement over time, a diameter per clock tick
 (define (tock ws)
   (cond
-    [(string=? "up" (worm-dir ws)) (make-worm "up"
-                                              (cons (make-segment (segment-left (first (worm-segments ws)))
-                                                                  (- (segment-top (first (worm-segments ws))) 2))
-                                                    (reverse (rest (reverse (worm-segments ws))))))]
-    [(string=? "down" (worm-dir ws)) (make-worm "down"
-                                                (cons (make-segment (segment-left (first (worm-segments ws)))
-                                                                    (+ (segment-top (first (worm-segments ws))) 2))
-                                                      (reverse (rest (reverse (worm-segments ws))))))]
-    [(string=? "left" (worm-dir ws)) (make-worm "left"
-                                                (cons (make-segment (- (segment-left (first (worm-segments ws))) 2)
-                                                                    (segment-top (first (worm-segments ws))))
-                                                      (reverse (rest (reverse (worm-segments ws))))))]
-    [(string=? "right" (worm-dir ws)) (make-worm "right"
-                                                 (cons (make-segment (+ (segment-left (first (worm-segments ws))) 2)
-                                                                     (segment-top (first (worm-segments ws))))
-                                                       (reverse (rest (reverse (worm-segments ws))))))]
+    [(string=? "up" (worm-dir ws)) (cond
+                                     [(and (within-one? (posn-x (worm-food ws))
+                                                        (segment-left (first (worm-segments ws))))
+                                           (within-one? (posn-y (worm-food ws))
+                                                        (- (segment-top (first (worm-segments ws))) 2)))
+                                      (make-worm (food-create (worm-food ws))
+                                                 "up"
+                                                 (cons (make-segment (segment-left (first (worm-segments ws)))
+                                                                     (- (segment-top (first (worm-segments ws))) 2))
+                                                       (worm-segments ws)))]
+                                     [else (make-worm (worm-food ws)
+                                                      "up"
+                                                      (cons (make-segment (segment-left (first (worm-segments ws)))
+                                                                          (- (segment-top (first (worm-segments ws))) 2))
+                                                            (reverse (rest (reverse (worm-segments ws))))))])]
+    [(string=? "down" (worm-dir ws)) (cond
+                                       [(and (within-one? (posn-x (worm-food ws))
+                                                          (segment-left (first (worm-segments ws))))
+                                             (within-one? (posn-y (worm-food ws))
+                                                          (+ (segment-top (first (worm-segments ws))) 2)))
+                                        (make-worm (food-create (worm-food ws))
+                                                   "down"
+                                                   (cons (make-segment (segment-left (first (worm-segments ws)))
+                                                                       (+ (segment-top (first (worm-segments ws))) 2))
+                                                         (worm-segments ws)))]
+                                       [else (make-worm (worm-food ws)
+                                                        "down"
+                                                        (cons (make-segment (segment-left (first (worm-segments ws)))
+                                                                            (+ (segment-top (first (worm-segments ws))) 2))
+                                                              (reverse (rest (reverse (worm-segments ws))))))])]
+    [(string=? "left" (worm-dir ws)) (cond
+                                       [(and (within-one? (posn-x (worm-food ws))
+                                                          (- (segment-left (first (worm-segments ws))) 2))
+                                             (within-one? (posn-y (worm-food ws))
+                                                          (segment-top (first (worm-segments ws)))))
+                                        (make-worm (food-create (worm-food ws))
+                                                   "left"
+                                                   (cons (make-segment (- (segment-left (first (worm-segments ws))) 2)
+                                                                       (segment-top (first (worm-segments ws))))
+                                                         (worm-segments ws)))]
+                                       [else (make-worm (worm-food ws)
+                                                        "left"
+                                                        (cons (make-segment (- (segment-left (first (worm-segments ws))) 2)
+                                                                            (segment-top (first (worm-segments ws))))
+                                                              (reverse (rest (reverse (worm-segments ws))))))])]
+    [(string=? "right" (worm-dir ws)) (cond
+                                        [(and (within-one? (posn-x (worm-food ws))
+                                                           (+ (segment-left (first (worm-segments ws))) 2))
+                                              (within-one? (posn-y (worm-food ws))
+                                                           (segment-top (first (worm-segments ws)))))
+                                         (make-worm (food-create (worm-food ws))
+                                                    "right"
+                                                    (cons (make-segment (+ (segment-left (first (worm-segments ws))) 2)
+                                                                        (segment-top (first (worm-segments ws))))
+                                                          (worm-segments ws)))]
+                                        [else (make-worm (worm-food ws)
+                                                         "right"
+                                                         (cons (make-segment (+ (segment-left (first (worm-segments ws))) 2)
+                                                                             (segment-top (first (worm-segments ws))))
+                                                               (reverse (rest (reverse (worm-segments ws))))))])]
     [else ws]))
 
 ; Exercise 202
@@ -97,7 +151,8 @@
   (cond
     [(empty? (worm-segments ws)) #false]
     [else (or (hit-wall? (first (worm-segments ws)))
-              (any-hit-wall? (make-worm (worm-dir ws)
+              (any-hit-wall? (make-worm (worm-food ws)
+                                        (worm-dir ws)
                                         (rest (worm-segments ws)))))]))
 
 ; WormState -> Image
@@ -113,7 +168,7 @@
                                     (render ws))]))
 
 ; Exercise 203
-(define-struct worm [dir segments])
+;(define-struct worm [dir segments])
 ; a Worm is (make-worm Direction List-of-Segments)
 ; Direction is one of: "up", "down", "left", "right"
 ; A List-of-Segments is one of:
@@ -135,3 +190,35 @@
 (define (hit-self? ws)
   (member? (first (worm-segments (tock ws)))
            (rest (worm-segments ws))))
+
+; Exercise 205
+(define-struct worm [food dir segments])
+; ...
+; Food is a Posn, though in the same units as segment-left and segment-top
+
+; Posn -> Posn
+; takes a Posn, and generates a new Posn, passing off both to
+; food-check-create to make sure it isn't the same area
+
+(check-satisfied (food-create (make-posn 1 1)) not-equal-1-1?)
+
+(define (food-create p)
+  (food-check-create p (make-posn (random MAX) (random MAX))))
+
+; Posn Posn -> Posn
+; generative recursion
+; appears to check if p is the same as candidate. if not, use it.
+; otherwise generate a new random p
+(define (food-check-create p candidate)
+  (if (equal? p candidate) (food-create p) candidate))
+
+; Posn -> Boolean
+; use for testing only
+(define (not-equal-1-1? p)
+  (not (and (= (posn-x p) 1)
+            (= (posn-y p) 1))))
+
+; Number Number -> Boolean
+; checks whether two numbers are within 1 of each other
+(define (within-one? x y)
+  (<= (abs (- x y)) 1))
