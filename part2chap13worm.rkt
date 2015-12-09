@@ -21,7 +21,7 @@
 ;(define-struct worm [dir left top])
 ; trying the logical definition
 ; A WormState is (make-worm Direction Number Number)
-; interpretation "left" and "top" denote segment-widths from the left and top
+; interpretation "left" and "top" denote sercgment-widths from the left and top
 ; Direction is one of:
 ; - "up", "down", "left", or "right"
 ; indicates the worm's bearing/heading
