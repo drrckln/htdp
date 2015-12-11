@@ -67,3 +67,42 @@
 (check-expect (tetris-render tetris1)
               (place-image/align BLOCK 0 (* SIZE (- HEIGHT 2)) "left" "top"
                                  (place-image/align BLOCK 0 (* SIZE (- HEIGHT 1)) "left" "top" MT)))
+
+; Exercise 207
+; Number -> Tetris
+(define (tetris-main r)
+  (big-bang (make-tetris (make-block 0 0) '())
+            [on-tick tetris-tock (/ 1 r)]
+            [to-draw tetris-render]))
+
+; Block Landscape -> Boolean
+; determines if the block has landed
+(define (landed? b ls)
+  (cond
+    [(= (block-y b) HEIGHT) #true]
+    [else (member? b ls)]))
+
+; Tetris -> Tetris
+; drops blocks, lands blocks, and creates new blocks
+(define (tetris-tock t)
+  (cond
+    [(landed? (make-block (block-x (tetris-block t))
+                          (+ (block-y (tetris-block t)) 1))
+              (tetris-ls t))
+     (make-tetris (block-generate (block-x (tetris-block t)))
+                  (cons (tetris-block t)
+                        (tetris-ls t)))]
+    [else (make-tetris (make-block (block-x (tetris-block t))
+                                   (+ (block-y (tetris-block t)) 1))
+                       (tetris-ls t))]))
+
+; Number -> Block
+; takes in a block x column and creates a block at a new column
+(define (block-generate x)
+  (block-check-generate x (make-block (random WIDTH) 0)))
+
+; Number Block -> Block
+(define (block-check-generate x candidate)
+  (if (equal? x (block-x candidate))
+      (block-generate x)
+      candidate))
