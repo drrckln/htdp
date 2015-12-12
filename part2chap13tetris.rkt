@@ -74,7 +74,8 @@
   (big-bang (make-tetris (make-block 0 0) '())
             [on-tick tetris-tock (/ 1 r)]
             [to-draw tetris-render]
-            [on-key tetris-key]))
+            [on-key tetris-key]
+            [stop-when tetris-stop?]))
 
 ; Block Landscape -> Boolean
 ; determines if the block has landed
@@ -147,3 +148,27 @@
               (tetris-ls t))
      #false]
     [else #true]))
+
+; Exercise 209
+; Tetris -> Boolean
+; determines when to stop the game, passing #true you want to stop
+(define (tetris-stop? t)
+  (check-columns WIDTH HEIGHT (tetris-ls t)))
+
+; Nat Landscape -> List-of-blocks
+; finds all blocks in the landscape with x-coordinate x0
+(define (find-col x0 ls)
+  (cond
+    [(empty? ls) '()]
+    [(= x0 (block-x (first ls)))
+     (cons (first ls) (find-col x0 (rest ls)))]
+    [else (find-col x0 (rest ls))]))
+
+; Nat Nat Landscape -> Boolean
+; checks all the columns, #true if any is HEIGHT high
+(define (check-columns w h ls)
+  (cond
+    [(< w 0) #false]
+    [(= h (length (find-col w ls)))
+     #true]
+    [else (check-columns (sub1 w) h ls)]))
