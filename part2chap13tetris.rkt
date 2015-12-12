@@ -73,7 +73,8 @@
 (define (tetris-main r)
   (big-bang (make-tetris (make-block 0 0) '())
             [on-tick tetris-tock (/ 1 r)]
-            [to-draw tetris-render]))
+            [to-draw tetris-render]
+            [on-key tetris-key]))
 
 ; Block Landscape -> Boolean
 ; determines if the block has landed
@@ -106,3 +107,43 @@
   (if (equal? x (block-x candidate))
       (block-generate x)
       candidate))
+
+; Exercise 208
+; modifying..
+; Tetris KeyEvent -> Tetris
+; tetris-key handles moving left or right
+(define (tetris-key t ke)
+  (cond
+    [(and (string=? "left" ke)
+          (left-ok? t))
+     (make-tetris (make-block (- (block-x (tetris-block t)) 1)
+                              (block-y (tetris-block t)))
+                  (tetris-ls t))]
+    [(and (string=? "right" ke)
+          (right-ok? t))
+     (make-tetris (make-block (+ (block-x (tetris-block t)) 1)
+                              (block-y (tetris-block t)))
+                  (tetris-ls t))]
+    [else t]))
+
+; Tetris -> Boolean
+; determines if moving the block left is ok
+(define (left-ok? t)
+  (cond
+    [(= (block-x (tetris-block t)) 0) #false]
+    [(member? (make-block (- (block-x (tetris-block t)) 1)
+                          (block-y (tetris-block t)))
+              (tetris-ls t))
+     #false]
+    [else #true]))
+
+; Tetris -> Boolean
+; determines if moving the block right is ok
+(define (right-ok? t)
+  (cond
+    [(= (block-x (tetris-block t)) (sub1 WIDTH)) #false]
+    [(member? (make-block (+ (block-x (tetris-block t)) 1)
+                          (block-y (tetris-block t)))
+              (tetris-ls t))
+     #false]
+    [else #true]))
