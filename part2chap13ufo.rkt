@@ -99,7 +99,7 @@
                 [(>= (random 20) 19) (* -1 UFO-WARP)]
                 [else 0]))
 
-; SIGS.v2 Number -> SIGS.v2
+; SIGS Number -> SIGS
 ; referentially transparent version of si-move.v2
 ; moves all objects, including the UFO horizontally by random number r
 (define (si-move-proper s r)
@@ -109,11 +109,11 @@
 
 (check-expect (si-move-proper (make-sigs (make-posn 20 10)
                                          (make-tank 20 -3)
-                                         #false)
+                                         '())
                               10)
               (make-sigs (make-posn (modulo 30 WIDTH) (+ 10 UFO-SPEED))
                          (make-tank 17 -3)
-                         #false))
+                         '()))
 
 ; UFO Number-> UFO
 ; moves the UFO down and to the x position horizontal
