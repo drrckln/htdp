@@ -16,6 +16,13 @@
                             (circle 5 "solid" "red")
                             TREE))
 (define WATER (circle 7 "solid" "blue"))
+; Number -> List-of-trees
+(define (generate-forest n)
+  (cond
+    [(= n 0) '()]
+    [else (cons (make-posn (random WIDTH) (random HEIGHT))
+                (generate-forest (sub1 n)))]))
+
 
 ; data definition
 (define-struct forest [trees fires])
@@ -28,13 +35,13 @@
 (define (fire-main f)
   (big-bang f
             [to-draw fire-render]
-            [on-tick create-fire (/ 1 10)]))
+            [on-tick create-fire (/ 1 5)]))
 
 ; Forest -> Image
 ; displays the forest and the fires
 (define (fire-render f)
-  (render FIRE (forest-trees f)
-          (render TREE (forest-fires f) MT)))
+  (render FIRE (forest-fires f)
+          (render TREE (forest-trees f) MT)))
 
 ; Image List-of-Posn Scene -> Image
 ; populates the scene with the image i at every position
@@ -46,8 +53,29 @@
                        (posn-y (first lop))
                        (render i (rest lop) scene))]))
 
-; Forest - Forest
+; Forest -> Forest
 ; randomly sets a tree on fire
 (define (create-fire f)
-  (make-forest (random-pick (forest-trees f))
-               (cons (random-pick (forest-trees f)) (forest-fires f))))
+  (cond
+    [(empty? (forest-trees f)) f]
+    [else (create-fire-random f (random (length (forest-trees f))))]))
+
+; Forest Number -> Forest
+; sets a tree (indicated by number) on fire
+(define (create-fire-random f n)
+  (make-forest (tree-remove n (forest-trees f))
+               (cons (pick-tree n (forest-trees f)) (forest-fires f))))
+
+; List-of-tree -> List-of-tree
+; removes tree n
+(define (tree-remove n trees)
+  (cond
+    [(= n 0) (rest trees)]
+    [else (cons (first trees) (tree-remove (sub1 n) (rest trees)))]))
+
+; List-of-tree -> Tree
+; selects tree n
+(define (pick-tree n trees)
+  (cond
+    [(= n 0) (first trees)]
+    [else (pick-tree (sub1 n) (rest trees))]))
