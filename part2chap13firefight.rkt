@@ -35,7 +35,7 @@
 (define (fire-main f)
   (big-bang f
             [to-draw fire-render]
-            [on-tick create-fire (/ 1 5)]))
+            [on-tick create-fire 0.5]))
 
 ; Forest -> Image
 ; displays the forest and the fires
@@ -58,11 +58,41 @@
 (define (create-fire f)
   (cond
     [(empty? (forest-trees f)) f]
-    [else (create-fire-random f (random (length (forest-trees f))))]))
+    [else (create-fire-pick (random (length (forest-trees (spread-fire f))))
+                            (spread-fire f))]))
+
+; Forest -> Forest
+; spreads the fire by proximity
+(define (spread-fire f)
+  (cond
+    [(empty? (forest-trees f)) f]
+    [(proximity? (first (forest-trees f)) (forest-fires f))
+     (spread-fire (create-fire-pick 0 f))]
+    [else (add-tree (first (forest-trees f))
+                    (spread-fire (make-forest (rest (forest-trees f))
+                                              (forest-fires f))))]))
+
+
+; Tree List-of-tree -> Boolean
+; determines if the tree is close to any tree on fire
+(define (proximity? t lot)
+  (cond
+    [(empty? lot) #f]
+    [else (or (close? t (first lot))
+              (proximity? t (rest lot)))]))
+
+; Tree Tree -> Boolean
+; determines if the two trees are close
+(define (close? t1 t2)
+  (< (sqrt (+ (sqr (- (posn-x t1)
+                      (posn-x t2)))
+              (sqr (- (posn-y t1)
+                      (posn-y t2)))))
+     25))
 
 ; Forest Number -> Forest
 ; sets a tree (indicated by number) on fire
-(define (create-fire-random f n)
+(define (create-fire-pick n f)
   (make-forest (tree-remove n (forest-trees f))
                (cons (pick-tree n (forest-trees f)) (forest-fires f))))
 
@@ -79,3 +109,9 @@
   (cond
     [(= n 0) (first trees)]
     [else (pick-tree (sub1 n) (rest trees))]))
+
+; Tree Forest -> Forest
+; add the [non-burning] tree to the forest
+(define (add-tree t f)
+  (make-forest (cons t (forest-trees f))
+               (forest-fires f)))
