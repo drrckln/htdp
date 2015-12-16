@@ -58,8 +58,10 @@
 (define (create-fire f)
   (cond
     [(empty? (forest-trees f)) f]
-    [else (create-fire-pick (random (length (forest-trees (spread-fire f))))
-                            (spread-fire f))]))
+    [(forest=? (spread-fire f) f)
+     (create-fire-pick (random (length (forest-trees f)))
+                       f)]
+    [else (spread-fire f)]))
 
 ; Forest -> Forest
 ; spreads the fire by proximity
@@ -115,3 +117,23 @@
 (define (add-tree t f)
   (make-forest (cons t (forest-trees f))
                (forest-fires f)))
+
+; Forest Forest -> Forest
+; checks if two forests are in the same state
+(define (forest=? f1 f2)
+  (and (l-o-tree=? (forest-trees f1) (forest-trees f2))
+       (l-o-tree=? (forest-fires f1) (forest-fires f2))))
+
+(define (l-o-tree=? lot1 lot2)
+  (cond
+    [(and (empty? lot1)
+          (empty? lot2))
+     #true]
+    [(empty? lot1) #false]
+    [(empty? lot2) #false]
+    [(and (= (posn-x (first lot1))
+             (posn-x (first lot2)))
+          (= (posn-y (first lot1))
+             (posn-y (first lot2))))
+     (l-o-tree=? (rest lot1) (rest lot2))]
+    [else #false]))
