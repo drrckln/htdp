@@ -40,8 +40,8 @@
 (define (fire-main f)
   (big-bang f
             [to-draw fire-render]
-            [on-tick fire-tock 0.5]))
-            ;[on-key plane-control]))
+            [on-tick fire-tock 0.5]
+            [on-key plane-control]))
 
 ; Forest -> Image
 ; displays the forest and the fires
@@ -171,6 +171,21 @@
      (l-o-tree=? (rest lot1) (rest lot2))]
     [else #false]))
 
+; Forest KeyEvent -> Forest
+; controls the plane
+(define (plane-control f ke)
+  (cond
+    [(string=? "left"  ke) (make-forest (forest-trees f)
+                                        (forest-fires f)
+                                        (make-plane (plane-posn (forest-plane f))
+                                                    (- (plane-bearing (forest-plane f)) 5)
+                                                    (plane-ammo (forest-plane f))))]
+    [(string=? "right" ke) (make-forest (forest-trees f)
+                                        (forest-fires f)
+                                        (make-plane (plane-posn (forest-plane f))
+                                                    (+ (plane-bearing (forest-plane f)) 5)
+                                                    (plane-ammo (forest-plane f))))]
+    [else f]))
 
 (fire-main (make-forest (generate-forest 200)
                           '()
