@@ -8,6 +8,7 @@
 (define HEIGHT 500)
 (define WIDTH 500)
 (define TREE-SIZE 20)
+(define PLANE-SPEED 20)
 
 ; graphical constants
 (define MT (empty-scene WIDTH HEIGHT))
@@ -16,6 +17,8 @@
                             (circle 5 "solid" "red")
                             TREE))
 (define WATER (circle 7 "solid" "blue"))
+(define PLANE (rectangle 20 100 "solid" "yellow"))
+
 ; Number -> List-of-trees
 (define (generate-forest n)
   (cond
@@ -25,24 +28,35 @@
 
 
 ; data definition
-(define-struct forest [trees fires])
-; Forest is a (make-forest List-of-tree List-of-fire), where these are mutually exclusive sets
+(define-struct forest [trees fires plane])
+(define-struct plane [posn bearing ammo])
+; Forest is a (make-forest List-of-tree List-of-fire Plane), where these are mutually exclusive sets
 ; Tree is a Posn
 ; Fire is a Posn
+; Plane is (make-plane Posn Angle Number)
 
 ; Forest -> Forest
 ; displays the forest, sets them on fire randomly
 (define (fire-main f)
   (big-bang f
             [to-draw fire-render]
-            [on-tick create-fire 0.5]))
+            [on-tick create-fire 0.5]
+            [on-key plane-control]))
 
 ; Forest -> Image
 ; displays the forest and the fires
 (define (fire-render f)
-  (render FIRE (forest-fires f)
-          (render TREE (forest-trees f) MT)))
+  (plane-render PLANE (forest-plane f)
+          (render FIRE (forest-fires f)
+                  (render TREE (forest-trees f) MT))))
 
+; Image Plane Scene -> Image
+; renders the plane, rotated correctly
+(define (plane-render i p scene)
+  (place-image (rotate (plane-bearing p) i)
+               (posn-x (plane-posn p)) (posn-y (plane-posn p))
+               scene))
+  
 ; Image List-of-Posn Scene -> Image
 ; populates the scene with the image i at every position
 (define (render i lop scene)
@@ -52,6 +66,23 @@
                        (posn-x (first lop))
                        (posn-y (first lop))
                        (render i (rest lop) scene))]))
+
+; Forest -> Forest
+; spreads fires and moves the plane
+(define (fire-tock f)
+  (make-forest (forest-trees (create-fire f))
+               (forest-fires (create-fire f))
+               (move-plane (forest-plane f))))
+
+; Plane -> Plane
+; moves the plane according to its bearing
+(define (move-plane p)
+  (make-plane (make-posn (+ (* PLANE-SPEED (cos (* -1 (plane-bearing p))))
+                            (posn-x (plane-posn p)))
+                         (+ (* PLANE-SPEED (sin (* -1 (plane-bearing p))))
+                            (posn-y (plane-posn p))))
+              (plane-bearing p)
+              (plane-ammo p))
 
 ; Forest -> Forest
 ; randomly sets a tree on fire
@@ -72,8 +103,8 @@
      (spread-fire (create-fire-pick 0 f))]
     [else (add-tree (first (forest-trees f))
                     (spread-fire (make-forest (rest (forest-trees f))
-                                              (forest-fires f))))]))
-
+                                              (forest-fires f)
+                                              (forest-plane f))))]))
 
 ; Tree List-of-tree -> Boolean
 ; determines if the tree is close to any tree on fire
@@ -96,7 +127,8 @@
 ; sets a tree (indicated by number) on fire
 (define (create-fire-pick n f)
   (make-forest (tree-remove n (forest-trees f))
-               (cons (pick-tree n (forest-trees f)) (forest-fires f))))
+               (cons (pick-tree n (forest-trees f)) (forest-fires f))
+               (forest-plane f)))
 
 ; List-of-tree -> List-of-tree
 ; removes tree n
@@ -116,10 +148,11 @@
 ; add the [non-burning] tree to the forest
 (define (add-tree t f)
   (make-forest (cons t (forest-trees f))
-               (forest-fires f)))
+               (forest-fires f)
+               (forest-plane f)))
 
 ; Forest Forest -> Forest
-; checks if two forests are in the same state
+; checks if two forests are in the same state, EXCLUDING THE PLANE
 (define (forest=? f1 f2)
   (and (l-o-tree=? (forest-trees f1) (forest-trees f2))
        (l-o-tree=? (forest-fires f1) (forest-fires f2))))
