@@ -8,7 +8,7 @@
 (define HEIGHT 500)
 (define WIDTH 500)
 (define TREE-SIZE 20)
-(define PLANE-SPEED 20)
+(define PLANE-SPEED 10)
 
 ; graphical constants
 (define MT (empty-scene WIDTH HEIGHT))
@@ -17,7 +17,7 @@
                             (circle 5 "solid" "red")
                             TREE))
 (define WATER (circle 7 "solid" "blue"))
-(define PLANE (rectangle 20 100 "solid" "yellow"))
+(define PLANE (rectangle 10 50 "solid" "red"))
 
 ; Number -> List-of-trees
 (define (generate-forest n)
@@ -40,8 +40,8 @@
 (define (fire-main f)
   (big-bang f
             [to-draw fire-render]
-            [on-tick create-fire 0.5]
-            [on-key plane-control]))
+            [on-tick fire-tock 0.5]))
+            ;[on-key plane-control]))
 
 ; Forest -> Image
 ; displays the forest and the fires
@@ -53,7 +53,7 @@
 ; Image Plane Scene -> Image
 ; renders the plane, rotated correctly
 (define (plane-render i p scene)
-  (place-image (rotate (plane-bearing p) i)
+  (place-image (rotate (* -1 (plane-bearing p)) i)
                (posn-x (plane-posn p)) (posn-y (plane-posn p))
                scene))
   
@@ -77,12 +77,12 @@
 ; Plane -> Plane
 ; moves the plane according to its bearing
 (define (move-plane p)
-  (make-plane (make-posn (+ (* PLANE-SPEED (cos (* -1 (plane-bearing p))))
+  (make-plane (make-posn (+ (* PLANE-SPEED (sin (/ (* -180 (plane-bearing p)) pi)))
                             (posn-x (plane-posn p)))
-                         (+ (* PLANE-SPEED (sin (* -1 (plane-bearing p))))
+                         (+ (* PLANE-SPEED (cos (/ (* -180 (plane-bearing p)) pi)))
                             (posn-y (plane-posn p))))
               (plane-bearing p)
-              (plane-ammo p))
+              (plane-ammo p)))
 
 ; Forest -> Forest
 ; randomly sets a tree on fire
@@ -170,3 +170,10 @@
              (posn-y (first lot2))))
      (l-o-tree=? (rest lot1) (rest lot2))]
     [else #false]))
+
+
+(fire-main (make-forest (generate-forest 200)
+                          '()
+                          (make-plane (make-posn 100 100)
+                                      -30
+                                      5)))
