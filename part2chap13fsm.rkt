@@ -67,8 +67,8 @@
 
 ; SimulationState.v2 -> SimulationState.v2
 ; finds the next state from a key stroke ke and current state cs
-(define (find-next-state.v2 cs ke)
-  cs)
+;(define (find-next-state.v2 cs ke)
+;  cs)
 
 ; FSM FSM-State -> SimulationState.v2
 ; match the keys pressed by a player with the given FSM
@@ -121,3 +121,53 @@
     [(string=? (transition-current (first transitions)) current)
      (transition-next (first transitions))]
     [else (find (rest transitions) current)]))
+
+; Exercise 215
+(define-struct ktransition [current key next])
+; A Transition.v2 is a structure:
+;   (make-ktransition FSM-State KeyEvent FSM-State)
+
+(define fsm111
+  (list (make-ktransition "A" "b" "B")
+        (make-ktransition "A" "c" "C")
+        (make-ktransition "B" "b" "B")
+        (make-ktransition "B" "c" "C")
+        (make-ktransition "C" "b" "B")
+        (make-ktransition "C" "c" "C")
+        (make-ktransition "B" "d" "D")
+        (make-ktransition "C" "d" "D")))
+
+; FSM FSM-State -> SimulationState.v2
+; match the keys pressed by a player with the given FSM
+(define (simulate.v3 a-fsm s0)
+  (big-bang (make-fs a-fsm s0)
+            [to-draw state-as-colored-square.v2]
+            [on-key find-next-state.v2]))
+
+; SimulationState.v2 -> Image
+; renders the current world state as a colored square
+(define (state-as-colored-square.v2 a-fs)
+  (cond
+    [(string=? (fs-current a-fs) "A") (square 100 "solid" "white")]
+    [(string=? (fs-current a-fs) "B") (square 100 "solid" "yellow")]
+    [(string=? (fs-current a-fs) "C") (square 100 "solid" "yellow")]
+    [(string=? (fs-current a-fs) "D") (square 100 "solid" "green")]))
+
+(check-expect (state-as-colored-square.v2 (make-fs fsm111 "B"))
+              (square 100 "solid" "yellow"))
+
+; SimulationState.v2 KeyEvent -> SimulationState.v2
+; finds the next state from a key stroke ke and current state cs
+(define (find-next-state.v2 a-fs ke)
+  (make-fs (fs-fsm a-fs)
+           (find.v2 (fs-fsm a-fs) (fs-current a-fs) ke)))
+
+; FSM FSM-State -> FSM-State
+; finds the state matching current in the transition table
+(define (find.v2 transitions current ke)
+  (cond
+    [(empty? transitions) (error (string-append "not found: " current))]
+    [(and (string=? (ktransition-current (first transitions)) current)
+          (string=? (ktransition-key (first transitions)) ke))
+     (ktransition-next (first transitions))]
+    [else (find.v2 (rest transitions) current ke)]))
