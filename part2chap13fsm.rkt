@@ -26,3 +26,8 @@
   (list (make-transition "red" "green")
         (make-transition "green" "yellow")
         (make-transition "yellow" "red")))
+
+; Exercise 213
+(define bw-machine
+  (list (make-transition "black" "white")
+        (make-transition "white" "black")))
