@@ -4,6 +4,7 @@
 (require 2htdp/image)
 (require 2htdp/universe)
 
+#|
 ; A FSM is one of:
 ; - '()
 ; - (cons Transition FSM)
@@ -171,3 +172,69 @@
           (string=? (ktransition-key (first transitions)) ke))
      (ktransition-next (first transitions))]
     [else (find.v2 (rest transitions) current ke)]))
+
+|#
+
+; Exercise 216
+(define-struct fsm [initial transitions final])
+(define-struct transition [current key next])
+; An FSM.v2 is a structure:
+;  (make-fsm FSM-STATE LOT FSM-State)
+; A LOT is one of:
+; - '()
+; - (cons Transition.v3 LOT)
+; A Transition.v3 is a structure:
+;  (make-transition FSM-State FSM-State KeyEvent)
+
+(define fsm-111
+  (make-fsm "A"
+            (list (make-transition "A" "b" "B")
+                  (make-transition "A" "c" "C")
+                  (make-transition "B" "b" "B")
+                  (make-transition "B" "c" "C")
+                  (make-transition "B" "d" "D")
+                  (make-transition "C" "b" "B")
+                  (make-transition "C" "c" "C")
+                  (make-transition "C" "d" "D"))
+            "D"))
+
+; FSM.v2 -> ???
+(define (fsm-simulation fsm)
+  (big-bang fsm
+            [to-draw fsm-render]
+            [on-key fsm-next]
+            [stop-when fsm-done?]))
+
+; FSM -> Image
+; shows the state as a colored square
+(define (fsm-render a-fsm)
+  (cond
+    [(string=? (fsm-initial a-fsm) "A") (square 100 "solid" "white")]
+    [(string=? (fsm-initial a-fsm) "B") (square 100 "solid" "yellow")]
+    [(string=? (fsm-initial a-fsm) "C") (square 100 "solid" "yellow")]
+    [(string=? (fsm-initial a-fsm) "D") (square 100 "solid" "green")]
+    [else (square 100 "solid" "red")]))
+
+; FSM KeyEvent-> FSM
+; transitions to the next state and wraps into FSM
+(define (fsm-next a-fsm ke)
+  (make-fsm (find-next-state (fsm-initial a-fsm)
+                             ke
+                             (fsm-transitions a-fsm))
+            (fsm-transitions a-fsm)
+            (fsm-final a-fsm)))
+
+; FSM-State KeyEvent LOT -> FSM-State
+; finds the next state
+(define (find-next-state s ke transitions)
+  (cond
+    [(empty? transitions) (error "WRONG")]
+    [(and (string=? s (transition-current (first transitions)))
+          (string=? ke (transition-key (first transitions))))
+     (transition-next (first transitions))]
+    [else (find-next-state s ke (rest transitions))]))
+
+; FSM -> Boolean
+; if the state is the end-state, return #true
+(define (fsm-done? fsm)
+  (string=? (fsm-initial fsm) (fsm-final fsm)))
