@@ -9,3 +9,32 @@
       (list "barb" 2000)
       (list "carl" 1500)
       (list "dawn" 2300))
+
+(define x 42)
+
+
+; String String -> ... deeply nested list ...
+; produces a (representation of) a web page with given author and title
+(define (my-first-web-page author title)
+  `(html
+    (head
+     (title ,title)
+     (meta ((http-equiv "content-type")
+            (content "text-html"))))
+    (body
+     (h1 ,title)
+     (p "I, " ,author ", made this page."))))
+
+; Exercise 218
+
+(list 1 "a" 2 #false 3 "c")
+
+(list (list "alan" 1000)
+      (list "barb" 2000)
+      (list "carl , the great" 1500)
+      (list "dawn" 2300))
+
+(list html
+      (list head (list title "ratings"))
+      (list body (list h1 "ratings")
+            (list p "A second web page")))
