@@ -25,3 +25,29 @@
 ; searches for "zoo" in the los
 (define (contains-zoo? los)
   (contains? "zoo" los))
+
+; Exercise 222
+; Lon -> Lon
+; add 1 to each number on l
+(define (add1* l)
+  (map-add 1 l))
+
+; Lon -> Lon
+; adds 5 to each number on l
+(define (plus5 l)
+  (map-add 5 l))
+
+; Number Lon -> Lon
+; adds n to each number on l
+(define (map-add n l)
+  (cond
+    [(empty? l) '()]
+    [else (cons (+ (first l) n)
+                (map-add n (rest l)))]))
+
+(check-expect (add1* (list 1 2 3 4))
+              (list 2 3 4 5))
+(check-expect (add1* '()) '())
+
+(check-expect (plus5 '()) '())
+(check-expect (plus5 (list 3 5 6)) '(8 10 11))
