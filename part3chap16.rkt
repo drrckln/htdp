@@ -51,3 +51,51 @@
 
 (check-expect (plus5 '()) '())
 (check-expect (plus5 (list 3 5 6)) '(8 10 11))
+
+(define (extract R l t)
+  (cond
+    [(empty? l) '()]
+    [else (cond
+            [(R (first l) t)
+             (cons (first l) (extract R (rest l) t))]
+            [else
+             (extract R (rest l) t)])]))
+
+; Exercise 223
+; Number Number -> Boolean
+; is the area of a square with side x larger than c
+(define (squared>? x c)
+  (> (* x x) c))
+
+; Exercise 224
+; R Nelon -> Number
+; determins the Rth number on l
+(define (most R l)
+  (cond
+    [(empty? (rest l)) (first l)]
+    [else (cond
+            [(R (first l) (most R (rest l)))
+             (first l)]
+            [else (most R (rest l))])]))
+
+(define (inf-1 l)
+  (most < l))
+
+(define (sup-1 l)
+  (most > l))
+
+; The reason it's slow is probably because it needs to calculate (extract R (rest l) t)
+; over and over and over again.. once per comparison, so like O(2n)? not sure..
+
+(define (extract-2 R l)
+  (cond
+    [(empty? (rest l)) (first l)]
+    [else (R (first l) (extract-2 R (rest l)))]))
+
+(define (inf-2 l)
+  (extract-2 max l))
+
+(define (sup-2 l)
+  (extract-2 min l))
+
+; Faster because each min only runs once.. so it's like O(n) with the number of list items
