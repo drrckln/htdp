@@ -161,6 +161,30 @@
 ; (make-bucket 1 '((make-posn 10 3)))
 
 ; [Bucket [List-of [List-of String]]]
-(make-bucket 2 '('("a" "b" "c") '("x" "d")))
-(make-bucket 1 '('("c" "d")))
-(make-bucket 3 '('("a") '("f") '("jeez")))
+;(make-bucket 2 '('("a" "b" "c") '("x" "d")))
+;(make-bucket 1 '('("c" "d")))
+;(make-bucket 3 '('("a") '("f") '("jeez")))
+
+; Exercise 229
+; A [Maybe X] is one of:
+; - #false
+; - X
+
+; [Maybe String] is either a String or #false
+; [Maybe [List-of String]] is either a List-of Strings or #false
+; [List-of [Maybe String]] is a List-of either Strings or #falses
+
+; String [List-of String] -> [Maybe [List-of String]]
+; returns the remainder of the list los if it contains s
+; #false otherwise.
+; This means it takes a String and a List-of String, and then gives
+; back either a List-of String or #false. According to the header,
+; #false is if the List-of String does not contain the s String.
+
+(check-expect (occurs "a" (list "b" "a" "d")) (list "d"))
+(check-expect (occurs "a" (list "b" "c" "d")) #f)
+(define (occurs s los)
+  (cond
+    [(empty? los) #f]
+    [(string=? s (first los)) (rest los)]
+    [else (occurs s (rest los))]))
