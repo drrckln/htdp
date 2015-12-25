@@ -212,3 +212,10 @@
 ; try by ensuring the the set of input types is the same, then
 ; randomizing.. The general implication would be that there are
 ; ideas that aren't easily definable as a function.
+
+(extract squared>? (list 3 4 5) 10)
+
+; Exercise 233
+; I can see how the cons is retaining the 4 and 5..
+
+; Exercise 234
