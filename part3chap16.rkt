@@ -198,3 +198,17 @@
 ; you can apply x in the first position now
 ; same deal, and you can use a function as an argument
 ; both
+
+; Exercise 232
+; (Number -> Number) (Number -> Number) -> Boolean
+(define (function=at1.2-3-and-5.775? f g)
+  (and (= (f 1) (g 1))
+       (= (f 2) (g 2))
+       (= (f 3) (g 3))
+       (= (f -5.775) (g -5.775))))
+
+; Maybe if you do could a forall. But I don't think you can, as it
+; is impractical to list all the possible inputs. I guess you can
+; try by ensuring the the set of input types is the same, then
+; randomizing.. The general implication would be that there are
+; ideas that aren't easily definable as a function.
