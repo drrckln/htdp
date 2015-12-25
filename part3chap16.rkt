@@ -220,3 +220,6 @@
 
 ; Exercise 234
 (extract < (cons 6 (cons 4 '())) 5)
+
+; Exercise 235
+(extract < (cons 8 (cons 6 (cons 4 '()))) 5)
