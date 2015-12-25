@@ -223,3 +223,8 @@
 
 ; Exercise 235
 (extract < (cons 8 (cons 6 (cons 4 '()))) 5)
+
+; Exercise 236
+(squared>? 3 10)
+(squared>? 4 10)
+(squared>? 5 10)
