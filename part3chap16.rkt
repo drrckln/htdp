@@ -99,3 +99,25 @@
   (extract-2 min l))
 
 ; Faster because each min only runs once.. so it's like O(n) with the number of list items
+
+; A [List-of ITEM] is one of:
+; - '()
+; - (cons ITEM [List-of ITEM])
+; parametric data definitions
+
+; A [CP H V] is a structure:
+;   (make-point H V)
+(define-struct point [hori veri])
+
+; Exercise 225
+; A [List X Y] is a structure:
+;   (cons X (cons Y '()))
+
+; [List Number Number]
+(cons 10 (cons 4 '()))
+
+; [List Number 1String]
+(cons 5 (cons "s" '()))
+
+; [List String Boolean]
+(cons "hello" (cons #f '()))
