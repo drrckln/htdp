@@ -193,3 +193,8 @@
 ; cons a primitive, f and '() are values
 ; f and f are both values
 ; f 10 and '() are values, cons a primitive
+
+; Exercise 231
+; you can apply x in the first position now
+; same deal, and you can use a function as an argument
+; both
