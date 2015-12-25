@@ -219,3 +219,4 @@
 ; I can see how the cons is retaining the 4 and 5..
 
 ; Exercise 234
+(extract < (cons 6 (cons 4 '())) 5)
