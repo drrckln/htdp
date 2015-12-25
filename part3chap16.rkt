@@ -228,3 +228,9 @@
 (squared>? 3 10)
 (squared>? 4 10)
 (squared>? 5 10)
+
+; Exercise 237
+(define (f x) x)
+(cons f '())
+(f f)
+(cons f (cons 10 (cons (f 10) '())))
