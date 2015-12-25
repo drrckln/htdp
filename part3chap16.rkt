@@ -121,3 +121,22 @@
 
 ; [List String Boolean]
 (cons "hello" (cons #f '()))
+
+; Exercise 226
+; A Nested-string is one of:
+; - String
+; - (make-layer Nested-string)
+
+; A Nested-number is one of:
+; - Number
+; - (make-layer Nested-number)
+
+(define-struct layer [stuff])
+(make-layer (make-layer (make-layer 4)))
+(make-layer (make-layer "whee"))
+
+; A Nested-ITEM is one of:
+; - ITEM
+; - (make-layer Nested-ITEM)
+
+; instantiate with Number and String..
