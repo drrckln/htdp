@@ -145,3 +145,22 @@
 ; A [NEList-of ITEM] is one of:
 ; - (cons ITEM '())
 ; - (cons ITEM [NEList-of ITEM])
+
+; Exercise 228
+; A [Bucket ITEM] is (make-bucket N [List-of ITEM])
+; interpretation the n in (make-bucket n l) is the length of l
+
+; [Bucket String]
+; List of Strings, along with the length of the list
+; (make-bucket 3 '("a" "b" "x"))
+; [Bucket IR]
+; List of IR, along with the total number of IR in the list
+; (make-bucket 2 '((make-ir "a" 7) (make-ir "whoo" 3)))
+; [Bucket Posn]
+; List of Posns, along with the number of Posns
+; (make-bucket 1 '((make-posn 10 3)))
+
+; [Bucket [List-of [List-of String]]]
+(make-bucket 2 '('("a" "b" "c") '("x" "d")))
+(make-bucket 1 '('("c" "d")))
+(make-bucket 3 '('("a") '("f") '("jeez")))
