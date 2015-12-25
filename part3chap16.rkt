@@ -188,3 +188,8 @@
     [(empty? los) #f]
     [(string=? s (first los)) (rest los)]
     [else (occurs s (rest los))]))
+
+; Exercise 230
+; cons a primitive, f and '() are values
+; f and f are both values
+; f 10 and '() are values, cons a primitive
