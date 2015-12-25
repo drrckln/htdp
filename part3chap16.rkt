@@ -135,8 +135,13 @@
 (make-layer (make-layer (make-layer 4)))
 (make-layer (make-layer "whee"))
 
-; A Nested-ITEM is one of:
+; A [Nested ITEM] is one of:
 ; - ITEM
-; - (make-layer Nested-ITEM)
+; - (make-layer [Nested ITEM])
 
 ; instantiate with Number and String..
+
+; Exercise 227
+; A [NEList-of ITEM] is one of:
+; - (cons ITEM '())
+; - (cons ITEM [NEList-of ITEM])
