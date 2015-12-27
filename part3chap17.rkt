@@ -202,3 +202,11 @@
 ; [[List-of Number] -> Boolean]
 (define (sum-greater-than-5? l)
   (> (fold1 l + 0) 5))
+
+; Exercise 242
+; [List-of Number] [Number Number -> Boolean] -> [List-of Number]
+; [List-of String] [String String -> Boolean] -> [List-of String]
+; Abstracted
+; [List-of X] [X X -> Boolean] -> [List-of X]
+; Instantiation using IR
+; [List-of IR] [IR IR -> Boolean] -> [List-of IR]
