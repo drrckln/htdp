@@ -1,6 +1,8 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-intermediate-reader.ss" "lang")((modname part3chap17) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require 2htdp/image)
+
 ; List-of-numbers -> List-of-numbers
 ; converts a list of Celsius
 ; temperatures to Fahrenheit
@@ -147,3 +149,37 @@
               (fold1-sum '(1 2 3 4)))
 (check-expect (product '(1 2 3 4 5))
               (fold1-product '(1 2 3 4 5)))
+
+; Exercise 240
+; [List-of Posn] -> Image
+(define (image* l)
+  (cond
+    [(empty? l) emt]
+    [else (place-dot (first l)
+                     (image* (rest l)))]))
+
+; Posn Image -> Image
+(define (place-dot p img)
+  (place-image dot
+               (posn-x p) (posn-y p)
+               img))
+
+; graphical constants:
+(define emt (empty-scene 100 100))
+(define dot (circle 3 "solid" "red"))
+
+; [List-of A] [A -> B] -> B
+(define (fold2 l op b)
+  (cond
+    [(empty? l) b]
+    [else (op (first l)
+              (fold2 (rest l) op b))]))
+
+(define (fold2-product l)
+  (fold2 l * 1))
+
+(define (fold2-image* l)
+  (fold2 l place-dot emt))
+
+(check-expect (image* (list (make-posn 3 4) (make-posn 4 5)))
+              (fold2-image* (list (make-posn 3 4) (make-posn 4 5))))
