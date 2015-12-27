@@ -114,3 +114,36 @@
 ; Number -> [List-of Number]
 (define (tab-tan n)
   (tabulate n tan))
+
+; Exercise 239
+; [List-of Number] -> Number
+; computes the sum of the numbers on l
+(define (sum l)
+  (cond
+    [(empty? l) 0]
+    [else (+ (first l) (sum (rest l)))]))
+
+; [List-of Number] -> Number
+; computes the product of the numbers on l
+(define (product l)
+  (cond
+    [(empty? l) 1]
+    [else (* (first l) (product (rest l)))]))
+
+; [List-of Number] [Number -> Number] Number -> Number
+(define (fold1 l op b)
+  (cond
+    [(empty? l) b]
+    [else (op (first l)
+              (fold1 (rest l) op b))]))
+
+(define (fold1-sum l)
+  (fold1 l + 0))
+
+(define (fold1-product l)
+  (fold1 l * 1))
+
+(check-expect (sum '(1 2 3 4))
+              (fold1-sum '(1 2 3 4)))
+(check-expect (product '(1 2 3 4 5))
+              (fold1-product '(1 2 3 4 5)))
