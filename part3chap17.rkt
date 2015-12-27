@@ -210,3 +210,11 @@
 ; [List-of X] [X X -> Boolean] -> [List-of X]
 ; Instantiation using IR
 ; [List-of IR] [IR IR -> Boolean] -> [List-of IR]
+
+; Exercise 243
+; [List-of Number] [Number -> Number] -> [List-of Number]
+; [List-of String] [String -> String] -> [List-of String]
+; Abstracted
+; [List-of X] [X -> X] -> [List-of X]
+; Instantiation using IR
+; [List-of IR] [IR -> IR] -> [List-of IR]
