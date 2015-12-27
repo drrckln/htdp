@@ -168,7 +168,7 @@
 (define emt (empty-scene 100 100))
 (define dot (circle 3 "solid" "red"))
 
-; [List-of A] [A -> B] -> B
+; [List-of A] [A B -> B] B -> B
 (define (fold2 l op b)
   (cond
     [(empty? l) b]
@@ -183,3 +183,22 @@
 
 (check-expect (image* (list (make-posn 3 4) (make-posn 4 5)))
               (fold2-image* (list (make-posn 3 4) (make-posn 4 5))))
+
+; Exercise 241
+; [Number -> Boolean]
+(define (5? n) (= n 5))
+; [Boolean String -> Boolean]
+(define (to-not? bool s)
+  (if (string=? s "not")
+      (not bool)
+      bool))
+; [Number Number Number -> Number]
+(define (multiply x y z) (* x y z))
+; [Number -> [List-of Number]]
+(define (list-initialize n)
+  (cond
+    [(= n 0) '()]
+    [else (cons n (list-initialise (sub1 n)))]))
+; [[List-of Number] -> Boolean]
+(define (sum-greater-than-5? l)
+  (> (fold1 l + 0) 5))
