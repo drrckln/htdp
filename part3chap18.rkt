@@ -39,3 +39,49 @@
 
 (check-expect (my-build-list 10 add1) (build-list 10 add1))
 (check-expect (my-build-list 3 sub1) (build-list 3 sub1))
+
+; alternately, add-at-end 0, then map f and reverse the results
+
+; [List-of Addr] -> String
+; creates a string of first names, sorted in alphabetical order,
+; separated and surrounded by blank spaces
+(define (listing.v2 l)
+  (local (; String String -> String
+          ; concatenates two strings and prefixes with space
+          (define (string-append-with-space s t)
+            (string-append " " s t)))
+    ; - IN -
+    (foldr string-append-with-space
+           " "
+           (sort (map address-first-name l)
+                 string<?))))
+
+(define (listing.v3 l)
+  (local (; String String -> String
+          ; concatenates two strings and prefixes with space
+          (define (string-append-with-space s t)
+            (string-append " " s t))
+          (define first-names (map address-first-name l))
+          (define sorted-names (sort first-names string<?)))
+    ; - IN -
+    (foldr string-append-with-space " " sorted-names)))
+
+; Exercise 246
+; Polygon -> Image
+(define (render-poly p)
+  (local (; NELoP Posn -> Image
+          ; connects the dots in p by rendering lines in MT, adding Posn last
+          (define (connect-dots p last)
+            (cond
+              [(empty? (rest p)) (render-line MT (first p) last)]
+              [else (render-line (connect-dots (rest p) last)
+                                 (first p)
+                                 (second p))]))
+          (define last (first p))
+          ; Image Posn Posn -> Image
+          ; draws a red line from Posn p to Posn q into im
+          (define (render-line im p q)
+            (scene+line
+             im (posn-x p) (posn-y p) (posn-x q) (posn-y q) "red")))
+    ; - IN -
+    (connect-dots p last)))
