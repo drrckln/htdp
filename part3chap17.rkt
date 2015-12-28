@@ -218,3 +218,10 @@
 ; [List-of X] [X -> X] -> [List-of X]
 ; Instantiation using IR
 ; [List-of IR] [IR -> IR] -> [List-of IR]
+
+; [List-of X] Y [X Y -> Y] -> Y
+(define (reduce l base combine)
+  (cond
+    [(empty? l) base]
+    [else (combine (first l)
+                   (reduce (rest l) base combine))]))
