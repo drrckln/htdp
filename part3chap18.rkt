@@ -1,6 +1,6 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-intermediate-reader.ss" "lang")((modname part3chap18) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname part3chap18) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 #|
 ; Exercise 244
 
@@ -118,7 +118,7 @@
       [(empty? (rest word)) (list (list (first word)))]
       [else (insert-everywhere/in-all-words (first word)
                                             (arrangements (rest word)))])))
-|#
+
 ; Nelon -> Number
 ; determines the smallest number on l
 (define (inf l)
@@ -129,7 +129,7 @@
        (cond
          [(< (first l) smallest-in-rest) (first l)]
          [else smallest-in-rest]))]))
-#|
+
 ; Exercise 248
 (define-struct ir [name price])
 ; Inventory -> Inventory
@@ -306,3 +306,56 @@
        f
        g))
  2)
+
+
+; [List-of Posn] -> [List-of Posn]
+; adds 3 to each x-coordinate on the given list
+
+(check-expect (add-3-to-all (list (make-posn 30 10)
+                                  (make-posn 0 0)))
+              (list (make-posn 33 10) (make-posn 3 0)))
+
+(define (add-3-to-all lop)
+  (local (; Posn -> Posn
+          ; ...
+          (define (add-3-to-one p)
+            (make-posn (+ (posn-x p) 3)
+                       (posn-y p))))
+    (map add-3-to-one lop)))
+
+; [List-of Posn] -> [List-of Posn]
+; eliminates Posns whose y-coordinate is larger than 100
+
+(check-expect (keep-good (list (make-posn 0 110) (make-posn 0 60)))
+              (list (make-posn 0 60)))
+
+(define (keep-good lop)
+  (local (; Posn -> Boolean
+          ; should this Posn stay on the list
+          (define (good? p)
+            (<= (posn-y p) 100)))
+    (filter good? lop)))
+
+; good? simply determines whether the y-coord is <= 100
+
+; Posn Posn Number -> Boolean
+; is the distance between pa dn q less than d
+(define (close-to p q d)
+  (< (sqrt (+ (sqr (- (posn-x p) (posn-x q)))
+              (sqr (- (posn-y p) (posn-y q)))))
+     d))
+
+; [List-of Posn] Posn -> Boolean
+; is any Posn on lop close to pt
+(check-expect (close? (list (make-posn 47 54) (make-posn 0 60))
+                      (make-posn 50 50))
+              #true)
+
+(define CLOSENESS 5)
+
+(define (close? lop pt)
+  (local (; Posn -> Boolean
+          ; is one shot close to pt
+          (define (is-one-close? p)
+            (close-to p pt CLOSENESS)))
+    (ormap is-one-close? lop)))
