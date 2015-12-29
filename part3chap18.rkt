@@ -85,3 +85,46 @@
              im (posn-x p) (posn-y p) (posn-x q) (posn-y q) "red")))
     ; - IN -
     (connect-dots p last)))
+
+; Exercise 247
+; Word -> List-of-words
+; find all re-arrangements of word
+(define (arrangements word)
+  (local (; 1String List-of-words -> List-of-words
+          ; inserts the 1string at every position of every word
+          (define (insert-everywhere/in-all-words letter low)
+            (cond
+              [(empty? low) '()]
+              [else (append (insert-everywhere/word letter (first low))
+                            (insert-everywhere/in-all-words letter (rest low)))]))
+          ; 1String List-of-words -> List-of-words
+          ; inserts the 1string at every position of every word
+          (define (insert-everywhere/in-all-words letter low)
+            (cond
+              [(empty? low) '()]
+              [else (append (insert-everywhere/word letter (first low))
+                            (insert-everywhere/in-all-words letter (rest low)))]))
+          ; 1String NEWord -> NEList-of-words
+          ; inserts the 1string at every position of the word
+          (define (insert-everywhere/word letter word)
+            (cond
+              [(empty? (rest word)) (list (append (list letter) word)
+                                          (append word (list letter)))]
+              [else (append (list (cons letter word))
+                            (fmap (first word) (insert-everywhere/word letter (rest word))))]))
+          ; w List-of-a -> List
+          ; maps w onto ls
+          (define (fmap w ls)
+            (cond
+              [(empty? ls) '()]
+              [else (cons (cons w (first ls)) (fmap w (rest ls)))])))
+    ; - IN -
+    (cond
+      [(empty? word) '()]
+      [(empty? (rest word)) (list (list (first word)))]
+      [else (insert-everywhere/in-all-words (first word)
+                                            (arrangements (rest word)))])))
+
+
+
+
