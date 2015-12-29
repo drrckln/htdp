@@ -277,7 +277,7 @@
     [(zero? n) '()]
     [(positive? n) (cons (make-row 0 ) .. n .. (sub1 n))]
 |#
-|#
+
 ; Exercise 251
 (inf (list 2 1 3))
 
@@ -294,3 +294,15 @@
          [else largest-in-rest]))]))
 
 (sup (list 2 1 3))
+|#
+; Exercise 253
+((local ((define (f x) (+ (* 4 (sqr x)) 3)))
+   f) 1)
+
+; Exercise 254
+((local ((define (f x) (+ x 3))
+         (define (g x) (* x 4)))
+   (if (odd? (f (g 1)))
+       f
+       g))
+ 2)
