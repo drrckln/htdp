@@ -162,3 +162,81 @@
 ; Well.. extract1.v2 CHOKES, so it doesn't help..
 ; modified it seems to make no difference. maybe a bit faster.
 (extract1.v2 test-inv)
+
+; Exercise 249
+; Lon -> Lon
+; constructs a list from the items in l in descending order
+(define (sort> l0)
+  (local (; Lon -> Lon
+          (define (sort l)
+            (cond
+              [(empty? l) '()]
+              [else (insert (first l) (sort (rest l)))]))
+          ; Number Lon -> Lon
+          (define (insert an l)
+            (cond
+              [(empty? l) (list an)]
+              [else
+               (cond
+                 [(> an (first l)) (cons an l)]
+                 [else (cons (first l) (insert an (rest l)))])])))
+    (sort l0)))
+
+(check-expect (sort> (list 0 4 3 5 6 8 9 7 2 1))
+              (list 9 8 7 6 5 4 3 2 1 0))
+
+; Lon -> Lon
+; constructs a list from the items in l in ascending order
+(define (sort< l0)
+  (local (; Lon -> Lon
+          (define (sort l)
+            (cond
+              [(empty? l) '()]
+              [else (insert (first l) (sort (rest l)))]))
+          ; Number Lon -> Lon
+          (define (insert an l)
+            (cond
+              [(empty? l) (list an)]
+              [else
+               (cond
+                 [(< an (first l)) (cons an l)]
+                 [else (cons (first l) (insert an (rest l)))])])))
+    (sort l0)))
+
+(check-expect (sort< (list 0 4 3 5 6 8 9 7 2 1))
+              (list 0 1 2 3 4 5 6 7 8 9))
+
+; Lon -> Lon
+; constructs a list from the items in l in cmp order
+(define (sort-a cmp l0)
+  (local (; Lon -> Lon
+          (define (sort l)
+            (cond
+              [(empty? l) '()]
+              [else (insert (first l) (sort (rest l)))]))
+          ; Number Lon -> Lon
+          (define (insert an l)
+            (cond
+              [(empty? l) (list an)]
+              [else
+               (cond
+                 [(cmp an (first l)) (cons an l)]
+                 [else (cons (first l) (insert an (rest l)))])])))
+    (sort l0)))
+
+(define (sort-a< l0)
+  (sort-a < l0))
+(check-expect (sort< (list 0 4 3 5 6 8 9 7 2 1))
+              (sort-a< (list 0 4 3 5 6 8 9 7 2 1)))
+
+(define (sort-a> l0)
+  (sort-a > l0))
+(check-expect (sort> (list 0 4 3 5 6 8 9 7 2 1))
+              (sort-a> (list 0 4 3 5 6 8 9 7 2 1)))
+
+; Los -> Los
+; ascending
+(define (sort-a-s< los)
+  (local ((define (string-sort< s1 s2) (< (string-length s1)
+                                          (string-length s2))))
+    (sort-a string-sort< los)))
