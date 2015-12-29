@@ -280,3 +280,6 @@
 |#
 ; Exercise 251
 (inf (list 2 1 3))
+
+; Exercise 252
+(sup (list 2 1 3))
