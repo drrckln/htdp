@@ -129,6 +129,36 @@
          [(< (first l) smallest-in-rest) (first l)]
          [else smallest-in-rest]))]))
 
+; Exercise 248
+(define-struct ir [name price])
+; Inventory -> Inventory
+; creates an Inventory from an-inv for all
+; those items taht cost less than $1
+(define (extract1 an-inv)
+  (cond
+    [(empty? an-inv) '()]
+    [else (cond
+            [(<= (ir-price (first an-inv)) 1.0)
+             (cons (first an-inv) (extract1 (rest an-inv)))]
+            [else (extract1 (rest an-inv))])]))
 
+(define (extract1.v2 an-inv)
+  (local ((define extracted (extract1 (rest an-inv)))
+          (define first-item (first an-inv)))
+    (cond
+      [(empty? an-inv) '()]
+      [else (cond
+              [(<= (ir-price first-item) 1.0)
+               (cons first-item extracted)]
+              [else extracted])])))
 
+(define test-inv (list (make-ir "john" 3)
+                       (make-ir "boo" 0.5)
+                       (make-ir "ga" 1.0)
+                       (make-ir "phleb" 1.4)
+                       (make-ir "chu" 1.3)
+                       (make-ir "oo" 0.9)))
 
+; Well.. extract1.v2 CHOKES, so it doesn't help..
+; modified it seems to make no difference. maybe a bit faster.
+(extract1.v2 test-inv)
