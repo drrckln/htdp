@@ -1,6 +1,7 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-intermediate-reader.ss" "lang")((modname part3chap18) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+#|
 ; Exercise 244
 
 ; [X -> Number] [List-of X] -> X
@@ -117,7 +118,7 @@
       [(empty? (rest word)) (list (list (first word)))]
       [else (insert-everywhere/in-all-words (first word)
                                             (arrangements (rest word)))])))
-
+|#
 ; Nelon -> Number
 ; determines the smallest number on l
 (define (inf l)
@@ -128,7 +129,7 @@
        (cond
          [(< (first l) smallest-in-rest) (first l)]
          [else smallest-in-rest]))]))
-
+#|
 ; Exercise 248
 (define-struct ir [name price])
 ; Inventory -> Inventory
@@ -246,7 +247,7 @@
 ; creates identity (diagonal 1) matrices
 (define (diagonal n)
   (local (; Number Number -> [List-of Number]
-          ; cnt starts at 1
+          ; cnt starts at 0
           (define (make-row i cnt)
             (cond
               [(= cnt n) '()]
@@ -256,3 +257,26 @@
           (define positions (build-list n identity))
           (define (make-row-0 i) (make-row i 0)))
   (map make-row-0 positions)))
+#|
+(define (ident n)
+  (local (; Number Number -> [List-of Number]
+          (define (make-row i cnt)
+            (cond
+              [(= cnt n) '()]
+              [(= i cnt) (cons 1 (make-row i (add1 cnt)))]
+              [else (cons 0 (make-row i (add1 cnt)))]))
+          ; Number -> [List-of Number]
+          (define (building x)
+            (cond
+              [(zero? x) (list 0)]
+              [else (cons x (building (sub1 x)))]))
+          ; [List-of Number]
+          (define built-list (reverse (building n)))
+          (define
+  (cond
+    [(zero? n) '()]
+    [(positive? n) (cons (make-row 0 ) .. n .. (sub1 n))]
+|#
+|#
+; Exercise 251
+(inf (list 2 1 3))
