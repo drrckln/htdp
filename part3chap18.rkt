@@ -41,7 +41,7 @@
 (check-expect (my-build-list 3 sub1) (build-list 3 sub1))
 
 ; alternately, add-at-end 0, then map f and reverse the results
-
+#|
 ; [List-of Addr] -> String
 ; creates a string of first names, sorted in alphabetical order,
 ; separated and surrounded by blank spaces
@@ -85,19 +85,12 @@
              im (posn-x p) (posn-y p) (posn-x q) (posn-y q) "red")))
     ; - IN -
     (connect-dots p last)))
-
+|#
 ; Exercise 247
 ; Word -> List-of-words
 ; find all re-arrangements of word
 (define (arrangements word)
   (local (; 1String List-of-words -> List-of-words
-          ; inserts the 1string at every position of every word
-          (define (insert-everywhere/in-all-words letter low)
-            (cond
-              [(empty? low) '()]
-              [else (append (insert-everywhere/word letter (first low))
-                            (insert-everywhere/in-all-words letter (rest low)))]))
-          ; 1String List-of-words -> List-of-words
           ; inserts the 1string at every position of every word
           (define (insert-everywhere/in-all-words letter low)
             (cond
@@ -124,6 +117,17 @@
       [(empty? (rest word)) (list (list (first word)))]
       [else (insert-everywhere/in-all-words (first word)
                                             (arrangements (rest word)))])))
+
+; Nelon -> Number
+; determines the smallest number on l
+(define (inf l)
+  (cond
+    [(empty? (rest l)) (first l)]
+    [else
+     (local ((define smallest-in-rest (inf (rest l))))
+       (cond
+         [(< (first l) smallest-in-rest) (first l)]
+         [else smallest-in-rest]))]))
 
 
 
