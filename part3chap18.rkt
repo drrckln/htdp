@@ -240,3 +240,19 @@
   (local ((define (string-sort< s1 s2) (< (string-length s1)
                                           (string-length s2))))
     (sort-a string-sort< los)))
+
+; Exercise 250
+; Number -> [List-of [List-of Number]]
+; creates identity (diagonal 1) matrices
+(define (diagonal n)
+  (local (; Number Number -> [List-of Number]
+          ; cnt starts at 1
+          (define (make-row i cnt)
+            (cond
+              [(= cnt n) '()]
+              [else (cond
+                      [(= i cnt) (cons 1 (make-row i (add1 cnt)))]
+                      [else (cons 0 (make-row i (add1 cnt)))])]))
+          (define positions (build-list n identity))
+          (define (make-row-0 i) (make-row i 0)))
+  (map make-row-0 positions)))
