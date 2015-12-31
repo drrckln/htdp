@@ -428,3 +428,47 @@
                              (make-ir "who" "me" 8 0)))
               (list (make-ir "who" "me" 8 0)
                     (make-ir "boo" "gah" 7 5)))
+
+; Exercise 257
+; Number [List-of IR] -> [List-of IR]
+(define (eliminate-exp ua inventory)
+  (local (; IR -> Boolean
+          ; is the IR sales price below ua?
+          (define (check-price? ir)
+            (< (ir-rec ir) ua)))
+    (filter check-price? inventory)))
+
+(check-expect (eliminate-exp 5 (list (make-ir "boo" "gah" 7 5)
+                                     (make-ir "who" "me" 8 0)))
+              (list (make-ir "who" "me" 8 0)))
+
+; String [List-of IR] -> [List-of IR]
+; takes name of an inventory item, ty, produces
+; list of ir records that don't use that name
+(define (recall ty inventory)
+  (local (; IR -> Boolean
+          ; this item not being recalled?
+          (define (to-recall? ir)
+            (not (string=? ty (ir-name ir)))))
+    (filter to-recall? inventory)))
+
+(check-expect (recall "boo" (list (make-ir "boo" "gah" 7 5)
+                                  (make-ir "who" "me" 8 0)))
+              (list (make-ir "who" "me" 8 0)))
+
+; [List-of String] [List-of String] -> [List-of String]
+; finds names on both lists, or 2nd list in 1st list
+(define (selection los1 los2)
+  (local (; String -> Boolean
+          ; tests for whether the string is in the list los1
+          (define (test s)
+            (local (; String -> Boolean
+                    ; tests whether the target is s
+                    (define (tester x)
+                      (string=? s x)))
+            (ormap tester los1))))
+    (filter test los2)))
+
+(check-expect (selection (list "whee" "bop" "boop" "beep")
+                         (list "bop" "boop" "beep"))
+              (list "bop" "boop" "beep"))
