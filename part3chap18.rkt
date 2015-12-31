@@ -1,6 +1,7 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname part3chap18) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require 2htdp/image)
 #|
 ; Exercise 244
 
@@ -351,7 +352,7 @@
                       (make-posn 50 50))
               #true)
 
-(define CLOSENESS 5)
+(define CLOSENESS 10)
 
 (define (close? lop pt)
   (local (; Posn -> Boolean
@@ -359,3 +360,53 @@
           (define (is-one-close? p)
             (close-to p pt CLOSENESS)))
     (ormap is-one-close? lop)))
+
+; [List-of Posn] -> Image
+; adds the Posns on lop to the empty scene
+
+(check-expect (dots (list (make-posn 12 31)))
+              (place-image DOT 12 31 BACKGROUND))
+
+
+(define BACKGROUND (empty-scene 200 200))
+(define DOT (circle 5 "solid" "red"))
+
+(define (dots lop)
+  (local (; Posn Image -> Image
+          (define (add-one-dot p scene)
+            (place-image DOT (posn-x p) (posn-y p) scene)))
+    (foldr add-one-dot BACKGROUND lop)))
+
+; Exercise 255
+; [List-of EUR] -> [List-of USD]
+; converts based on exchange rate of EUR1.22/USD
+(define (convert-euro lod)
+  (local (; EUR -> USD
+          ; converts euro to USD
+          (define (euro->usd p)
+            (* p 1.22)))
+    (map euro->usd lod)))
+
+(check-expect (convert-euro (list 1 2 3))
+              (list 1.22 2.44 3.66))
+
+; [List-of Fahrenheit] -> [List-of Celsius]
+; converts..
+(define (convertFC lof)
+  (local (; Fahrenheit -> Celsius
+          (define (f->c f)
+            (* (- f 32) 5/9)))
+    (map f->c lof)))
+
+(check-expect (convertFC (list -40))
+              (list -40))
+
+; [List-of Posn] -> [List-of [List-of Number Number]]
+(define (translate lop)
+  (local (; Posn -> [List-of Number Number]
+          (define (posn->listpair p)
+            (list (posn-x p) (posn-y p))))
+    (map posn->listpair lop)))
+
+(check-expect (translate (list (make-posn 3 6) (make-posn 5 3)))
+              (list (list 3 6) (list 5 3)))
