@@ -410,3 +410,21 @@
 
 (check-expect (translate (list (make-posn 3 6) (make-posn 5 3)))
               (list (list 3 6) (list 5 3)))
+
+; Exercise 256
+(define-struct ir [name desc acq rec])
+
+; [List-of IR] -> [List-of IR]
+; sorts a list of IR by the difference between the two prices
+(define (sort-ir inventory)
+  (local (; IR IR -> Boolean
+          ; sorts by diff between two prices
+          (define (ir> ir1 ir2)
+            (> (abs (- (ir-acq ir1) (ir-rec ir1)))
+               (abs (- (ir-acq ir2) (ir-rec ir2))))))
+    (sort inventory ir>)))
+
+(check-expect (sort-ir (list (make-ir "boo" "gah" 7 5)
+                             (make-ir "who" "me" 8 0)))
+              (list (make-ir "who" "me" 8 0)
+                    (make-ir "boo" "gah" 7 5)))
