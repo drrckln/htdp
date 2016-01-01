@@ -544,3 +544,12 @@
 ; vertically composes
 (define (verticalize loi)
   (foldr above empty-image loi))
+
+; Exercise 261
+; [X -> Y] [List-of X] -> [List-of Y]
+(define (fold-map f lox)
+  (local (; X Y -> Y
+          (define (cons-f x y)
+            (cons (f x) y)))
+    (foldr cons-f '() lox)))
+  
