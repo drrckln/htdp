@@ -477,7 +477,7 @@
 ; N [N -> X] -> [List-of X]
 ; constructs a list by applying f to 0, 1, ..., (sub1 n)
 ;   (build-list n f) == (list (f 0) ... (f (- n 1)))
-(define (build-list n f) ...)
+;(define (build-list n f) ...)
 
 (define (zero-indexed n)
   (build-list n identity))
@@ -523,3 +523,24 @@
 ; You should use andmap, because that guarantees
 ; checking all names for the property. just have
 ; to "not" to make True.
+
+; Exercise 260
+; [List-of X] [List-of X] -> [List-of X]
+; like append
+(define (append-from-fold l1 l2)
+  (foldr cons l2 l1))
+
+(check-expect (append-from-fold (list 1 2 3) (list 4 5 6 7 8))
+              (list 1 2 3 4 5 6 7 8))
+
+; foldl reverses the first list!
+
+; [List-of Image] -> Image
+; horizontally composes
+(define (horizontalize loi)
+  (foldr beside empty-image loi))
+
+; [List-of Image] -> Image
+; vertically composes
+(define (verticalize loi)
+  (foldr above empty-image loi))
