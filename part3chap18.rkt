@@ -495,3 +495,31 @@
           (define (double n) (* n 2)))
     (build-list n double)))
 ; did that already
+
+; Exercise 259
+; String [List-of String] -> Boolean
+; determines whether any of the names on the latter are
+; equal to or an extension of the former
+(define (find-name name lon)
+  (local (; String -> Boolean
+          ; same as name or extension?
+          (define (same-ext? s)
+            (string=? name (first-part s)))
+          (define l (string-length name))
+          ; String -> String
+          ; selects the first part of string
+          (define (first-part s)
+            (substring s 0 l)))
+    (ormap same-ext? lon)))
+
+; [List-of String] -> Boolean
+; checks all names start with "a"
+(define (start-a? lon)
+  (local (; String -> Boolean
+          ; starts with a?
+          (define (first-a? s)
+            (string=? "a" (substring s 0 1))))
+    (andmap first-a? lon)))
+; You should use andmap, because that guarantees
+; checking all names for the property. just have
+; to "not" to make True.
