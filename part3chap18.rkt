@@ -472,3 +472,26 @@
 (check-expect (selection (list "whee" "bop" "boop" "beep")
                          (list "bop" "boop" "beep"))
               (list "bop" "boop" "beep"))
+
+; Exercise 258
+; N [N -> X] -> [List-of X]
+; constructs a list by applying f to 0, 1, ..., (sub1 n)
+;   (build-list n f) == (list (f 0) ... (f (- n 1)))
+(define (build-list n f) ...)
+
+(define (zero-indexed n)
+  (build-list n identity))
+(define (naturals n)
+  (build-list n add1))
+(define (build-list-frac n)
+  (local (; Number -> Fraction
+          ; creates the fraction 1/10^n
+          (define (frac n)
+            (/ 1 (expt 10 n))))
+    (build-list n frac)))
+(define (evens n)
+  (local (; Number -> Number
+          ; doubles the number
+          (define (double n) (* n 2)))
+    (build-list n double)))
+; did that already
