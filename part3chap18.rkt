@@ -552,4 +552,53 @@
           (define (cons-f x y)
             (cons (f x) y)))
     (foldr cons-f '() lox)))
-  
+
+; Exercise 262
+; Lo1s -> List-of-Lo1s
+; produces all the prefixes of a lo1s
+#|
+(define (prefixes lo1s)
+  (cond
+    [(empty? lo1s) '()]
+    [else (cons lo1s (prefixes (reverse (rest (reverse lo1s)))))]))
+|#
+(define (prefixes lo1s)
+  (local (; 1s -> [List-of Lo1s]
+          (define positions (build-list (length lo1s) add1))
+          (define (take n ls)
+            (cond
+              [(= n 0) '()]
+              [else (cons (first ls) (take (sub1 n) (rest ls)))]))
+          (define (taker n)
+            (take n lo1s)))          
+    (map taker positions)))
+
+(list 1 2 3 4)
+(list 1)
+(list 1 2)
+(list 1 2 3)
+
+; Lo1s -> List-of-Lo1s
+; produces all the suffixes of a lo1s
+#|
+(define (suffixes lo1s)
+  (cond
+    [(empty? lo1s) '()]
+    [else (cons lo1s (suffixes (rest lo1s)))]))
+|#
+(define (suffixes lo1s)
+  (local (; 1s -> [List-of Lo1s]
+          (define positions (build-list (length lo1s) add1))
+          (define (take n ls)
+            (cond
+              [(= n 0) '()]
+              [else (cons (first ls) (take (sub1 n) (rest ls)))]))
+          (define (taker n)
+            (reverse (take n (reverse lo1s)))))          
+    (map taker positions)))
+
+
+(list 1 2 3 4)
+(list 2 3 4)
+(list 3 4)
+(list 4)
