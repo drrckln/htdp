@@ -78,20 +78,16 @@ of objects as one example where abstraction may pay off.
                (posn-x u) (posn-y u)
                im))
 
-; Missile Image -> Image
-; adds m to the given image im
-(define (missile-render m im)
-  (place-image MISSILE
-               (posn-x m) (posn-y m)
-               im))
-
 ; List-of-missile Image -> Image
 ; adds all missiles to the given image
 (define (missiles-render lom im)
-  (cond
-    [(empty? lom) im]
-    [else (missile-render (first lom)
-                          (missiles-render (rest lom) im))]))
+  (local (; Missile Image -> Image
+          ; adds m to the given image im
+          (define (missile-render m img)
+            (place-image MISSILE
+                         (posn-x m) (posn-y m)
+                         img)))
+  (foldr missile-render im lom)))
 
 ; SIGS -> SIGS
 ; moves all objects by their designated velocities
@@ -143,13 +139,13 @@ of objects as one example where abstraction may pay off.
 
 ; List-of-missile -> List-of-missile
 ; moves all the existing missiles
-(define (move-missiles m)
-  (cond
-    [(empty? m) '()]
-    [else (cons (make-posn (posn-x (first m))
-                           (+ (posn-y (first m)) MISSILE-SPEED))
-                (move-missiles (rest m)))]))
-
+(define (move-missiles lom)
+  (local (; Missile -> Missile
+          ; updates the missile
+          (define (update-m m)
+            (make-posn (posn-x m)
+                       (+ (posn-y m) MISSILE-SPEED))))
+    (map update-m lom)))
 
 ; SIGS KeyEvent -> SIGS
 ; "left" makes the tank move left, "right" to the right
@@ -180,15 +176,11 @@ of objects as one example where abstraction may pay off.
 (define (fire t)
   (make-posn (tank-loc t) (- HEIGHT TANK-HEIGHT)))
 
-
-
 ; SIGS -> Boolean
 ; #true when UFO lands or a missile hits UFO
 (define (si-game-over? sigs)
-  (cond
-    [(landed? (sigs-ufo sigs)) #true]
-    [(any-hit? (sigs-ufo sigs) (sigs-missiles sigs)) #true]
-    [else #false]))
+  (or (landed? (sigs-ufo sigs))
+      (any-hit? (sigs-ufo sigs) (sigs-missiles sigs))))
 
 ; UFO -> Boolean
 ; determines whether the UFO has landed
@@ -199,22 +191,17 @@ of objects as one example where abstraction may pay off.
 ; UFO List-of-missile -> Boolean
 ; determines whether any missile hit the UFO
 (define (any-hit? u lom)
-  (cond
-    [(empty? lom) #false]
-    [else (or (hit? u (first lom))
-              (any-hit? u (rest lom)))]))
-
-; UFO Missile -> Boolean
-; determines whether the missile is close enough to the UFO to hit
-(define (hit? u m)
-  (<= (near u m) (image-width UFO)))
+  (local (; Missile -> Boolean
+          ; determines whether the missile is close enough to the UFO to hit
+          (define (hit? m)
+            (<= (near u m) (image-width UFO))))
+    (ormap hit? lom)))
 
 ; Posn Posn -> Number
 ; determines the distance between two Posns
 (define (near a b)
   (sqrt (+ (sqr (- (posn-x a) (posn-x b)))
            (sqr (- (posn-y a) (posn-y b))))))
-
 
 ; SIGS -> Image
 ; places GAME OVER on the final image
@@ -256,3 +243,7 @@ of objects as one example where abstraction may pay off.
                                        100
                                        (- 200 (/ TANK-HEIGHT 2))
                                        (empty-scene 200 200))))
+
+(si-main (make-sigs (make-posn 10 5)
+                      (make-tank 20 TANK-SPEED)
+                      '()))
