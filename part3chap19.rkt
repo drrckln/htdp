@@ -12,3 +12,14 @@
 ; 1. 3
 ; 2. 14
 ; 3. 13.25
+
+; Exercise 267
+(lambda (n) (< n 10))
+(lambda (x y) (number->string (* x y)))
+(lambda (ir1 ir2) (< (ir-price ir1)
+                     (ir-price ir2)))
+(lambda (nat) (if (even? nat) 0 1))
+(lambda (p im) (place-image (circle 3 "solid" "red")
+                            (posn-x p)
+                            (posn-y p)
+                            im))
