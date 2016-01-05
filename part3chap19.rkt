@@ -14,6 +14,7 @@
 ; 3. 13.25
 
 ; Exercise 267
+#|
 (lambda (n) (< n 10))
 (lambda (x y) (number->string (* x y)))
 (lambda (ir1 ir2) (< (ir-price ir1)
@@ -23,3 +24,14 @@
                             (posn-x p)
                             (posn-y p)
                             im))
+|#
+
+; Exercise 268
+(define (f-plain x) (* 10 x))
+
+(define f-lambda (lambda (x)
+                   (* 10 x)))
+
+; Number -> Boolean
+(define (compare x)
+  (= (f-plain x) (f-lambda x)))
