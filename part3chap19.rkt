@@ -35,3 +35,6 @@
 ; Number -> Boolean
 (define (compare x)
   (= (f-plain x) (f-lambda x)))
+
+; Exercise 269
+; yes it can
