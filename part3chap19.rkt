@@ -38,3 +38,16 @@
 
 ; Exercise 269
 ; yes it can
+
+; Exercise 270
+
+(map (lambda (x) (* 10 x))
+     '(1 2 3))
+
+(foldl (lambda (name rst) (string-append name ", " rst)) "etc."
+       '("Matthew" "Robby"))
+
+(define threshold 100)
+(define-struct ir [name price])
+(filter (lambda (ir) (<= (ir-price ir) threshold))
+        (list (make-ir "bear" 10) (make-ir "doll" 33)))
