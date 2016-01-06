@@ -51,3 +51,11 @@
 (define-struct ir [name price])
 (filter (lambda (ir) (<= (ir-price ir) threshold))
         (list (make-ir "bear" 10) (make-ir "doll" 33)))
+
+; Exercise 271
+((lambda (x) x) (lambda (x) x))
+; so.. you just get the original function
+((lambda (x) (x x)) (lambda (x) x))
+; identity applied twice
+;((lambda (x) (x x)) (lambda (x) (x x)))
+; infinite identities
