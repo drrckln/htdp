@@ -59,3 +59,17 @@
 ; identity applied twice
 ;((lambda (x) (x x)) (lambda (x) (x x)))
 ; infinite identities
+
+; Exercise 272
+; [List-of USD] -> [List-of Euro]
+(define (convert-euro lod)
+  (map (lambda (dollar) (* 1.22 dollar))
+       lod))
+; [List-of Fahrenheit] -> [List-of Celsius]
+(define (convertFC lof)
+  (map (lambda (f) (* 5/9 (- f 32))) lof))
+
+; [List-of Posn] -> [List-of [List Number Number]]
+(define (translate lop)
+  (map (lambda (p) (list (posn-x p) (posn-y p)))
+       lop))
