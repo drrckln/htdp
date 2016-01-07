@@ -48,7 +48,7 @@
        '("Matthew" "Robby"))
 
 (define threshold 100)
-(define-struct ir [name price])
+;(define-struct ir [name price])
 (filter (lambda (ir) (<= (ir-price ir) threshold))
         (list (make-ir "bear" 10) (make-ir "doll" 33)))
 
@@ -73,3 +73,23 @@
 (define (translate lop)
   (map (lambda (p) (list (posn-x p) (posn-y p)))
        lop))
+
+; Exercise 273
+(define-struct ir [name desc acq rec])
+; [List-of IR] -> [List-of IR]
+; sorts by diff between the two prices
+(define (ir-sorter loir)
+  (cond
+    [(empty? loir) '()]
+    [else (insert (first loir) (ir-sorter (rest loir)))]))
+
+; IR [List-of IR] -> [List-of IR]
+; inserts IR into the sorted list
+(define (insert ir loir)
+  (cond
+    [(empty? loir) (list ir)]
+    [((lambda (x) (<= (abs (- (ir-acq ir) (ir-rec ir)))
+                      (abs (- (ir-acq x) (ir-rec x)))))
+      (first loir))
+     (cons ir (loir))]
+    [else (cons (first loir) (insert ir (rest loir)))]))
