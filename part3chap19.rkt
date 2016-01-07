@@ -93,3 +93,20 @@
       (first loir))
      (cons ir (loir))]
     [else (cons (first loir) (insert ir (rest loir)))]))
+
+; Exercise 274
+; Number [List-of IR] -> [List-of IR]
+; produces list of all with acq price below ua
+(define (eliminate-exp n loir)
+  (filter (lambda (ir) (< (ir-acq ir) n)) loir))
+
+; String [List-of IR] -> [List-of IR]
+; removes all IR that have ty as the name
+(define (recall ty loir)
+  (filter (lambda (ir) (not (string=? ty (ir-name)))) loir))
+
+; [List-of String] [List-of String] -> [List-of String]
+; consumes two lists of names and selects all those from the
+; second one that are also on the first
+(define (selection l1 l2)
+  (filter (lambda (name) (member? name l1)) l2))
