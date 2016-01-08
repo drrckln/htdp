@@ -142,3 +142,9 @@
           lon))
 
 ; You should use andmap ("and" for conditions that hold for all)
+
+; Exercise 277
+; [List-of X] [List-of X] -> [List-of X]
+; concatenates the two lists
+(define (append-from-fold l1 l2)
+  (foldr (lambda (x y) (cons x y)) l2 l1))
