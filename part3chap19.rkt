@@ -122,3 +122,23 @@
                                             (cond
                                               [(= x y) 1]
                                               [else 0]))))))
+
+; Exercise 276
+; Name [List-of Name] -> [List-of Name]
+; determines whether any of the names on the list are equal
+; to or an extension of the name
+(define (find-name name lon)
+  (ormap (lambda (x) (cond
+                       [(string=? name
+                                  (substring 0 (string-length name)))
+                        #true]
+                       [else false]))
+         lon))
+
+; [List-of Name] -> Boolean
+; checks that all names start with "a"
+(define (check-start-a lon)
+  (andmap (lambda (x) (if (string=? "a" (substring 0 1 x)) #true #false))
+          lon))
+
+; You should use andmap ("and" for conditions that hold for all)
