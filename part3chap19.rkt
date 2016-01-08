@@ -49,8 +49,8 @@
 
 (define threshold 100)
 ;(define-struct ir [name price])
-(filter (lambda (ir) (<= (ir-price ir) threshold))
-        (list (make-ir "bear" 10) (make-ir "doll" 33)))
+;(filter (lambda (ir) (<= (ir-price ir) threshold))
+;        (list (make-ir "bear" 10) (make-ir "doll" 33)))
 
 ; Exercise 271
 ((lambda (x) x) (lambda (x) x))
@@ -110,3 +110,15 @@
 ; second one that are also on the first
 (define (selection l1 l2)
   (filter (lambda (name) (member? name l1)) l2))
+
+; Exercise 275
+(define n 5)
+(build-list n (lambda (x) x))
+(build-list n (lambda (x) (+ x 1)))
+(build-list n (lambda (x) (/ 1 (expt 10 x))))
+(build-list n (lambda (x) (* (+ x 1) 2)))
+(define (identmatrix n)
+  (build-list n (lambda (x) (build-list n (lambda (y)
+                                            (cond
+                                              [(= x y) 1]
+                                              [else 0]))))))
