@@ -148,3 +148,8 @@
 ; concatenates the two lists
 (define (append-from-fold l1 l2)
   (foldr (lambda (x y) (cons x y)) l2 l1))
+
+; Exercise 278
+; (X -> Y) [List-of X] -> [List-of Y]
+(define (map-via-fold f ls)
+  (foldr (lambda (x y) (cons (f x) y)) '() ls))
