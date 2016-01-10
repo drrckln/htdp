@@ -153,3 +153,19 @@
 ; (X -> Y) [List-of X] -> [List-of Y]
 (define (map-via-fold f ls)
   (foldr (lambda (x y) (cons (f x) y)) '() ls))
+
+; [List-of Number] [Number Number -> Boolean] -> [List-of Number]
+; sort alon0 according to cmp
+
+(check-expect (sort-cmp '("a" "b" "c") string<?) '("a" "b" "c"))
+(check-expect (sort-cmp '(2 1 3 4 6 5) <) '(1 2 3 4 5 6))
+
+(define (sort-cmp alon0 cmp)
+  (local (; [List-of Number] -> [List-of Number]
+          ; produces a variant of alon sorted by cmp
+          (define (isort alon) ...)
+
+          ; Number [List-of Number] -> [List-of Number]
+          ; inserts n into the sorted list of numbers alon
+          (define (insert n alon) ...))
+    (isort alon0)))
