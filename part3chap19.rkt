@@ -169,3 +169,31 @@
           ; inserts n into the sorted list of numbers alon
           (define (insert n alon) ...))
     (isort alon0)))
+
+(check-satisfied (sort-cmp '("a" "b" "c") string<?) (sorted string<?))
+(check-satisfied (sort-cmp '(2 1 3 4 6 5) <) (sorted <))
+
+; [X X -> Boolean] -> [ [List-of X] -> Boolean]
+; produces a function that determines whether
+; some list is sorted according to cmp
+(define (sorted cmp)
+  (lambda (l0)
+    (local ((define (sorted/l l) ...))
+      ...)))
+
+(check-expect [(sorted string<?) '("a" "b" "c")] #true)
+(check-expect [(sorted <) '(1 2 3 4 5 6)] #true)
+
+; Exercise 279
+; [X X -> Boolean] [NEList-of X] -> Boolean 
+; determine whether l is sorted according to cmp
+ 
+(check-expect (sorted? < '(1 2 3)) #true)
+(check-expect (sorted? < '(2 1 3)) #false)
+ 
+(define (sorted? cmp l)
+  (cond
+    [(empty? (rest l)) #true]
+    [(cmp (first l) (second l))
+     (sorted? cmp (rest l))]
+    [else #false]))
