@@ -178,8 +178,14 @@
 ; some list is sorted according to cmp
 (define (sorted cmp)
   (lambda (l0)
-    (local ((define (sorted/l l) ...))
-      ...)))
+    (local (; [NEList-of X] -> Boolean
+            ; is l sorted according to cmp
+            (define (sorted/l l)
+              (cond
+                [(empty? (rest l)) #true]
+                [else (and (cmp (first l) (second l))
+                           (sorted/l (rest l)))])))
+      if (empty? l0) #true (sorted/l l0))))
 
 (check-expect [(sorted string<?) '("a" "b" "c")] #true)
 (check-expect [(sorted <) '(1 2 3 4 5 6)] #true)
@@ -197,3 +203,40 @@
     [(cmp (first l) (second l))
      (sorted? cmp (rest l))]
     [else #false]))
+
+; yes, you could redefine sorted to use sorted?
+; it doesn't consume cmp because the local expression
+; has access to the variables in the scope of the function
+; containing it.
+
+; List-of-Numbers -> List-of-Numbers
+; produces a sorted version of l
+(define (sort-cmp/bad l)
+  '(9 8 6 5 4 3 2 1 0))
+
+; [List-of X] [X X -> Boolean] -> [ [List-of X] -> Boolean]
+; is l0 sorted according to cmp
+; are all items in list k members of l0
+(define (sorted-variant-of k cmp)
+  (lambda (l0)
+    (and (sorted? cmp l0)
+         (contains? l0 k))))
+
+(check-expect [(sorted-variant-of '(1 3 2) <) '(1 2 3)] #true)
+(check-expect [(sorted-variant-of '(1 3 2) <) '(1 3)] #false)
+
+; [Listof X] [Listof X] -> Boolean 
+; are all items in list k members of list l
+ 
+(check-expect (contains? '(1 2 3) '(2 1 4 3)) #false)
+(check-expect (contains? '(1 2 3 4) '(2 1 3)) #true)
+ 
+(define (contains? l k)
+  (andmap (lambda (item-in-k) (member? item-in-k l)) k))
+
+(define (sorted-variant-of.v2 k cmp)
+  (lambda (l0)
+    (and (sorted? cmp l0)
+         (contains? l0 k)
+         (contains? k l0))))
+
