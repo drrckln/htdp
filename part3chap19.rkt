@@ -263,3 +263,46 @@
                  (found? 10 (list (list 3 4)
                                   (list 7 8 3)
                                   (list 2 7 1 0))))
+
+; Exercise 281
+; X [List-of X] -> [Maybe N]
+; determine the (0-based) index of the first occurrence of x in l, 
+; #false otherwise
+(define (index x l)
+  (cond
+    [(empty? l) #false]
+    [else (if (equal? (first l) x)
+              0
+              (local ((define i (index x (rest l))))
+                (if (boolean? i) i (+ i 1))))]))
+
+; X [List-of X] -> [[Maybe N] -> Boolean]
+(define (is-index? x k)
+  (lambda (maybe-n)
+    (cond
+      [(boolean? maybe-n) (not (member? x k))]
+      [else (and (equal? x (list-select maybe-n k))
+                 (first-occurrence? x maybe-n k))])))
+
+; N [List-of X] -> Maybe X
+(define (list-select n l)
+  (cond
+    [(empty? l) #false]
+    [(= n 0) (first l)]
+    [else (list-select (sub1 n) (rest l))]))
+
+; X N [List-of X] -> Boolean
+; checks that N is indeed where the first occurrence of x is
+(define (first-occurrence? x i l)
+  (local (; N [List-of X]
+          ; cuts off starting from i
+          (define (cut-off n l0)
+            (cond
+              [(= n 0) '()]
+              [else (cons (first l0) (cut-off (sub1 n) (rest l0)))]))
+          ; the list before i index
+          (define before-list (cut-off i l)))
+    (not (member? x before-list))))
+
+(check-satisfied (index 3 (list 5 8 0 4 2 3 9 8 2))
+                 (is-index? 3 (list 5 8 0 4 2 3 9 8 2)))
