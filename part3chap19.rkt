@@ -154,6 +154,7 @@
 (define (map-via-fold f ls)
   (foldr (lambda (x y) (cons (f x) y)) '() ls))
 
+#|
 ; [List-of Number] [Number Number -> Boolean] -> [List-of Number]
 ; sort alon0 according to cmp
 
@@ -185,7 +186,7 @@
                 [(empty? (rest l)) #true]
                 [else (and (cmp (first l) (second l))
                            (sorted/l (rest l)))])))
-      if (empty? l0) #true (sorted/l l0))))
+      (if (empty? l0) #true (sorted/l l0)))))
 
 (check-expect [(sorted string<?) '("a" "b" "c")] #true)
 (check-expect [(sorted <) '(1 2 3 4 5 6)] #true)
@@ -225,7 +226,7 @@
 (check-expect [(sorted-variant-of '(1 3 2) <) '(1 2 3)] #true)
 (check-expect [(sorted-variant-of '(1 3 2) <) '(1 3)] #false)
 
-; [Listof X] [Listof X] -> Boolean 
+; [List-of X] [List-of X] -> Boolean 
 ; are all items in list k members of list l
  
 (check-expect (contains? '(1 2 3) '(2 1 4 3)) #false)
@@ -240,6 +241,7 @@
          (contains? l0 k)
          (contains? k l0))))
 
+|#
 ; Exercise 280
 ; X [List-of X] -> [Maybe [List-of X]]
 ; produces the first sublist of l that starts with x, #false otherwise
@@ -248,5 +250,16 @@
     [(empty? l) #false]
     [else (if (equal? (first l) x) l (find x (rest l)))]))
 
-(define (found? 
+; X [List-of X] -> [[Maybe [List-of X]] -> Boolean]
+(define (found? x k)
+  (lambda (l0)
+    (cond
+      [(boolean? l0) (not (ormap (lambda (y) (equal? (first y) x)) k))]
+      [else (member? l0 k)])))
 
+(check-satisfied (find 10 (list (list 3 4)
+                                (list 7 8 3)
+                                (list 2 7 1 0)))
+                 (found? 10 (list (list 3 4)
+                                  (list 7 8 3)
+                                  (list 2 7 1 0))))
