@@ -240,3 +240,13 @@
          (contains? l0 k)
          (contains? k l0))))
 
+; Exercise 280
+; X [List-of X] -> [Maybe [List-of X]]
+; produces the first sublist of l that starts with x, #false otherwise
+(define (find x l)
+  (cond
+    [(empty? l) #false]
+    [else (if (equal? (first l) x) l (find x (rest l)))]))
+
+(define (found? 
+
