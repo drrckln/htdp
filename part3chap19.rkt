@@ -306,3 +306,31 @@
 
 (check-satisfied (index 3 (list 5 8 0 4 2 3 9 8 2))
                  (is-index? 3 (list 5 8 0 4 2 3 9 8 2)))
+
+; Exercise 282
+(define WIDTH 300)
+(define HEIGHT 300)
+ 
+; N -> [List-of Posn]
+; generate n random Posns in a WIDTH by HEIGHT rectangle
+(check-satisfied (random-posns 3) (n-inside-playground? 3))
+ 
+(define (random-posns n)
+  (build-list n (lambda (i) (make-posn (random WIDTH) (random HEIGHT)))))
+
+; N -> [[List-of Posn] -> Boolean]
+(define (n-inside-playground? k)
+  (lambda (lop)
+    (and (= (length lop) k)
+         (andmap (lambda (p) (and (<= 0 (posn-x p) WIDTH)
+                                  (<= 0 (posn-y p) HEIGHT)))
+                 lop))))
+
+; This is an incomplete specification because it doesn't check
+; that the Posns are random
+
+; N -> [List-of Posn]
+(define (random-posns/bad n)
+  (build-list n (lambda (i) (make-posn (/ WIDTH 2) (/ HEIGHT 2)))))
+
+(check-satisfied (random-posns/bad 3) (n-inside-playground? 3))
