@@ -334,3 +334,44 @@
   (build-list n (lambda (i) (make-posn (/ WIDTH 2) (/ HEIGHT 2)))))
 
 (check-satisfied (random-posns/bad 3) (n-inside-playground? 3))
+
+; Shape is a function:
+; [Posn -> Boolean]
+; interpretation if s is a shape and p a Posn, (s p) produces
+; #true if the given Posn is inside of s, #false otherwise
+
+; Shape Posn -> Boolean
+; this takes the Shape s and the Posn p to be tested, and applies
+; (s p). This works because the Shape type IS a function w/ the
+; set of Posns as the domain (input type)
+(define (inside? s p)
+  (s p))
+
+; Posn -> Boolean
+; this example shape is simply the point (3, 4)
+(lambda (p) (and (= (posn-x p) 3)
+                 (= (posn-y p) 4)))
+
+; Number Number -> Shape
+; represents a point at (x,y)
+(define (make-point x y)
+  (lambda (p)
+    (and (= (posn-x p) x) (= (posn-y p) y))))
+
+(define a-sample-shape (make-point 3 4))
+
+(check-expect (inside? (make-point 3 4) (make-posn 3 4)) #true)
+(check-expect (inside? (make-point 3 4) (make-posn 3 -4)) #false)
+
+; Number Number Number -> Shape
+; creates a data representation for a circle of radius r
+; located at (center-x, center-y)
+(define (make-circle circle-x circley r)
+  ...)
+
+(check-expect (inside? (make-circle 3 4 5) (make-posn 0 0)) #true) ; exactly 5 away
+(check-expect (inside? (make-circle 3 4 5) (make-posn 0 -1)) #false) ; too far
+(check-expect (inside? (make-circle 3 4 5) (make-posn -1 3)) #true) ; close enough
+
+; Exercise 283
+; drawn
