@@ -366,8 +366,10 @@
 ; Number Number Number -> Shape
 ; creates a data representation for a circle of radius r
 ; located at (center-x, center-y)
-(define (make-circle circle-x circley r)
-  ...)
+(define (make-circle center-x center-y r)
+  ; [Posn -> Boolean]
+  (lambda (p)
+    (<= (distance-between center-x center-y p) r)))
 
 (check-expect (inside? (make-circle 3 4 5) (make-posn 0 0)) #true) ; exactly 5 away
 (check-expect (inside? (make-circle 3 4 5) (make-posn 0 -1)) #false) ; too far
@@ -375,3 +377,10 @@
 
 ; Exercise 283
 ; drawn
+
+; Exercise 284
+; Number Number Posn -> Number
+; takes an x and y, then finds distance to the Posn p given
+(define (distance-between x y p)
+  (sqrt (+ (sqr (- x (posn-x p)))
+           (sqr (- y (posn-y p))))))
