@@ -23,8 +23,8 @@
 ; (define x (cons 1 >x<) >x< is bound at the first x
 ; I guess it's an infinite loop of (cons 1 (cons 1 (cons 1 ...
 
-(define x (cons 1 x))
-
+;(define x (cons 1 x))
+#|
 ; Exercise 290
 ; > < highlighted
 ; { } binding
@@ -42,4 +42,17 @@
      ((lambda ({x}1)
         (+ (* 3 >x<1)
            (/ 1 x)))
-      (* y y)))) 
+      (* y y))))
+|#
+
+; [List-of X] -> [List-of (Number, X)]
+(define (enumerate2 lox)
+  (local ((define index (build-list (length lox) identity)))
+    (map list index lox)))
+
+; [List-of X] -> [List-of [List N X]]
+; pair each item in l with its index
+(check-expect (enumerate '(a b c)) '((1 a) (2 b) (3 c)))
+(define (enumerate l)
+  (for/list ((item l) (ith (length l)))
+    (list (+ ith 1) item)))
