@@ -18,3 +18,9 @@
 
 ; Exercise 288
 ; No, these are the same function (diagrams drawn in notebook)
+
+; Exercise 289
+; (define x (cons 1 >x<) >x< is bound at the first x
+; I guess it's an infinite loop of (cons 1 (cons 1 (cons 1 ...
+
+(define x (cons 1 x))
