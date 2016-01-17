@@ -15,3 +15,6 @@
 (define (p3 x)
   (+ (p1 x 0)
      (+ (p1 x 1) (p2 x))))
+
+; Exercise 288
+; No, these are the same function (diagrams drawn in notebook)
