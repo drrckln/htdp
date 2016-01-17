@@ -24,3 +24,22 @@
 ; I guess it's an infinite loop of (cons 1 (cons 1 (cons 1 ...
 
 (define x (cons 1 x))
+
+; Exercise 290
+; > < highlighted
+; { } binding
+(lambda ({x} y)
+  (+ >x< (* x y))) 
+
+(lambda ({x}0 y)
+  (+ >x<0
+     (local ((define {x}1 (* y y)))
+       (+ (* 3 >x<1)
+          (/ 1 x)))))
+
+(lambda ({x}0 y)
+  (+ >x<0
+     ((lambda ({x}1)
+        (+ (* 3 >x<1)
+           (/ 1 x)))
+      (* y y)))) 
