@@ -56,3 +56,20 @@
 (define (enumerate l)
   (for/list ((item l) (ith (length l)))
     (list (+ ith 1) item)))
+
+; [List-of X] [List-of Y] -> [List-of [List X Y]]
+(define (cross2 l1 l2)
+  (foldl append '()
+         (map (lambda (y) (map (lambda (x) (list x y)) l1))
+              l2)))
+
+; [List-of X] [List-of Y] -> [List-of [List X Y]]
+; generate all possible pairs of items from l1 and l2
+(check-satisfied (cross '(a b c) '(1 2)) (lambda (c) (= (length c) 6)))
+(define (cross l1 l2)
+  (for*/list ([item1 l1][item2 l2])
+    (list item1 item2)))
+
+(define width 2)
+(for*/list ([width 3][height width])
+  (list width height))
