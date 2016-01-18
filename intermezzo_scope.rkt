@@ -92,3 +92,7 @@
     [(not (equal? (f (first ls)) #false))
      (first ls)]
     [else (or-map f (rest ls))]))
+
+; N -> sequence?
+; construct an infinite sequence of natural numbers starting at n
+(define (in-naturals n) ...)
