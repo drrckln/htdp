@@ -73,3 +73,22 @@
 (define width 2)
 (for*/list ([width 3][height width])
   (list width height))
+
+; and-map gives the last generated value or #false
+; [X -> Maybe Y] [List-of X] -> Maybe X
+(define (and-map f ls)
+  (cond
+    [(empty? (rest ls)) (if (equal? (f (first ls)) #false)
+                            #false
+                            (first ls))]
+    [(equal? (f (first ls)) #false) #false]
+    [else (and-map f (rest ls))]))
+
+; or-map gives the first value that is not #false, else #false (all #false)
+; [X -> Maybe Y] [List-of X] -> Maybe X
+(define (or-map f ls)
+  (cond
+    [(empty? ls) #false]
+    [(not (equal? (f (first ls)) #false))
+     (first ls)]
+    [else (or-map f (rest ls))]))
