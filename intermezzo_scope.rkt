@@ -96,3 +96,12 @@
 ; N -> sequence?
 ; construct an infinite sequence of natural numbers starting at n
 (define (in-naturals n) ...)
+
+; N N N -> sequence?
+; construct the finite sequence of natural numbers starting with
+;    start
+;    (+ start step)
+;    (+ start step step)
+;    ...
+;  until the number exceeds end
+(define (in-range start end step) ...)
