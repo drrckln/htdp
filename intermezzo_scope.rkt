@@ -95,7 +95,7 @@
 
 ; N -> sequence?
 ; construct an infinite sequence of natural numbers starting at n
-(define (in-naturals n) ...)
+;(define (in-naturals n) ...)
 
 ; N N N -> sequence?
 ; construct the finite sequence of natural numbers starting with
@@ -104,4 +104,21 @@
 ;    (+ start step step)
 ;    ...
 ;  until the number exceeds end
-(define (in-range start end step) ...)
+;(define (in-range start end step) ...)
+
+(define (enumerate.v2 l)
+  (for/list ((item l) (ith (in-naturals 1)))
+    (list ith item)))
+
+; N -> Number
+; add the even numbers between 0 and n (exclusive)
+(check-expect (sum-evens 2) 0)
+(check-expect (sum-evens 4) 2)
+(define (sum-evens n)
+  (for/sum ([i (in-range 0 n 2)]) i))
+
+; Exercise 291
+; [List-of USD] -> [List-of Euro]
+(define (convert-euro lod)
+  (for/list ((dollar lod))
+    (* 1.08 dollar)))
