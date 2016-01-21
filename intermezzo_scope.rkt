@@ -122,3 +122,33 @@
 (define (convert-euro lod)
   (for/list ((dollar lod))
     (* 1.08 dollar)))
+
+; Exercise 292
+(define (zero-list n)
+  (for/list ((i n))
+    i))
+
+(define (one-list n)
+  (for/list ((i n))
+    (add1 i)))
+
+(define (inverse-tens n)
+  (for/list ((i n))
+    (/ 1 (expt 10 i))))
+
+(define (evens n)
+  (for/list ((i n))
+    (* 2 (add1 i))))
+
+(define (diagonal n)
+  (local (; N N -> [List-of N]
+          (define (produce i)
+            (for/list ((index n))
+              (if (= index i) 1 0))))
+    (for/list ((i n))
+      (produce i))))
+
+(define (tabulate f n)
+  (reverse
+   (for/list ((i (+ n 1)))
+     (f i))))
