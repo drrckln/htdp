@@ -152,3 +152,17 @@
   (reverse
    (for/list ((i (+ n 1)))
      (f i))))
+
+; Exercise 293
+; Name [List-of Name] -> Name
+(define (find-name name lon)
+  (for/or ((item lon))
+    (if (or (equal? item name)
+            (equal? (substring item 0 (string-length name)) name))
+        item
+        #false)))
+
+; Number [List-of Name] -> Boolean
+(define (check-width n lon)
+  (for/and ((item lon))
+    (<= n (string-length item))))
