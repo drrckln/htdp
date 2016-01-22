@@ -166,3 +166,37 @@
 (define (check-width n lon)
   (for/and ((item lon))
     (<= n (string-length item))))
+
+; [Non-empty-list X] -> X
+; retrieve the last item of ne-l
+(check-expect (last-item '(a b c)) 'c)
+(check-error (last-item '()))
+(define (last-item ne-l)
+  (match ne-l
+    [(cons lst '()) lst]
+    [(cons fst rst) (last-item rst)]))
+
+(define-struct layer [color doll])
+; An RD (russian doll) is one of: 
+; – "wooden doll"
+; – (make-layer String RD)
+
+; RD -> Number
+; how many dolls are a part of an-rd 
+(define (depth an-rd)
+  (match an-rd
+    ["wooden doll" 0]
+    [(layer name interior) (+ (depth interior) 1)]))
+
+; Exercise 294
+(define-struct phone [area switch four])
+(check-expect (replace (list (make-phone 713 434 2553) (make-phone 342 395 5773)))
+              (list (make-phone 281 434 2553) (make-phone 342 395 5773)))
+; [List-of Phone] -> [List-of Phone]
+; replaces area code 713 with 281
+(define (replace lop)
+  (map (lambda (p) (match p
+                     [(phone 713 s f) (make-phone 281 s f)]
+                     [(phone a s f) (make-phone a s f)]))
+       lop))
+  
