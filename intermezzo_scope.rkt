@@ -199,4 +199,11 @@
                      [(phone 713 s f) (make-phone 281 s f)]
                      [(phone a s f) (make-phone a s f)]))
        lop))
-  
+
+; Exercise 295
+; [List-of [List-of String]] -> [List-of Number]
+; determines the number of words on each line 
+(define (words-on-line lls)
+  (match lls
+    ['() '()]
+    [(cons line rst-lines) (cons (length line) (words-on-line rst-lines))]))
