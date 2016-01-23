@@ -109,3 +109,26 @@
      (append (list (child-eyes ft))
              (eye-colors (child-father ft))
              (eye-colors (child-mother ft)))]))
+
+; Exercise 299
+; FT -> Boolean
+; determines whether any ancestors had blue eyes
+(define (blue-eyed-ancestor? ft)
+  (cond
+    [(no-parent? ft) #false]
+    [else (or (blue-eyed-child? (child-father ft))
+              (blue-eyed-child? (child-mother ft)))]))
+
+(check-expect (blue-eyed-ancestor? Eva) #false)
+(check-expect (blue-eyed-ancestor? Gustav) #true)
+
+; This version fails, because it keeps checking the ancestors
+; recursively. Ignores the current child at every level of depth.
+; Will always result in #false
+#|
+(define (blue-eyed-ancestor? a-ftree)
+  (cond
+    [(no-parent? a-ftree) #false]
+    [else (or (blue-eyed-ancestor? (child-father a-ftree))
+              (blue-eyed-ancestor? (child-mother a-ftree)))]))
+|#
