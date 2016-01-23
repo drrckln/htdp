@@ -98,3 +98,14 @@
 (check-expect (sum-ages Eva 2016) (+ (- 2016 1965)
                                      (- 2016 1926)
                                      (- 2016 1926)))
+
+; Exercise 298
+; FT -> [List-of Color]
+; produces a list of all eye colors in the tree
+(define (eye-colors ft)
+  (cond
+    [(no-parent? ft) '()]
+    [else ; (child? a-ftree)
+     (append (list (child-eyes ft))
+             (eye-colors (child-father ft))
+             (eye-colors (child-mother ft)))]))
