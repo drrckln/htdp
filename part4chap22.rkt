@@ -70,3 +70,31 @@
 (check-expect (count-persons Carl) 1)
 (check-expect (count-persons Dave) 3)
 (check-expect (count-persons Gustav) 5)
+
+; Exercise 297
+; FT -> Number
+; produces the average age of all child structures in the family tree
+(define (average-age ft)
+  (/ (sum-ages ft 2016)
+     (count-persons ft)))
+
+(check-expect (average-age Carl) (- 2016 1926))
+(check-expect (average-age Eva) (/ (+ (- 2016 1965)
+                                      (- 2016 1926)
+                                      (- 2016 1926))
+                                   3))
+
+; FT Number -> Number
+; sums the ages of all child structures in the family tree
+(define (sum-ages ft current-year)
+  (cond
+    [(no-parent? ft) 0]
+    [else ; (child? a-ftree)
+     (+ (sum-ages (child-father ft) current-year)
+        (sum-ages (child-mother ft) current-year)
+        (- current-year (child-date ft)))]))
+
+(check-expect (sum-ages Carl 2013) (- 2013 1926))
+(check-expect (sum-ages Eva 2016) (+ (- 2016 1965)
+                                     (- 2016 1926)
+                                     (- 2016 1926)))
