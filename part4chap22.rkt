@@ -132,3 +132,11 @@
     [else (or (blue-eyed-ancestor? (child-father a-ftree))
               (blue-eyed-ancestor? (child-mother a-ftree)))]))
 |#
+
+; A FF (family forest) is one of:
+; - '()
+; - (cons FT FF)
+
+(define ff1 (list Carl Bettina))
+(define ff2 (list Fred Eva))
+(define ff3 (list Fred Eva Carl))
