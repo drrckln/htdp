@@ -163,3 +163,10 @@
 
 (define (blue-eyed-child-in-forest? ft)
   (ormap blue-eyed-child? ft))
+
+; Exercise 301
+; FF Natural -> Number
+; produces the average age of all child nodes in the forest
+(define (averaged-age ff year)
+  (/ (foldl + 0 (map (lambda (ft) (sum-ages ft year)) ff))
+     (foldl + 0 (map count-persons ff))))
