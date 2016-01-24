@@ -140,3 +140,26 @@
 (define ff1 (list Carl Bettina))
 (define ff2 (list Fred Eva))
 (define ff3 (list Fred Eva Carl))
+
+; Exercise 300
+; A FF (family forest) is: [List-of FT]
+; - '()
+; - (cons FT [List-of FT])
+
+; [List-of FT] -> Boolean
+; does the forest contain any child node with "blue" eyes
+ 
+(check-expect (blue-eyed-child-in-forest? ff1) #false)
+(check-expect (blue-eyed-child-in-forest? ff2) #true)
+(check-expect (blue-eyed-child-in-forest? ff3) #true)
+
+#|
+(define (blue-eyed-child-in-forest? a-forest)
+  (cond
+    [(empty? a-forest) #false]
+    [else (or (blue-eyed-child? (first a-forest))
+              (blue-eyed-child-in-forest? (rest a-forest)))]))
+|#
+
+(define (blue-eyed-child-in-forest? ft)
+  (ormap blue-eyed-child? ft))
