@@ -294,3 +294,23 @@
               [(symbol? at) (if (symbol=? at sy) 1 0)])))
     ; — IN —
     (count-sexp sexp)))
+
+; Exercise 304
+; S-expr -> Number
+; determines the depth of sexp
+(define (depth sexp)
+  (cond
+    [(atom? sexp) 1]
+    [else (+ (depth-sl sexp) 1)]))
+
+; SL -> Number
+; determines the depth of sexp
+(define (depth-sl sexp)
+  (cond
+    [(empty? sexp) 0]
+    [else (max (depth (first sexp))
+               (depth-sl (rest sexp)))]))
+
+(check-expect (depth 'world) 1)
+(check-expect (depth '(world hello)) 2)
+(check-expect (depth '(((world) hello) hello)) 4)
