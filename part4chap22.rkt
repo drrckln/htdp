@@ -191,3 +191,106 @@
     [(string? s-expr) #true]
     [(symbol? s-expr) #true]
     [else #false]))
+
+; S-expr Symbol -> N
+; counts all occurrences of sy in sexp
+;(define (count sexp sy)
+;  0)
+
+(check-expect (count 'world 'hello) 0)
+(check-expect (count '(world hello) 'hello) 1)
+(check-expect (count '(((world) hello) hello) 'hello) 2)
+
+#|
+; S-expr template
+; S-expr -> ???
+(define (f-sexp sexp)
+  (cond
+    [(atom? sexp) (f-atom sexp)]
+    [(list? sexp) (f-list sexp)]))
+
+; SL template
+; SL -> ???
+(define (f-list sl)
+  (cond
+    [(empty? sl) ...]
+    [else (... (first sl) ... (f-list (rest sl)) ...)]))
+
+; Atom template
+; Atom -> ???
+(define (f-atom atom)
+  (cond
+    [(number? atom) ...]
+    [(string? atom) ...]
+    [(symbol? atom) ...]))
+
+; count problem templates
+(define (count sexp sy)
+ (cond
+   [(atom? sexp) (count-atom sexp sy)]
+   [else (count-sl sexp sy)]))
+ 
+(define (count-sl sl sy)
+  (cond
+    [(empty? sl) ...]
+    [else (... (count (first sl) sy)
+           ... (count-sl (rest sl) sy) ...)]))
+ 
+(define (count-atom at sy)
+  (cond
+    [(number? at) ...]
+    [(string? at) ...]
+    [(symbol? at) ...]))
+
+
+; S-expr Symbol -> N 
+; counts all occurrences of sy in sexp 
+(define (count sexp sy)
+ (cond
+   [(atom? sexp) (count-atom sexp sy)]
+   [else (count-sl sexp sy)]))
+ 
+; SL Symbol -> N 
+; counts all occurrences of sy in sl 
+(define (count-sl sl sy)
+  (cond
+    [(empty? sl) 0]
+    [else (+ (count (first sl) sy) (count-sl (rest sl) sy))]))
+ 
+; Atom Symbol -> N 
+; counts all occurrences of sy in at 
+(define (count-atom at sy)
+  (cond
+    [(number? at) 0]
+    [(string? at) 0]
+    [(symbol? at) (if (symbol=? at sy) 1 0)]))
+|#
+
+; Exercise 303
+; S-expr Symbol -> N 
+; counts all occurrences of sy in sexp 
+(define (count sexp sy)
+  (local (; S-expr -> N 
+          ; the main function 
+          (define (count-sexp sexp)
+            (cond
+              [(atom? sexp) (count-atom sexp)]
+              [else (count-sl sexp)]))
+ 
+          ; SL -> N 
+          ; counts all occurrences of sy in sl 
+          (define (count-sl sl)
+            (cond
+              [(empty? sl) 0]
+              [else (+ (count-sexp (first sl))
+                       (count-sl (rest sl)))]))
+ 
+          ; Atom -> N 
+          ; counts all occurrences of sy in at 
+          (define (count-atom at)
+            (cond
+              [(number? at) 0]
+              [(string? at) 0]
+              [(symbol? at) (if (symbol=? at sy) 1 0)])))
+    ; — IN —
+    (count-sexp sexp)))
