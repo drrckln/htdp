@@ -170,3 +170,24 @@
 (define (averaged-age ff year)
   (/ (foldl + 0 (map (lambda (ft) (sum-ages ft year)) ff))
      (foldl + 0 (map count-persons ff))))
+
+; An S-expr (S-expression) is one of: 
+; – Atom
+; – SL
+; An SL (S-list) is one of: 
+; – '()
+; – (cons S-expr SL)
+; An Atom is one of: 
+; – Number
+; – String
+; – Symbol
+
+; Exercise 302
+; S-expr -> Boolean
+; determines if the s-expr is a atom
+(define (atom? s-expr)
+  (cond
+    [(number? s-expr) #true]
+    [(string? s-expr) #true]
+    [(symbol? s-expr) #true]
+    [else #false]))
