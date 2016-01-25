@@ -314,3 +314,27 @@
 (check-expect (depth 'world) 1)
 (check-expect (depth '(world hello)) 2)
 (check-expect (depth '(((world) hello) hello)) 4)
+
+; Exercise 305
+; S-expr Symbol Symbol -> S-expr
+; replaces symbol old with new
+(define (substitute sexp old new)
+  (cond
+    [(atom? sexp) (sub-atom sexp old new)]
+    [else (sub-sl sexp old new)]))
+
+; Atom Symbol Symbol -> Atom
+(define (sub-atom at old new)
+  (cond
+    [(symbol? at) (if (equal? at old) new at)]
+    [else at]))
+
+; SL Symbol Symbol -> SL
+(define (sub-sl sl old new)
+  (cond
+    [(empty? sl) '()]
+    [else (cons (substitute (first sl) old new)
+                (sub-sl (rest sl) old new))]))
+
+(check-expect (substitute '(abc def (hi jk def)) 'def 'afk)
+              '(abc afk (hi jk afk)))
