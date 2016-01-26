@@ -355,4 +355,10 @@
    [(symbol? at) (if (symbol=? at sy) 1 0)]
    [(empty? sl) 0]
    [else (+ (count (first sl) sy) (count (rest sl) sy))]))
- 
+
+; Exercise 307
+; A [S-expr X] is one of:
+; - X
+; - [List-of [S-expr x]]
+
+; where X is a Number, String, or Symbol
