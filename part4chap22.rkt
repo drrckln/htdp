@@ -338,3 +338,21 @@
 
 (check-expect (substitute '(abc def (hi jk def)) 'def 'afk)
               '(abc afk (hi jk afk)))
+
+; Exercise 306
+; An S-expr is one of:
+; - Number
+; - String
+; - Symbol
+; - [List-of S-expr]
+
+; S-expr Symbol -> N 
+; counts all occurrences of sy in sexp 
+(define (count sexp sy)
+ (cond
+   [(number? at) 0]
+   [(string? at) 0]
+   [(symbol? at) (if (symbol=? at sy) 1 0)]
+   [(empty? sl) 0]
+   [else (+ (count (first sl) sy) (count (rest sl) sy))]))
+ 
