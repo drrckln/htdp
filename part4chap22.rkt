@@ -400,3 +400,23 @@
 (check-expect (contains-bt? 30 btree1) #false)
 (check-expect (contains-bt? 87 btree2) #true)
 (check-expect (contains-bt? 39 btree2) #false)
+
+; Exercise 309
+; Number BT -> [Maybe Symbol]
+; if ssn is n, produces name field. else false
+(define (search-bt n bt)
+  (cond
+    [(no-info? bt) #false]
+    [(= n (node-ssn bt)) (node-name bt)]
+    [(contains-bt? n (node-left bt))
+     (search-bt n (node-left bt))]
+    [(contains-bt? n (node-right bt))
+     (search-bt n (node-right bt))]
+    [else #false]))
+
+(check-expect (search-bt 24 btree1) 'i)
+(check-expect (search-bt 39 btree1) #false)
+(check-expect (search-bt 87 btree2) 'h)
+(check-expect (search-bt 39 btree2) #false)
+(check-expect (search-bt 15 btree1) 'd)
+(check-expect (search-bt 15 btree2) 'd)
