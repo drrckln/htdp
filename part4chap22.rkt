@@ -420,3 +420,17 @@
 (check-expect (search-bt 39 btree2) #false)
 (check-expect (search-bt 15 btree1) 'd)
 (check-expect (search-bt 15 btree2) 'd)
+
+; Exercise 310
+; BT -> [List-of Number]
+; produces the sequence of all ssn numbers in the tree, as they show up left to right
+(define (inorder bt)
+  (cond
+    [(no-info? bt) '()]
+    [else (append (inorder (node-left bt))
+                  (list (node-ssn bt))
+                  (inorder (node-right bt)))]))
+
+(check-expect (inorder btree1) (list 15 24))
+(check-expect (inorder btree2) (list 87 15))
+; for a BST, inorder should produce a monotonically increasing list of numbers
