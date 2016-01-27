@@ -264,7 +264,7 @@
     [(number? at) 0]
     [(string? at) 0]
     [(symbol? at) (if (symbol=? at sy) 1 0)]))
-|#
+
 
 ; Exercise 303
 ; S-expr Symbol -> N 
@@ -294,6 +294,7 @@
               [(symbol? at) (if (symbol=? at sy) 1 0)])))
     ; — IN —
     (count-sexp sexp)))
+|#
 
 ; Exercise 304
 ; S-expr -> Number
@@ -350,11 +351,11 @@
 ; counts all occurrences of sy in sexp 
 (define (count sexp sy)
  (cond
-   [(number? at) 0]
-   [(string? at) 0]
-   [(symbol? at) (if (symbol=? at sy) 1 0)]
-   [(empty? sl) 0]
-   [else (+ (count (first sl) sy) (count (rest sl) sy))]))
+   [(number? sexp) 0]
+   [(string? sexp) 0]
+   [(symbol? sexp) (if (symbol=? sexp sy) 1 0)]
+   [(empty? sexp) 0]
+   [else (+ (count (first sexp) sy) (count (rest sexp) sy))]))
 
 ; Exercise 307
 ; A [S-expr X] is one of:
@@ -362,3 +363,40 @@
 ; - [List-of [S-expr x]]
 
 ; where X is a Number, String, or Symbol
+
+(define-struct no-info [])
+(define NONE (make-no-info))
+
+(define-struct node [ssn name left right])
+; A BinaryTree (short: BT) is one of:
+; - NONE
+; - (make-node Number Symbol BT BT)
+
+(define btree1 (make-node
+                15
+                'd
+                NONE
+                (make-node 24 'i NONE NONE)))
+
+(define btree2 (make-node
+                15
+                'd
+                (make-node 87 'h NONE NONE)
+                NONE))
+
+; Exercise 308
+; Number BT -> Boolean
+; determines whether a given number occurs in some BT
+(define (contains-bt? n bt)
+  (cond
+    [(no-info? bt) #false]
+    [else (if (= n (node-ssn bt))
+              #true
+              (or (contains-bt? n (node-left bt))
+                  (contains-bt? n (node-right bt))))]))
+
+(check-expect (contains-bt? 15 btree1) #true)
+(check-expect (contains-bt? 24 btree1) #true)
+(check-expect (contains-bt? 30 btree1) #false)
+(check-expect (contains-bt? 87 btree2) #true)
+(check-expect (contains-bt? 39 btree2) #false)
