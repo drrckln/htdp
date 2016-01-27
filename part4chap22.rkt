@@ -434,3 +434,17 @@
 (check-expect (inorder btree1) (list 15 24))
 (check-expect (inorder btree2) (list 87 15))
 ; for a BST, inorder should produce a monotonically increasing list of numbers
+
+; Exercise 311
+; Number BST -> BST
+; produces value of name of the node, or else NONE
+(define (search-bst n bst)
+  (cond
+    [(no-info? bst) NONE]
+    [(= n (node-ssn bst)) (node-name bst)]
+    [(< n (node-ssn bst)) (search-bst n (node-left bst))]
+    [(> n (node-ssn bst)) (search-bst n (node-right bst))]))
+
+(check-expect (search-bst 15 btree1) 'd)
+(check-expect (search-bst 24 btree1) 'i)
+(check-expect (search-bst 31 btree1) NONE)
