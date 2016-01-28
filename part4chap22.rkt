@@ -475,3 +475,25 @@
                  95 'g)
                 77 'h)
                99 'i))
+
+; Exercise 313
+; [List-of [List Number Symbol]] -> BST
+; produces a BST by repeatedly applying create-bst
+(define (create-bst-from-list lolns)
+  (cond
+    [(empty? (rest lolns)) (make-node (first (first lolns)) (second (first lolns)) NONE NONE)]
+    [else (create-bst (create-bst-from-list (rest lolns)) (first (first lolns)) (second (first lolns)))]))
+
+(define sample
+  '((99 o)
+    (77 l)
+    (24 i)
+    (10 h)
+    (95 g)
+    (15 d)
+    (89 c)
+    (29 b)
+    (63 a)))
+
+(inorder (create-bst-from-list sample))
+; You might get an inverted one if you fold from the wrong direction, and 99 is the first node rather than 63
