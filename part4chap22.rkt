@@ -448,3 +448,30 @@
 (check-expect (search-bst 15 btree1) 'd)
 (check-expect (search-bst 24 btree1) 'i)
 (check-expect (search-bst 31 btree1) NONE)
+
+; Exercise 312
+; BST N Symbol -> BST
+(define (create-bst b n s)
+  (cond
+    [(no-info? b) (make-node n s NONE NONE)]
+    [(<= n (node-ssn b))
+     (make-node (node-ssn b) (node-name b) (create-bst (node-left b) n s) (node-right b))]
+    [(> n (node-ssn b))
+     (make-node (node-ssn b) (node-name b) (node-left b) (create-bst (node-right b) n s))]))
+
+(define treeA (create-bst
+               (create-bst
+                (create-bst
+                 (create-bst
+                  (create-bst
+                   (create-bst
+                    (create-bst
+                     (create-bst (make-node 63 'a NONE NONE)
+                                 29 'b)
+                     15 'c)
+                    10 'd)
+                   24 'e)
+                  89 'f)
+                 95 'g)
+                77 'h)
+               99 'i))
