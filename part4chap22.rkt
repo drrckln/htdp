@@ -512,20 +512,16 @@
   (local (; S-expr -> S-expr
           (define (subst-sexp sexp)
             (cond
-              [(atom? sexp) (subst-atom sexp)]
-              [else (subst-sl sexp)]))
- 
-          ; SL -> S-expr 
-          (define (subst-sl sl)
-            (cond
-              [(empty? sl) '()]
-              [else (cons (subst-sexp (first sl)) (subst-sl (rest sl)))]))
- 
-          ; Atom -> S-expr
-          (define (subst-atom at)
-            (cond
-              [(number? at) at]
-              [(string? at) at]
-              [(symbol? at) (if (symbol=? at old) new at)])))
+              [(atom? sexp) (if (eq? sexp old) new sexp)]
+              [else (map subst-sexp sexp)])))
     ; — IN —
     (subst-sexp sexp)))
+
+(define (substitute sexp old new)
+  (cond
+    [(atom? sexp) (if (eq? sexp old) new sexp)]
+    [else (map (lambda (s) (substitute s old new)) sexp)]))
+
+; lambda is necessary because substitute is a 3 argument function
+; we're partially applying it so that it becomes a 1 argument function
+; on s-expressions
