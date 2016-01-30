@@ -1,6 +1,8 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname part4chap23) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require 2htdp/abstraction)
+
 ; Exercise 315
 ; read! occurs twice in the directory tree TS:
 ; /TS/read!
@@ -54,3 +56,16 @@
                       'read!
                       (make-dir 'Libs (list (make-dir 'Code (list 'hang 'draw))
                                             (make-dir 'Docs (list 'read!)))))))
+
+; Exercise 319
+; Dir.v2 -> Number
+; determines how many files the directory contains
+(define (how-many.v2 directory)
+  (match directory
+    [(dir name '()) 0]
+    [(dir name (cons (? symbol?) rst)) (+ 1 (how-many.v2 (make-dir name rst)))]
+    [(dir name (cons (? dir?) rst))
+     (+ (how-many.v2 (first (dir-content directory)))
+        (how-many.v2 (make-dir name rst)))]))
+
+(check-expect (how-many.v2 TS.v2) 7)
