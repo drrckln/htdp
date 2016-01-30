@@ -18,7 +18,7 @@
 ; A File.v1 is a Symbol. 
 
 ; Exercise 316
-(define TS
+(define TS.v1
   (list (list 'part1 'part2 'part3)
         'read!
         (list (list 'hang 'draw)
@@ -34,4 +34,23 @@
     [(list? (first dir)) (+ (how-many (first dir))
                             (how-many (rest dir)))]))
 
-(check-expect (how-many TS) 7)
+(check-expect (how-many TS.v1) 7)
+
+(define-struct dir [name content])
+
+; A Dir.v2 is a structure: 
+;   (make-dir Symbol LOFD)
+ 
+; A LOFD (short for list of files and directories) is one of:
+; – '()
+; – (cons File.v2 LOFD)
+; – (cons Dir.v2 LOFD)
+ 
+; A File.v2 is a Symbol.
+
+; Exercise 318
+(define TS.v2
+  (make-dir 'TS (list (make-dir 'Text (list 'part1 'part2 'part3))
+                      'read!
+                      (make-dir 'Libs (list (make-dir 'Code (list 'hang 'draw))
+                                            (make-dir 'Docs (list 'read!)))))))
