@@ -18,7 +18,20 @@
 ; A File.v1 is a Symbol. 
 
 ; Exercise 316
-(list (list 'part1 'part2 'part3)
-      'read!
-      (list (list 'hang 'draw)
-            (list 'read!)))
+(define TS
+  (list (list 'part1 'part2 'part3)
+        'read!
+        (list (list 'hang 'draw)
+              (list 'read!))))
+
+; Exercise 317
+; Dir.v1 -> Number
+; determines how many files the directory contains
+(define (how-many dir)
+  (cond
+    [(empty? dir) 0]
+    [(symbol? (first dir)) (+ 1 (how-many (rest dir)))]
+    [(list? (first dir)) (+ (how-many (first dir))
+                            (how-many (rest dir)))]))
+
+(check-expect (how-many TS) 7)
