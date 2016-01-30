@@ -9,3 +9,16 @@
 ; 99 + 52 + 10 + 17 + 8 + 2 + 19
 ; with directories, add 5
 ; TS contains 3 + 1 levels
+
+; A Dir.v1 (short for directory) is one of: 
+; – '()
+; – (cons File.v1 Dir.v1)
+; – (cons Dir.v1 Dir.v1)
+ 
+; A File.v1 is a Symbol. 
+
+; Exercise 316
+(list (list 'part1 'part2 'part3)
+      'read!
+      (list (list 'hang 'draw)
+            (list 'read!)))
