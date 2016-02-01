@@ -145,6 +145,7 @@
 
 (define d0 (create-dir "/Users/derricklin/repos/htdp")) ; on OS X 
 (define d1 (create-dir "/Users/derricklin/repos/learnmath"))
+(define d2 (create-dir "/Users/derricklin/Documents"))
 (how-many.v4 d0)
 (how-many.v4 d1)
 
@@ -161,3 +162,11 @@
     [else (andmap (lambda (dir) (find? dir n)) (dir-dirs d))]))
 
 (check-expect (find? d1 "README.md") #true)
+
+; Exercise 326
+; Dir -> [List-of String]
+(define (ls d)
+  (append (map (lambda (f) (symbol->string (file-name f))) (dir-files d)) 
+          (foldr append '() (map ls (dir-dirs d)))))
+
+(ls d2)
