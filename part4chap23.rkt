@@ -150,3 +150,14 @@
 
 ; Couldn't get the pattern match to work for Exercise 322's version
 ; I'm confident because it's DEFINITIONAL!
+
+; Exercise 325
+; Dir String -> Boolean
+; determines whether any file in dir is named name
+(define (find? d n)
+  (cond
+    [(member? (string->symbol n) (map file-name (dir-files d))) #true]
+    [(empty? (dir-dirs d)) #false]
+    [else (andmap (lambda (dir) (find? dir n)) (dir-dirs d))]))
+
+(check-expect (find? d1 "README.md") #true)
