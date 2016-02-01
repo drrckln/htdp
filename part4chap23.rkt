@@ -2,7 +2,7 @@
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname part4chap23) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 (require 2htdp/abstraction)
-
+#|
 ; Exercise 315
 ; read! occurs twice in the directory tree TS:
 ; /TS/read!
@@ -112,9 +112,9 @@
 ; Dir.v3 -> Number
 (define (how-many.v3 directory)
   (match directory
-    [(dir.v3 n '() '()) 0]
-    [(dir.v3 n '() fs) (length fs)]
-    [(dir.v3 n (cons d ds) fs) (+ (length fs)
+    [(dir n '() '()) 0]
+    [(dir n '() fs) (length fs)]
+    [(dir n (cons d ds) fs) (+ (length fs)
                                   (how-many.v3 d)
                                   (how-many.v3 (make-dir.v3 n ds '())))]))
 
@@ -123,14 +123,30 @@
 ; You can be sure because you just cover all the cases
 ; and it's referentially transparent so you can design
 ; by checking the definitions
-
+|#
 ; Exercise 323
 ; A Dir.v3 is a structure:
 ;   (make-dir.v3 Symbol [List-of Dir] [List-of File])
 
 ; Dir.v3 -> Number
 (define (how-many.v4 directory)
-  (foldr + (length (dir.v3-files directory))
-     (map how-many.v3 (dir.v3-dirs directory))))
+  (foldr + (length (dir-files directory))
+     (map how-many.v4 (dir-dirs directory))))
 
-(check-expect (how-many.v4 TS.dir.v3) 7)
+;(check-expect (how-many.v4 TS.dir.v3) 7)
+
+
+; Exercise 324
+(require htdp/dir)
+
+; String -> Dir.v3
+; creates a data representation of the directory that a-path identifies
+; (define (create-dir a-path) ...)
+
+(define d0 (create-dir "/Users/derricklin/repos/htdp")) ; on OS X 
+(define d1 (create-dir "/Users/derricklin/repos/learnmath"))
+(how-many.v4 d0)
+(how-many.v4 d1)
+
+; Couldn't get the pattern match to work for Exercise 322's version
+; I'm confident because it's DEFINITIONAL!
