@@ -73,3 +73,37 @@
 ; Exercise 320
 ; isn't this just (define-struct dir [name size readability content])?
 
+(define-struct file [name size content])
+; a File.v3 is a structure:
+;   (make-file Symbol N String)
+(define-struct dir.v3 [name dirs files])
+
+; A Dir.v3 is a structure:
+;   (make-dir.v3 Symbol Dir* File*)
+
+; A Dir* is one of:
+; - '()
+; - (cons Dir.v3 Dir*)
+
+; A File* is one of:
+; - '()
+; - (cons File.v3 File*)
+
+; Exercise 321
+(define TS.dir.v3
+  (make-dir.v3 'TS
+               (list (make-dir.v3 'Text
+                                  '()
+                                  '(list (make-file 'part1 99 "")
+                                         (make-file 'part2 52 "")
+                                         (make-file 'part3 17 "")))
+                     (make-dir.v3 'Libs
+                                  (list (make-dir.v3 'Code
+                                                     '()
+                                                     (list (make-file 'hang 8 "")
+                                                           (make-file 'draw 2 "")))
+                                        (make-dir.v3 'Docs
+                                                     '()
+                                                     (list (make-file 'read! 19 ""))))
+                                  '()))
+               (list (make-file 'read! 10 ""))))
