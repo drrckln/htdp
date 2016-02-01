@@ -69,3 +69,7 @@
         (how-many.v2 (make-dir name rst)))]))
 
 (check-expect (how-many.v2 TS.v2) 7)
+
+; Exercise 320
+; isn't this just (define-struct dir [name size readability content])?
+
