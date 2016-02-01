@@ -94,9 +94,9 @@
   (make-dir.v3 'TS
                (list (make-dir.v3 'Text
                                   '()
-                                  '(list (make-file 'part1 99 "")
-                                         (make-file 'part2 52 "")
-                                         (make-file 'part3 17 "")))
+                                  (list (make-file 'part1 99 "")
+                                        (make-file 'part2 52 "")
+                                        (make-file 'part3 17 "")))
                      (make-dir.v3 'Libs
                                   (list (make-dir.v3 'Code
                                                      '()
@@ -107,3 +107,22 @@
                                                      (list (make-file 'read! 19 ""))))
                                   '()))
                (list (make-file 'read! 10 ""))))
+
+; Exercise 322
+; Dir.v3 -> Number
+(define (how-many.v3 directory)
+  (foldr + (length (dir.v3-files directory))
+     (map how-many.v3 (dir.v3-dirs directory))))
+
+#|
+  (match directory
+    [(dir.v3 n '() '()) 0]
+    [(dir.v3 n '() fs) (length fs)]
+    [(dir.v3 n ds fs) (+ (length fs)
+                         (foldr + 0 (map how-many.v3 ds)))]))
+|#
+
+(check-expect (how-many.v3 TS.dir.v3) 7)
+; You can be sure because you just cover all the cases
+; and it's referentially transparent so you can design
+; by checking the definitions
