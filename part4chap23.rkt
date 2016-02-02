@@ -170,3 +170,15 @@
           (foldr append '() (map ls (dir-dirs d)))))
 
 (ls d2)
+
+; Exercise 327
+; Dir -> Number
+; computes the total size of all the files
+; assumes each Dir is size 1
+(define (du directory)
+  (+ (foldr + 0 (map (lambda (f) (file-size f)) (dir-files directory)))
+     1 ; directory itself
+     (foldr + 0 (map du (dir-dirs directory)))))
+
+(check-expect (du (make-dir 'a '() (list (make-file 'f 7 ""))))
+              8)
