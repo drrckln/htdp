@@ -135,9 +135,27 @@
 
 ;(check-expect (how-many.v4 TS.dir.v3) 7)
 
-
 ; Exercise 324
 (require htdp/dir)
+
+(define TS
+  (make-dir 'TS
+            (list (make-dir 'Text
+                            '()
+                            (list (make-file 'part1 99 "")
+                                  (make-file 'part2 52 "")
+                                  (make-file 'part3 17 "")))
+                  (make-dir 'Libs
+                            (list (make-dir 'Code
+                                            '()
+                                            (list (make-file 'hang 8 "")
+                                                  (make-file 'draw 2 "")))
+                                  (make-dir 'Docs
+                                            '()
+                                            (list (make-file 'read! 19 ""))))
+                            '()))
+               (list (make-file 'read! 10 ""))))
+
 
 ; String -> Dir.v3
 ; creates a data representation of the directory that a-path identifies
@@ -146,22 +164,24 @@
 (define d0 (create-dir "/Users/derricklin/repos/htdp")) ; on OS X 
 (define d1 (create-dir "/Users/derricklin/repos/learnmath"))
 (define d2 (create-dir "/Users/derricklin/Documents"))
-(how-many.v4 d0)
-(how-many.v4 d1)
+;(how-many.v4 d0)
+;(how-many.v4 d1)
 
 ; Couldn't get the pattern match to work for Exercise 322's version
 ; I'm confident because it's DEFINITIONAL!
 
 ; Exercise 325
-; Dir String -> Boolean
+; Dir Symbol -> Boolean
 ; determines whether any file in dir is named name
 (define (find? d n)
   (cond
-    [(member? (string->symbol n) (map file-name (dir-files d))) #true]
+    [(member? n (map file-name (dir-files d))) #true]
     [(empty? (dir-dirs d)) #false]
-    [else (andmap (lambda (dir) (find? dir n)) (dir-dirs d))]))
+    [else (ormap (lambda (dr) (find? dr n)) (dir-dirs d))]))
 
-(check-expect (find? d1 "README.md") #true)
+(check-expect (find? d1 'README.md) #true)
+(check-expect (find? TS 'hang) #true)
+(check-expect (find? (second (dir-dirs TS)) 'read!) #true)
 
 ; Exercise 326
 ; Dir -> [List-of String]
@@ -169,7 +189,7 @@
   (append (map (lambda (f) (symbol->string (file-name f))) (dir-files d)) 
           (foldr append '() (map ls (dir-dirs d)))))
 
-(ls d2)
+;(ls d2)
 
 ; Exercise 327
 ; Dir -> Number
@@ -180,5 +200,32 @@
      1 ; directory itself
      (foldr + 0 (map du (dir-dirs directory)))))
 
-(check-expect (du (make-dir 'a '() (list (make-file 'f 7 ""))))
-              8)
+;(check-expect (du (make-dir 'a '() (list (make-file 'f 7 ""))))
+;              8)
+
+; Path = [List-of Symbol]
+; interpretation directions on how to find a file in a directory tree
+
+; Exercise 328
+; Dir Symbol -> Maybe Path
+(define (find d f)
+  (cond
+    [(member? f (map file-name (dir-files d))) (list (dir-name d) f)]
+    [(find? d f)
+     (cons (dir-name d) (find (first (filter (lambda (x) (find? x f)) (dir-dirs d))) f))]
+    [else #false]))
+
+(find d2 'TXT.rtf)
+
+; Dir Symbol -> [List-of [Maybe Path]]
+(define (find-all d f)
+  (cond
+    [(member? f (map file-name (dir-files d))) (list (dir-name d) f)]
+    [(find? d f)
+     (map (lambda (p) (cons (dir-name d) p))
+          (map (lambda (y) (find-all y f))
+               (filter (lambda (x) (find? x f)) (dir-dirs d))))]
+    [else (list #false)]))
+
+; no, that second part isn't a challenge
+(find-all TS 'read!)
