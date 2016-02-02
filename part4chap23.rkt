@@ -217,15 +217,23 @@
 
 (find d2 'TXT.rtf)
 
-; Dir Symbol -> [List-of [Maybe Path]]
+; Dir Symbol -> Maybe [List-of Path]
 (define (find-all d f)
   (cond
-    [(member? f (map file-name (dir-files d))) (list (dir-name d) f)]
+    [(and (member? f (map file-name (dir-files d)))
+          (empty? (dir-dirs d)))
+     (list (dir-name d) f)]
+    [(and (member? f (map file-name (dir-files d)))
+          (not (empty? (dir-dirs d))))
+     (cons (list (dir-name d) f)
+           (map (lambda (p) (cons (dir-name d) p))
+                (map (lambda (y) (find-all y f))
+                     (filter (lambda (x) (find? x f)) (dir-dirs d)))))]
     [(find? d f)
      (map (lambda (p) (cons (dir-name d) p))
           (map (lambda (y) (find-all y f))
                (filter (lambda (x) (find? x f)) (dir-dirs d))))]
-    [else (list #false)]))
+    [else #false]))
 
 ; no, that second part isn't a challenge
 (find-all TS 'read!)
