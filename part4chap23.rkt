@@ -161,9 +161,9 @@
 ; creates a data representation of the directory that a-path identifies
 ; (define (create-dir a-path) ...)
 
-(define d0 (create-dir "/Users/derricklin/repos/htdp")) ; on OS X 
-(define d1 (create-dir "/Users/derricklin/repos/learnmath"))
-(define d2 (create-dir "/Users/derricklin/Documents"))
+;(define d0 (create-dir "/Users/derricklin/repos/htdp")) ; on OS X 
+;(define d1 (create-dir "/Users/derricklin/repos/learnmath"))
+;(define d2 (create-dir "/Users/derricklin/Documents"))
 ;(how-many.v4 d0)
 ;(how-many.v4 d1)
 
@@ -179,9 +179,9 @@
     [(empty? (dir-dirs d)) #false]
     [else (ormap (lambda (dr) (find? dr n)) (dir-dirs d))]))
 
-(check-expect (find? d1 'README.md) #true)
-(check-expect (find? TS 'hang) #true)
-(check-expect (find? (second (dir-dirs TS)) 'read!) #true)
+;(check-expect (find? d1 'README.md) #true)
+;(check-expect (find? TS 'hang) #true)
+;(check-expect (find? (second (dir-dirs TS)) 'read!) #true)
 
 ; Exercise 326
 ; Dir -> [List-of String]
@@ -215,25 +215,26 @@
      (cons (dir-name d) (find (first (filter (lambda (x) (find? x f)) (dir-dirs d))) f))]
     [else #false]))
 
-(find d2 'TXT.rtf)
+;(find d2 'TXT.rtf)
 
 ; Dir Symbol -> Maybe [List-of Path]
 (define (find-all d f)
   (cond
     [(and (member? f (map file-name (dir-files d)))
           (empty? (dir-dirs d)))
-     (list (dir-name d) f)]
+     (list (list (dir-name d) f))] ; [List-of Path]
     [(and (member? f (map file-name (dir-files d)))
           (not (empty? (dir-dirs d))))
-     (cons (list (dir-name d) f)
-           (map (lambda (p) (cons (dir-name d) p))
-                (map (lambda (y) (find-all y f))
-                     (filter (lambda (x) (find? x f)) (dir-dirs d)))))]
+     (cons (list (dir-name d) f) ; add this one
+           (map (lambda (p) (cons (dir-name d) p)) ; [List-of (cons name [List-of Path])]
+                (map (lambda (y) (find-all y f)) ; [List-of Path]
+                     (filter (lambda (x) (find? x f)) (dir-dirs d)))))] ; [List-of Dir]
     [(find? d f)
      (map (lambda (p) (cons (dir-name d) p))
-          (map (lambda (y) (find-all y f))
-               (filter (lambda (x) (find? x f)) (dir-dirs d))))]
+          (map (lambda (y) (find-all y f)) ; [List-of [List-of Path]]
+               (filter (lambda (x) (find? x f)) (dir-dirs d))))] ; [List-of Dir]
     [else #false]))
 
 ; no, that second part isn't a challenge
+; we're getting 3-levels of list somehow.. write it out?
 (find-all TS 'read!)
