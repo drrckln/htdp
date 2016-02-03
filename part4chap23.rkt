@@ -227,12 +227,14 @@
           (not (empty? (dir-dirs d))))
      (cons (list (dir-name d) f) ; add this one
            (map (lambda (p) (cons (dir-name d) p)) ; [List-of (cons name [List-of Path])]
-                (map (lambda (y) (find-all y f)) ; [List-of Path]
-                     (filter (lambda (x) (find? x f)) (dir-dirs d)))))] ; [List-of Dir]
+                (foldr append '()
+                       (map (lambda (y) (find-all y f)) ; [List-of Path]
+                            (filter (lambda (x) (find? x f)) (dir-dirs d))))))] ; [List-of Dir]
     [(find? d f)
      (map (lambda (p) (cons (dir-name d) p))
-          (map (lambda (y) (find-all y f)) ; [List-of [List-of Path]]
-               (filter (lambda (x) (find? x f)) (dir-dirs d))))] ; [List-of Dir]
+          (foldr append '()
+                 (map (lambda (y) (find-all y f)) ; [List-of [List-of Path]]
+                      (filter (lambda (x) (find? x f)) (dir-dirs d)))))] ; [List-of Dir]
     [else #false]))
 
 ; no, that second part isn't a challenge
