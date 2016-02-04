@@ -265,3 +265,20 @@
               (ls-R (make-dir (dir-name drct) (dir-dirs drct) '()))))]))
 
 ;(ls-R TS)
+
+; Exercise 330
+; redesign find-all using ls-R
+; Dir Symbol -> Maybe [List-of Path]
+(define (find-all2 d f)
+  (local ((define answer
+            (filter (lambda (path) (if (equal? f (first (reverse path)))
+                                #true
+                                #false))
+             (ls-R d))))
+    (if (empty? answer) #false answer)))
+
+
+(check-expect (find-all2 TS 'read!)
+              (list (list 'TS 'read!) (list 'TS 'Libs 'Docs 'read!)))
+(check-expect (find-all2 TS 'TS)
+              (list (list 'TS)))
