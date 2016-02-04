@@ -239,4 +239,27 @@
 
 ; no, that second part isn't a challenge
 ; we're getting 3-levels of list somehow.. write it out?
-(find-all TS 'read!)
+(check-expect (find-all TS 'read!)
+              (list (list 'TS 'read!) (list 'TS 'Libs 'Docs 'read!)))
+
+; Exercise 329
+; Dir -> [List-of Path]
+; lists the paths to all files in a given Dir
+(define (ls-R drct)
+  (cond
+    [(and (empty? (dir-files drct)) ; files and dirs empty
+          (empty? (dir-dirs drct)))
+     (list (dir-name (drct)))]
+    [(empty? (dir-dirs drct)) ; files, but no dirs
+     (map (lambda (file) (cons (dir-name drct) (list (file-name file))))
+          (dir-files drct))]
+    [(empty? (dir-files drct)) ; dirs, but no files
+     (map (lambda (path) (cons (dir-name (drct)) path))
+          (foldr append '()
+                 (map ls-R (dir-dirs drct))))]
+    [else ; both dirs and files
+     (append (ls-R (make-dir (dir-name drct) (dir-files drct) '()))
+             (ls-R (make-dir (dir-name drct) '() (dir-dirs drct))))]))
+    
+
+(ls-R TS)
