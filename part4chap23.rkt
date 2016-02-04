@@ -263,6 +263,5 @@
      (rest ; removes one duplicate Path for this directory
       (append (ls-R (make-dir (dir-name drct) '() (dir-files drct)))
               (ls-R (make-dir (dir-name drct) (dir-dirs drct) '()))))]))
-    
 
-(ls-R TS)
+;(ls-R TS)
