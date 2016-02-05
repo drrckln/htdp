@@ -43,3 +43,30 @@
 (check-expect (eval-expression (make-add 1 1)) 2)
 (check-expect (eval-expression (make-mul 3 10)) 30)
 (check-expect (eval-expression (make-add (make-mul 1 1) 10)) 11)
+
+; Exercise 334
+; A BooleanBSL is one of:
+; - #true
+; - #false
+; - (make-and BooleanBSL BooleanBSL)
+; - (make-or BooleanBSL BooleanBSL)
+; - (make-not BooleanBSL)
+(define-struct and_ [left right])
+(define-struct or_ [left right])
+(define-struct not_ [operand])
+
+; BooleanBSL -> Boolean
+(define (eval-bool-expression bbsl)
+  (cond
+    [(boolean? bbsl) bbsl]
+    [(and_? bbsl) (and (eval-bool-expression (and_-left bbsl))
+                       (eval-bool-expression (and_-right bbsl)))]
+    [(or_? bbsl) (or (eval-bool-expression (or_-left bbsl))
+                     (eval-bool-expression (or_-right bbsl)))]
+    [(not_? bbsl) (not (eval-bool-expression (not_-operand bbsl)))]))
+
+(check-expect (eval-bool-expression #true) #true)
+(check-expect (eval-bool-expression #false) #false)
+(check-expect (eval-bool-expression (make-and_ #true #false)) #false)
+(check-expect (eval-bool-expression (make-not_ #true)) #false)
+(check-expect (eval-bool-expression (make-or_ #true #false)) #true)
