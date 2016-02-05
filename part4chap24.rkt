@@ -121,3 +121,12 @@
 (check-expect (parse '(+ (* 3 4) (* -2 3)))
               (make-add (make-mul 3 4)
                         (make-mul -2 3)))
+
+; Weird stuff: it doesn't use cond to take advantage of the
+; different forms of BSL-expr. it uses error a lot. it uses
+; the (< L 3) (= L 3) else expressions, which aren't based
+; on the form of the BSL expr so much as the properties of
+; the form of BSL-expr.
+
+; Programming languages should be designed for the convenience
+; of the programmer who uses it! Otherwise there's no point.
