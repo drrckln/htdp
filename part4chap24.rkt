@@ -22,3 +22,9 @@
 (* (+ 1
       (* 2 3))
    (* 3.14 12))
+
+; Exercise 332
+; A representation of a BSL-expression (rBSL) can evaluate
+; - Number
+; - (+ rBSL rBSL)
+; - (* rBSL rBSL)
