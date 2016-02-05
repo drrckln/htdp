@@ -181,4 +181,34 @@
 
 (check-expect (eval-variable (make-mul 3 (make-add 'y 7))) #false)
 (check-expect (eval-variable (make-mul 3 (make-add 3 7))) 30)
-    
+
+; An AL (association list) is [List-of Association].
+; An Association is (cons Symbol (cons Number '())).
+
+(list (list 'x 7) (list 'y 3))
+(list (list 'g 3) (list 'b 9))
+
+; BSL-var-expr AL -> Maybe Number
+; iteratively applies subst to all associations in da
+; if numeric? holds it determines its value
+(define (eval-variable* bsl da)
+  (cond
+    [(numeric? bsl) (eval-expression bsl)]
+    [(empty? da) #false]
+    [else (eval-variable* (subst bsl
+                                 (first (first da))
+                                 (second (first da)))
+                          (rest da))]))
+
+(check-expect (eval-variable* (make-mul 3 (make-add 'y 7))
+                              (list (list 'y 2)))
+              27)
+(check-expect (eval-variable* (make-mul 3 (make-add 3 7))
+                              '())
+              30)
+(check-expect (eval-variable* (make-mul 3 (make-add 'y 7))
+                              (list (list 'z 2)))
+              #false)
+(check-expect (eval-variable* (make-mul 3 (make-add 'y 'z))
+                              (list (list 'y 2) (list 'z 3)))
+              15)
