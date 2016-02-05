@@ -218,3 +218,42 @@
 
 ; Exercise 339
 ; modified by making symbol not an error, but itself. look above.
+
+; Exercise 340
+; AL Symbol -> Maybe Number
+(define (lookup da x)
+  (cond
+    [(empty? da) #false]
+    [(symbol=? x (first (first da)))
+     (second (first da))]
+    [else (lookup (rest da) x)]))
+
+(check-expect (lookup (list (list 'a 7) (list 'b 3) (list 'z 24)) 'z)
+              24)
+(check-expect (lookup (list (list 'a 7) (list 'b 3) (list 'z 24)) 'y)
+              #false)
+
+; Exercise 341
+; BSL-var-expr AL -> Number
+(define (eval-var-lookup e da)
+  (cond
+    [(number? e) e]
+    [(symbol? e) (if (eq? #false (lookup da e))
+                     (error "cannot find variable assignment")
+                     (lookup da e))]
+    [(add? e) (+ (eval-var-lookup (add-left e) da)
+                 (eval-var-lookup (add-right e) da))]
+    [(mul? e) (* (eval-var-lookup (mul-left e) da)
+                 (eval-var-lookup (mul-right e) da))]))
+
+(check-expect (eval-var-lookup (make-mul 3 (make-add 'y 7))
+                               (list (list 'y 2)))
+              27)
+(check-expect (eval-var-lookup (make-mul 3 (make-add 3 7))
+                               '())
+              30)
+(check-error (eval-var-lookup (make-mul 3 (make-add 'y 7))
+                              (list (list 'z 2))))
+(check-expect (eval-var-lookup (make-mul 3 (make-add 'y 'z))
+                               (list (list 'y 2) (list 'z 3)))
+              15)
