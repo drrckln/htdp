@@ -105,12 +105,12 @@
             (cond
               [(number? s) s]
               [(string? s) (error "strings not allowed")]
-              [(symbol? s) (error "symbols not allowed")])))
+              [(symbol? s) s])))
     (parse s)))
 
 (check-expect (parse 3) 3)
 (check-error (parse "hello"))
-(check-error (parse 'hey))
+(check-expect (parse 'hey) 'hey)
 (check-error (parse '(3 2)))
 (check-error (parse '(3 4 5)))
 (check-error (parse '(+ 3 4 6)))
@@ -120,6 +120,9 @@
               (make-mul 3 4))
 (check-expect (parse '(+ (* 3 4) (* -2 3)))
               (make-add (make-mul 3 4)
+                        (make-mul -2 3)))
+(check-expect (parse '(+ (* 3 a) (* -2 3)))
+              (make-add (make-mul 3 'a)
                         (make-mul -2 3)))
 
 ; Weird stuff: it doesn't use cond to take advantage of the
@@ -212,3 +215,6 @@
 (check-expect (eval-variable* (make-mul 3 (make-add 'y 'z))
                               (list (list 'y 2) (list 'z 3)))
               15)
+
+; Exercise 339
+; modified by making symbol not an error, but itself. look above.
