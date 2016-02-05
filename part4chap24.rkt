@@ -70,3 +70,54 @@
 (check-expect (eval-bool-expression (make-and_ #true #false)) #false)
 (check-expect (eval-bool-expression (make-not_ #true)) #false)
 (check-expect (eval-bool-expression (make-or_ #true #false)) #true)
+
+; Exercise 335
+(require htdp/docs)
+(define WRONG "wrong kind of S-expression")
+ 
+; S-expr -> BSL-expr
+; creates representation of a BSL expression for s (if possible)
+(define (parse s)
+  (local (; S-expr -> BSL-expr
+          (define (parse s)
+            (cond
+              [(atom? s) (parse-atom s)]
+              [else (parse-sl s)]))
+ 
+          ; SL -> BSL-expr 
+          (define (parse-sl s)
+            (local ((define L (length s)))
+              (cond
+                [(< L 3)
+                 (error WRONG)]
+                [(and (= L 3) (symbol? (first s)))
+                 (cond
+                   [(symbol=? (first s) '+)
+                    (make-add (parse (second s)) (parse (third s)))]
+                   [(symbol=? (first s) '*)
+                    (make-mul (parse (second s)) (parse (third s)))]
+                   [else (error WRONG)])]
+                [else
+                 (error WRONG)])))
+ 
+          ; Atom -> BSL-expr 
+          (define (parse-atom s)
+            (cond
+              [(number? s) s]
+              [(string? s) (error "strings not allowed")]
+              [(symbol? s) (error "symbols not allowed")])))
+    (parse s)))
+
+(check-expect (parse 3) 3)
+(check-error (parse "hello"))
+(check-error (parse 'hey))
+(check-error (parse '(3 2)))
+(check-error (parse '(3 4 5)))
+(check-error (parse '(+ 3 4 6)))
+(check-expect (parse '(+ 3 4))
+              (make-add 3 4))
+(check-expect (parse '(* 3 4))
+              (make-mul 3 4))
+(check-expect (parse '(+ (* 3 4) (* -2 3)))
+              (make-add (make-mul 3 4)
+                        (make-mul -2 3)))
