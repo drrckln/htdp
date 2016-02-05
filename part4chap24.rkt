@@ -170,4 +170,15 @@
 
 (check-expect (numeric? (make-mul 3 (make-add 'y 7))) #false)
 (check-expect (numeric? (make-mul 3 (make-add 3 7))) #true)
+
+; Exercise 338
+; BSL-var-expr -> Maybe Number
+; if is a BSL-expr, evaluates. otherwise #false
+(define (eval-variable bslve)
+  (cond
+    [(numeric? bslve) (eval-expression bslve)]
+    [else #false]))
+
+(check-expect (eval-variable (make-mul 3 (make-add 'y 7))) #false)
+(check-expect (eval-variable (make-mul 3 (make-add 3 7))) 30)
     
