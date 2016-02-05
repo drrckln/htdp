@@ -24,7 +24,22 @@
    (* 3.14 12))
 
 ; Exercise 332
-; A representation of a BSL-expression (rBSL) can evaluate
+; A representation of a BSL-expression (BSL) can evaluate
 ; - Number
-; - (+ rBSL rBSL)
-; - (* rBSL rBSL)
+; - (+ BSL BSL)
+; - (* BSL BSL)
+
+; Exercise 333
+; BSL-expr -> Number
+(define (eval-expression bsl)
+  (cond
+    [(number? bsl) bsl]
+    [(add? bsl) (+ (eval-expression (add-left bsl))
+                   (eval-expression (add-right bsl)))]
+    [(mul? bsl) (* (eval-expression (mul-left bsl))
+                   (eval-expression (mul-right bsl)))]))
+
+(check-expect (eval-expression 3) 3)
+(check-expect (eval-expression (make-add 1 1)) 2)
+(check-expect (eval-expression (make-mul 3 10)) 30)
+(check-expect (eval-expression (make-add (make-mul 1 1) 10)) 11)
