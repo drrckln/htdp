@@ -154,3 +154,20 @@
 
 (check-expect (subst (make-mul 3 (make-add 'z 7)) 'y 2)
               (make-mul 3 (make-add 'z 7)))
+
+; Exercise 337
+; BSL-var-expr -> Boolean
+; determines whether it is also a BSL-expr
+; eg, no symbols :)
+(define (numeric? bslve)
+  (cond
+    [(number? bslve) #true]
+    [(symbol? bslve) #false]
+    [(add? bslve) (and (numeric? (add-left bslve))
+                       (numeric? (add-right bslve)))]
+    [(mul? bslve) (and (numeric? (mul-left bslve))
+                       (numeric? (mul-right bslve)))]))
+
+(check-expect (numeric? (make-mul 3 (make-add 'y 7))) #false)
+(check-expect (numeric? (make-mul 3 (make-add 3 7))) #true)
+    
