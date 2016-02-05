@@ -130,3 +130,27 @@
 
 ; Programming languages should be designed for the convenience
 ; of the programmer who uses it! Otherwise there's no point.
+
+; A BSL-var-expr is one of: 
+; – Number
+; – Symbol 
+; – (make-add BSL-var-expr BSL-var-expr)
+; – (make-mul BSL-var-expr BSL-var-expr)
+
+; Exercise 336
+; BSL-var-expr Symbol Number -> BSL-var-expr
+; replaces symbol x with value v
+(define (subst bslve x v)
+  (cond
+    [(number? bslve) bslve]
+    [(symbol? bslve) (if (symbol=? bslve x) v bslve)]
+    [(add? bslve) (make-add (subst (add-left bslve) x v)
+                            (subst (add-right bslve) x v))]
+    [(mul? bslve) (make-mul (subst (mul-left bslve) x v)
+                            (subst (mul-right bslve) x v))]))
+
+(check-expect (subst (make-mul 3 (make-add 'y 7)) 'y 2)
+              (make-mul 3 (make-add 2 7)))
+
+(check-expect (subst (make-mul 3 (make-add 'z 7)) 'y 2)
+              (make-mul 3 (make-add 'z 7)))
