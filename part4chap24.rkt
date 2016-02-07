@@ -257,3 +257,15 @@
 (check-expect (eval-var-lookup (make-mul 3 (make-add 'y 'z))
                                (list (list 'y 2) (list 'z 3)))
               15)
+
+; Exercise 342
+; A BSL-fun-expr is one of: 
+; – Number
+; – Symbol
+; – (make-add BSL-fun-expr BSL-fun-expr)
+; – (make-mul BSL-fun-expr BSL-fun-expr)
+; - (Name BSL-fun-expr)
+
+(k (make-add 1 1))
+(make-mul 5 (k (make-add 1 1)))
+(make-mul (i 5) (k (make-add 1 1)))
