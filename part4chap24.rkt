@@ -264,8 +264,24 @@
 ; – Symbol
 ; – (make-add BSL-fun-expr BSL-fun-expr)
 ; – (make-mul BSL-fun-expr BSL-fun-expr)
-; - (Name BSL-fun-expr)
+; - (list Symbol BSL-fun-expr)
 
 (k (make-add 1 1))
 (make-mul 5 (k (make-add 1 1)))
 (make-mul (i 5) (k (make-add 1 1)))
+
+; Exercise 343
+; BSL-fun-expr Symbol Symbol BSL-fun-expr -> BSL-fun-expr
+(define (eval-definition1 ex f x b)
+  (cond
+    [(number? ex) ex]
+    [(symbol? ex) #false]
+    [(list? ex) (if (symbol=? (first ex) f)
+                    (eval-definition1 (subst b x (eval-definition1 (second ex) f x b))
+                                      f x b)
+                    (error "cannot find variable assignment"))]
+    [(add? ex) (+ (eval-definition1 (add-left ex) f x b)
+                  (eval-definition1 (add-right ex) f x b))]
+    [(mul? ex) (* (eval-definition1 (mul-left ex) f x b)
+                  (eval-definition1 (mul-right ex) f x b))]
+    [else #false]))
