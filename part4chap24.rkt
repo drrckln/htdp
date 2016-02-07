@@ -266,9 +266,9 @@
 ; – (make-mul BSL-fun-expr BSL-fun-expr)
 ; - (list Symbol BSL-fun-expr)
 
-(k (make-add 1 1))
-(make-mul 5 (k (make-add 1 1)))
-(make-mul (i 5) (k (make-add 1 1)))
+;(k (make-add 1 1))
+;(make-mul 5 (k (make-add 1 1)))
+;(make-mul (i 5) (k (make-add 1 1)))
 
 ; Exercise 343
 ; BSL-fun-expr Symbol Symbol BSL-fun-expr -> BSL-fun-expr
@@ -285,3 +285,30 @@
     [(mul? ex) (* (eval-definition1 (mul-left ex) f x b)
                   (eval-definition1 (mul-right ex) f x b))]
     [else #false]))
+
+; Exercise 344
+(define-struct fun [name para body])
+; BSL-fun-def ^
+; Symbol Symbol BSL-var-expr
+(define f (make-fun 'f 'x '(+ 3 x)))
+(define g (make-fun 'g 'y '(f (* 2 y))))
+(define h (make-fun 'h 'v '(+ (f v) (g v))))
+
+
+; BSL-fun-def* is one of:
+; - '()
+; - (cons BSL-fun-def BSL-fun-def*)
+
+(define da-fgh (list f g h))
+
+; BSL-fun-def* Symbol -> BSL-fun-def
+; retrieves the definition of f in da
+; or signal "undefined function" if da does not contain one
+(check-expect (lookup-def da-fgh 'g)
+              g)
+(define (lookup-def da f)
+  (cond
+    [(empty? da) (error "undefined function")]
+    [(symbol=? f (fun-name (first da)))
+     (first da)]
+    [else (lookup-def (rest da-fgh) 'g)]))
