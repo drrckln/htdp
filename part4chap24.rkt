@@ -312,3 +312,19 @@
     [(symbol=? f (fun-name (first da)))
      (first da)]
     [else (lookup-def (rest da-fgh) 'g)]))
+
+; Exercise 345
+; BSL-fun-expr BSL-fun-expr*
+(define (eval-function* ex da)
+  (cond
+    [(number? ex) ex]
+    [(symbol? ex) (error "no symbols")]
+    [(add? ex) (+ (eval-function* (add-left ex) da)
+                  (eval-function* (add-right ex) da))]
+    [(mul? ex) (* (eval-function* (mul-left ex) da)
+                  (eval-function* (mul-right ex) da))]
+    [(list? ex) (eval-function* (eval-definition1 ex
+                                                  (fun-name (lookup-def da (first ex))
+                                                  (fun-para (lookup-def da (first ex)))
+                                                  (fun-body (lookup-def da (first ex))))))]))
+
