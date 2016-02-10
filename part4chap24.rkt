@@ -88,6 +88,8 @@
           (define (parse-sl s)
             (local ((define L (length s)))
               (cond
+                [(= L 2)
+                 ((make-fun (fun-name (first s))) (second s))]
                 [(< L 3)
                  (error WRONG)]
                 [(and (= L 3) (symbol? (first s)))
@@ -328,3 +330,6 @@
                                                   (fun-para (lookup-def da (first ex)))
                                                   (fun-body (lookup-def da (first ex))))))]))
 
+; Exercise 346
+; done by adding the clause
+; [(= L 2) ((make-fun (fun-name (first s))) (second s))]
