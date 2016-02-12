@@ -333,3 +333,40 @@
 ; Exercise 346
 ; done by adding the clause
 ; [(and (= L 2) (symbol? (first s))) (list (first s) (second s))]
+
+; Exercise 347 
+(define-struct def [name para body])
+; see exercise 344
+ 
+; S-expr -> BSL-fun-def
+; creates representation of a BSL definition for s (if possible)
+(define (def-parse s)
+  (local (; S-expr -> BSL-fun-def
+          (define (def-parse s)
+            (cond
+              [(atom? s) (error WRONG)]
+              [else
+               (if (and (= (length s) 3) (eq? (first s) 'define))
+                   (head-parse (second s) (parse (third s)))
+                   (error WRONG))]))
+          ; S-expr BSL-expr -> BSL-fun-def
+          (define (head-parse s body)
+            (cond
+              [(atom? s) (error WRONG)]
+              [else
+               (if (not (= (length s) 2))
+                   (error WRONG)
+                   (local ((define name (first s))
+                           (define para (second s)))
+                     (if (and (symbol? name) (symbol? para))
+                         (make-def name para body)
+                         (error WRONG))))])))
+    (def-parse s)))
+
+(check-error (def-parse 7))
+(check-error (def-parse '(defun x f)))
+(check-error (def-parse '(define 8 f)))
+(check-error (def-parse '(define (7 a) gah)))
+(check-error (def-parse '(define (7 a f) gah)))
+(check-expect (def-parse '(define (goog ly) gah))
+              (make-def 'goog 'ly 'gah))
