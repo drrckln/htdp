@@ -88,8 +88,8 @@
           (define (parse-sl s)
             (local ((define L (length s)))
               (cond
-                [(= L 2)
-                 ((make-fun (fun-name (first s))) (second s))]
+                [(and (= L 2) (symbol? (first s)))
+                 (list (first s) (second s))]
                 [(< L 3)
                  (error WRONG)]
                 [(and (= L 3) (symbol? (first s)))
@@ -332,4 +332,4 @@
 
 ; Exercise 346
 ; done by adding the clause
-; [(= L 2) ((make-fun (fun-name (first s))) (second s))]
+; [(and (= L 2) (symbol? (first s))) (list (first s) (second s))]
