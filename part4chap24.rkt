@@ -370,3 +370,35 @@
 (check-error (def-parse '(define (7 a f) gah)))
 (check-expect (def-parse '(define (goog ly) gah))
               (make-def 'goog 'ly 'gah))
+
+; SL -> BSL-fun-def*
+; da is a list of quoted BSL definitions
+(define (da-parse da)
+  (map def-parse da))
+
+; Exercise 348
+; a BSL-da-all is one of the following:
+; - '()
+; - (cons BSL-fun-def BSL-da-all)
+; - (cons BSL-const-def BSL-da-all)
+; a BSL-const-def is one of the following:
+; - (make-const [Symbol BSL-expr])
+(define-struct const [name value])
+
+; BSL-da-all Symbol -> Maybe BSL-const-def
+(define (lookup-con-def da x)
+  (cond
+    [(empty? da) #false]
+    [(and (const? (first da))
+          (symbol=? x (cons-name (first da))))          
+     (first da)]
+    [else (lookup-con-def (rest da) x)]))
+
+; BSL-da-all Symbol -> Maybe BSL-fun-def
+(define (lookup-fun-def da x)
+  (cond
+    [(empty? da) #false]
+    [(and (fun? (first da))
+          (symbol=? x (fun-name (first da))))          
+     (first da)]
+    [else (lookup-con-def (rest da) x)]))
