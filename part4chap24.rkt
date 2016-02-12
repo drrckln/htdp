@@ -3,7 +3,7 @@
 #reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname part4chap24) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 (define-struct add [left right])
 (define-struct mul [left right])
-
+#|
 ; Exercise 331
 ; A BSL-expr is one of:
 ; - Number
@@ -141,6 +141,7 @@
 ; – Symbol 
 ; – (make-add BSL-var-expr BSL-var-expr)
 ; – (make-mul BSL-var-expr BSL-var-expr)
+|#
 
 ; Exercise 336
 ; BSL-var-expr Symbol Number -> BSL-var-expr
@@ -153,6 +154,8 @@
                             (subst (add-right bslve) x v))]
     [(mul? bslve) (make-mul (subst (mul-left bslve) x v)
                             (subst (mul-right bslve) x v))]))
+
+#|
 
 (check-expect (subst (make-mul 3 (make-add 'y 7)) 'y 2)
               (make-mul 3 (make-add 2 7)))
@@ -334,10 +337,14 @@
 ; done by adding the clause
 ; [(and (= L 2) (symbol? (first s))) (list (first s) (second s))]
 
+|#
 ; Exercise 347 
 (define-struct def [name para body])
+(require htdp/docs)
+(define WRONG "wrong kind of S-expression")
 ; see exercise 344
- 
+
+#|
 ; S-expr -> BSL-fun-def
 ; creates representation of a BSL definition for s (if possible)
 (define (def-parse s)
@@ -363,6 +370,7 @@
                          (error WRONG))))])))
     (def-parse s)))
 
+
 (check-error (def-parse 7))
 (check-error (def-parse '(defun x f)))
 (check-error (def-parse '(define 8 f)))
@@ -371,10 +379,13 @@
 (check-expect (def-parse '(define (goog ly) gah))
               (make-def 'goog 'ly 'gah))
 
+
 ; SL -> BSL-fun-def*
 ; da is a list of quoted BSL definitions
 (define (da-parse da)
   (map def-parse da))
+
+|#
 
 ; Exercise 348
 ; a BSL-da-all is one of the following:
@@ -390,15 +401,39 @@
   (cond
     [(empty? da) #false]
     [(and (const? (first da))
-          (symbol=? x (cons-name (first da))))          
-     (first da)]
+          (symbol=? x (const-name (first da))))          
+     (const-value (first da))]
     [else (lookup-con-def (rest da) x)]))
 
 ; BSL-da-all Symbol -> Maybe BSL-fun-def
 (define (lookup-fun-def da x)
   (cond
     [(empty? da) #false]
-    [(and (fun? (first da))
-          (symbol=? x (fun-name (first da))))          
+    [(and (def? (first da))
+          (symbol=? x (def-name (first da))))          
      (first da)]
-    [else (lookup-con-def (rest da) x)]))
+    [else (lookup-fun-def (rest da) x)]))
+
+; Exercise 349
+; BSL-expr BSL-da-all -> Value
+(define (eval-all s da)
+  (cond
+    [(number? s) s]
+    [(add? s) (+ (eval-all (add-left s) da)
+                 (eval-all (add-right s) da))]
+    [(mul? s) (* (eval-all (mul-left s) da)
+                 (eval-all (mul-right s) da))]
+    [(symbol? s) (lookup-con-def da s)]
+    [(and (list? s) (= (length s) 2))
+     (local ((define f (lookup-fun-def da (first s))))
+       (eval-all (subst (def-body f) (def-para f) (eval-all (second s) da)) da))]
+    [else (error "something's wrong")]))
+
+(check-expect (eval-all 7 '()) 7)
+(check-expect (eval-all (make-add 8 8) '()) 16)
+(check-expect (eval-all (make-mul 8 8) '()) 64)
+(check-expect (eval-all 'goo (list (make-const 'goo 8))) 8)
+(check-expect (eval-all '(goo 8) (list (make-const 'go 8)
+                                   (make-def 'goo 'x (make-mul 'x 3))))
+              24)
+
