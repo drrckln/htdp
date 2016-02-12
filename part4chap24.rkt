@@ -74,7 +74,8 @@
 ; Exercise 335
 (require htdp/docs)
 (define WRONG "wrong kind of S-expression")
- 
+
+|#
 ; S-expr -> BSL-expr
 ; creates representation of a BSL expression for s (if possible)
 (define (parse s)
@@ -127,6 +128,7 @@
               (make-add (make-mul 3 'a)
                         (make-mul -2 3)))
 
+
 ; Weird stuff: it doesn't use cond to take advantage of the
 ; different forms of BSL-expr. it uses error a lot. it uses
 ; the (< L 3) (= L 3) else expressions, which aren't based
@@ -141,7 +143,7 @@
 ; – Symbol 
 ; – (make-add BSL-var-expr BSL-var-expr)
 ; – (make-mul BSL-var-expr BSL-var-expr)
-|#
+
 
 ; Exercise 336
 ; BSL-var-expr Symbol Number -> BSL-var-expr
@@ -344,7 +346,7 @@
 (define WRONG "wrong kind of S-expression")
 ; see exercise 344
 
-#|
+
 ; S-expr -> BSL-fun-def
 ; creates representation of a BSL definition for s (if possible)
 (define (def-parse s)
@@ -383,9 +385,12 @@
 ; SL -> BSL-fun-def*
 ; da is a list of quoted BSL definitions
 (define (da-parse da)
-  (map def-parse da))
+  (cond
+    [(empty? da) '()]
+    [(= (length (first da)) 2) (cons (make-const (first (first da)) (second (first da)))
+                                     (da-parse (rest da)))]
+    [else (cons (def-parse (first da)) (da-parse (rest da)))]))
 
-|#
 
 ; Exercise 348
 ; a BSL-da-all is one of the following:
@@ -437,3 +442,12 @@
                                    (make-def 'goo 'x (make-mul 'x 3))))
               24)
 
+; Exercise 350
+; S-expr SL -> Value
+; parses and then evals
+(define (eval-all-sexpr s da)
+  (eval-all (parse s) (da-parse da)))
+
+(check-expect (eval-all-sexpr '(+ (a 10) 2) '((define (a x) (* x 3))))
+              32)
+(check-expect (eval-all-sexpr 7 '()) 7)
