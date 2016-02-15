@@ -7,3 +7,6 @@
 ; <machine><action></action><action></action><action></action></machine>
 
 (make-element "machine" (list (make-element "action" '())))
+
+(define-struct element [name attributes content])
+(define-struct attribute [name value])
