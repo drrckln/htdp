@@ -52,3 +52,17 @@
 ; (cons Symbol '())
 ; (cons Symbol (cons Xexpr.v2 Xexpr.v2*))
 ; (cons Symbol (cons Attribute* Xexpr.v2*))
+
+; Exercise 352
+
+(cons 'transition (list (list 'from "seen-e")
+                        (list 'to "seen-f"))
+      '())
+
+(cons 'ul (list (list 'li
+                      (list (list 'word)
+                            (list 'word)))
+                (list 'li
+                      (list (list 'word)))))
+
+(cons 'end '()) ; THIS ONE
