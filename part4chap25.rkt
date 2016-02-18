@@ -49,4 +49,6 @@
 
 ; Exercise 351
 ; An Xexpr.v2 is
-SICK
+; (cons Symbol '())
+; (cons Symbol (cons Xexpr.v2 Xexpr.v2*))
+; (cons Symbol (cons Attribute* Xexpr.v2*))
