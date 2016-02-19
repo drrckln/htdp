@@ -66,3 +66,14 @@
                       (list (list 'word)))))
 
 (cons 'end '()) ; THIS ONE
+
+; Exercise 353
+'(server ((name "example.org")))
+<server name="example.org"/>
+
+'(carcassonne (board (grass)) (player ((name "sam"))))
+<carcassonne board> </carcassonne> ; malformed?
+
+'(start)
+<start/>
+
