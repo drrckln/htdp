@@ -77,3 +77,20 @@
 '(start)
 <start/>
 
+(define a0 '((initial "red")))
+
+(define e0 '(machine))
+(define e1 `(machine ,a0))
+(define e2 '(machine (action)))
+(define e3 '(machine () (action)))
+(define e4 `(machine ,a0 (action) (action)))
+
+; Xexpr.v2 -> [List-of Attribute]
+; retrieves the list of attributes of xe
+(define (xexpr-attributes xe) '())
+
+(check-expect (xexpr-attributes e0) '())
+(check-expect (xexpr-attributes e1) '((initial "red")))
+(check-expect (xexpr-attributes e2) '())
+(check-expect (xexpr-attributes e3) '())
+(check-expect (xexpr-attributes e4) '((initial "red")))
