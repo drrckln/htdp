@@ -6,7 +6,7 @@
 ; <machine><action /><action /><action /></machine> expanded is:
 ; <machine><action></action><action></action><action></action></machine>
 
-(make-element "machine" (list (make-element "action" '())))
+;(make-element "machine" (list (make-element "action" '())))
 
 (define-struct element [name attributes content])
 (define-struct attribute [name value])
@@ -53,8 +53,12 @@
 ; (cons Symbol (cons Xexpr.v2 Xexpr.v2*))
 ; (cons Symbol (cons Attribute* Xexpr.v2*))
 
-; Exercise 352
+; (cons Symbol '())
+; (cons Symbol Xexpr.v2)
+; (cons Symbol (list Attribute..) Xexpr.v2)
 
+; Exercise 352
+#|
 (cons 'transition (list (list 'from "seen-e")
                         (list 'to "seen-f"))
       '())
@@ -76,6 +80,7 @@
 
 '(start)
 <start/>
+|#
 
 (define a0 '((initial "red")))
 
@@ -87,10 +92,26 @@
 
 ; Xexpr.v2 -> [List-of Attribute]
 ; retrieves the list of attributes of xe
-(define (xexpr-attributes xe) '())
+(define (xexpr-attributes xe)
+  (local ((define optional-loa+content (rest xe)))
+    (cond
+      [(empty? optional-loa+content) '()]
+      [else (local ((define loa-or-x (first optional-loa+content)))
+              (if (list-of-attributes? loa-or-x)
+                  loa-or-x
+                  '()))])))
 
 (check-expect (xexpr-attributes e0) '())
 (check-expect (xexpr-attributes e1) '((initial "red")))
 (check-expect (xexpr-attributes e2) '())
 (check-expect (xexpr-attributes e3) '())
 (check-expect (xexpr-attributes e4) '((initial "red")))
+
+; [List-of Attribute] or Xexpr.v2 -> ???
+; determine whether x is an element of [List-of Attribute]; #false otherwise
+; this is such a hack, wtf
+(define (list-of-attributes? x)
+  (cond
+    [(empty? x) #true]
+    [else (local ((define possible-attribute (first x)))
+            (cons? possible-attribute))]))
