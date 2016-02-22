@@ -115,3 +115,9 @@
     [(empty? x) #true]
     [else (local ((define possible-attribute (first x)))
             (cons? possible-attribute))]))
+
+; Exercise 354
+
+; Xexpr.v2 -> Symbol
+(define (xexpr-name expr)
+  (first expr))
