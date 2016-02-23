@@ -121,3 +121,11 @@
 ; Xexpr.v2 -> Symbol
 (define (xexpr-name expr)
   (first expr))
+
+; Xexpr.v2 -> [List-of Xexpr.v2]
+(define (xexpr-content expr)
+  (cond
+    [(empty? (rest expr)) '()]
+    [(list-of-attributes? (second expr))
+     (rest (rest expr))]
+    [else (rest expr)]))
