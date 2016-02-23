@@ -117,7 +117,6 @@
             (cons? possible-attribute))]))
 
 ; Exercise 354
-
 ; Xexpr.v2 -> Symbol
 (define (xexpr-name expr)
   (first expr))
