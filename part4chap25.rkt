@@ -128,3 +128,14 @@
     [(list-of-attributes? (second expr))
      (rest (rest expr))]
     [else (rest expr)]))
+
+; Exercise 355
+(define (xexpr-attributes xe)
+  (local ((define optional-loa+content (rest xe)))
+    (cond
+      [(empty? optional-loa+content) ...]
+      [else (... (first optional-loa+content)
+             ... (xexpr-attributes (rest optional-loa+content) ...))])))
+; as (first optional-loa+content) is basicaly (second xe),
+; we can look to see this is either list of attributes or content
+; thus (rest optional-loa+content) is never needed.
