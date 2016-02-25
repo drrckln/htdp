@@ -139,3 +139,11 @@
 ; as (first optional-loa+content) is basicaly (second xe),
 ; we can look to see this is either list of attributes or content
 ; thus (rest optional-loa+content) is never needed.
+
+; Exercise 356
+; [List-of Attribute] or Xexpr.v2
+; so.. LoA_or_Xexpr
+; '()
+; (cons Symbol '())
+; (cons Symbol [List-of Attributes] [List-of Xexpr])
+
