@@ -147,3 +147,8 @@
 ; (cons Symbol '())
 ; (cons Symbol [List-of Attributes] [List-of Xexpr])
 
+; Exercise 357
+; [List-of Attributes] Symbol -> Maybe String
+; gets the associated String, else #false
+(define (lookup-attribute la s)
+  ...)
