@@ -151,4 +151,8 @@
 ; [List-of Attributes] Symbol -> Maybe String
 ; gets the associated String, else #false
 (define (lookup-attribute la s)
-  ...)
+  (cond
+    [(empty? la) #false]
+    [(symbol=? s (first (first la)))
+     (second (first la))]
+    [else (lookup-attribute (rest la) s)]))
