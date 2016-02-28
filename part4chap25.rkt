@@ -156,3 +156,7 @@
     [(symbol=? s (first (first la)))
      (second (first la))]
     [else (lookup-attribute (rest la) s)]))
+
+; An XWord is '(word ((text String))).
+
+; Exercise 358
