@@ -160,3 +160,17 @@
 ; An XWord is '(word ((text String))).
 
 ; Exercise 358
+'(word ((text "Hi")))
+'(word ((text "hello")))
+'(word ((text "jaaa")))
+
+; X -> Boolean
+(define (word? x)
+  (and (symbol=? 'word (first x))
+       (= (length x) 2)
+       (symbol=? 'text (first (second x)))
+       (string? (second (second x)))))
+
+; XWord -> String
+(define (word-text x)
+  (second (second x)))
