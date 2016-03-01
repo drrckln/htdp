@@ -174,3 +174,8 @@
 ; XWord -> String
 (define (word-text x)
   (second (second x)))
+
+; Exercise 359
+; An Xexpr.v2 is 
+; – (cons Symbol [List-of Xexpr.v2])
+; – (cons Symbol (cons [List-of Attribute] [List-of Xexpr.v2]))
