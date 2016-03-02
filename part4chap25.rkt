@@ -179,3 +179,11 @@
 ; An Xexpr.v2 is 
 ; – (cons Symbol [List-of Xexpr.v2])
 ; – (cons Symbol (cons [List-of Attribute] [List-of Xexpr.v2]))
+
+; An XEnum.v1 is one of: 
+; – (cons 'ul [List-of XItem.v1])
+; – (cons 'ul (cons [List-of Attribute] [List-of XItem.v1]))
+; An XItem.v1 is one of:
+; – (cons 'li (cons XWord '()))
+; – (cons 'li (cons [List-of Attribute] (cons XWord '())))
+
