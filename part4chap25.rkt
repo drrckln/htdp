@@ -187,3 +187,8 @@
 ; – (cons 'li (cons XWord '()))
 ; – (cons 'li (cons [List-of Attribute] (cons XWord '())))
 
+(define e0
+  '(ul
+    (li (word ((text "one"))))
+    (li (word ((text "two"))))))
+
