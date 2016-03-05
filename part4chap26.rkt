@@ -4,4 +4,12 @@
 ; [List-of Number] [List-of Number] -> [List-of Number]
 ; constructs a new list by replacing '() in front with end
 (define (replace-eol-with front end)
-  front)
+  (cond
+    [(empty? front) ..]
+    [else (... (first front) ...
+           ... (replace-eol-with (rest front) end) ...)]))
+
+(check-expect (replace-eol-with '() '(a b c)) '(a b c))
+(check-expect (replace-eol-with (cons 1 '()) '(a)) (cons 1 '(a)))
+(check-expect (replace-eol-with (cons 2 (cons 1 '())) '(a))
+              (cons 2 (cons 1 '(a))))
