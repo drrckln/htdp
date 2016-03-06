@@ -5,9 +5,9 @@
 ; constructs a new list by replacing '() in front with end
 (define (replace-eol-with front end)
   (cond
-    [(empty? front) ..]
-    [else (... (first front) ...
-           ... (replace-eol-with (rest front) end) ...)]))
+    [(empty? front) end]
+    [else (cons (first front)
+                (replace-eol-with (rest front) end))]))
 
 (check-expect (replace-eol-with '() '(a b c)) '(a b c))
 (check-expect (replace-eol-with (cons 1 '()) '(a)) (cons 1 '(a)))
