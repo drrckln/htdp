@@ -33,3 +33,33 @@
               '())
 (check-expect (cross '(a) '(1 2))
               '((a 1) (a 2)))
+
+; Exercise 373
+(define-struct employee [name ssn pay-rate])
+(define-struct wr [name hours]) ; work record
+(define-struct or [name pay]) ; output record
+
+; [List-of Employee] [List-of WR] -> [List-of OR]
+; computes weekly wages by multiplying the corresponding
+; items on hours and hourly-wages
+; assume the two lists are of equal length
+(define (wages*.v2 ems wrs)
+  (cond
+    [(empty? ems) '()]
+    [else
+     (cons (make-or (employee-name (first ems))
+                    (weekly-wage (employee-pay-rate (first ems))
+                                 (wr-hours (first wrs))))
+           (wages*.v2 (rest ems) (rest wrs)))]))
+
+; Number Number -> Number
+; computes the weekly wage from pay-rate and hours-worked
+(define (weekly-wage pay-rate hours-worked)
+  (* pay-rate hours-worked))
+
+(check-expect (wages*.v2 '() '()) '())
+(check-expect (wages*.v2 (make-employee "jim" 3838383 5.65) (make-wr "jim" 40)) (make-or "jim" 226.0))
+;(check-expect (wages*.v2 '(5.65 8.75) '(40.0 30.0)) '(226.0 262.5))
+
+; to compute the wage of one worker, use weekly-wage
+; to deal with income taxes, change weekly-wage
