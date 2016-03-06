@@ -13,3 +13,23 @@
 (check-expect (replace-eol-with (cons 1 '()) '(a)) (cons 1 '(a)))
 (check-expect (replace-eol-with (cons 2 (cons 1 '())) '(a))
               (cons 2 (cons 1 '(a))))
+
+; Exercise 372
+; [List-of Symbol] [List-of Number] -> [List-of (Symbol, Number)]
+(define (cross los lon)
+  (cond
+    [(empty? los) '()]
+    [(empty? lon) '()]
+    [(empty? (rest los)) (cons (list (first los) (first lon))
+                               (cross (list (first los)) (rest lon)))]
+    [else (replace-eol-with (cross (list (first los)) lon)
+                            (cross (rest los) lon))]))
+    
+(check-expect (cross '(a b c) '(1 2))
+              '((a 1) (a 2) (b 1) (b 2) (c 1) (c 2)))
+(check-expect (cross '() '(1 2))
+              '())
+(check-expect (cross '(a b c) '())
+              '())
+(check-expect (cross '(a) '(1 2))
+              '((a 1) (a 2)))
