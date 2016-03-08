@@ -64,3 +64,17 @@
 
 ; to compute the wage of one worker, use weekly-wage
 ; to deal with income taxes, change weekly-wage
+
+; Exercise 374
+(define-struct phone-record [name number])
+; A PhoneRecord is (make-phone-record String String)
+
+; [List-of String] [List-of String] -> [List-of PhoneRecord]
+; takes list of names and list of phone numbers, creating phone records
+; lists are equally long
+; assumption: corresponding list items belong to the same person
+(define (zip names phones)
+  (cond
+    [(empty? names) '()]
+    [else (cons (make-phone-record (first names) (first phones))
+                (zip (rest names) (rest phones)))]))
