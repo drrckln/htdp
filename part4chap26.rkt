@@ -88,14 +88,9 @@
 ; signals an error if there is no such symbol
 (define (list-pick l n)
   (cond
-    [(and (= n 0) (empty? l))
-     (error "list too short")]
-    [(and (> n 0) (empty? l))
-     (error "list too short")]
-    [(and (= n 0) (cons? l))
-     (first l)]
-    [(and (> n 0) (cons? l))
-     (list-pick (rest l) (sub1 n))]))
+    [(empty? alos) (error "list too short")]
+    [(= n 0) (first l)]
+    [(> n 0) (list-pick (rest l) (sub1 n))]))
 
 (check-expect (list-pick '(a b c) 2) 'c)
 (check-error (list-pick '() 0) "list too short")
@@ -133,3 +128,10 @@
 (check-error (tree-pick (make-branch 'a 'b) '()) "not a leaf")
 (check-error (tree-pick 'a (cons 'left '())) "no more depth")
 (check-expect (tree-pick (make-branch 'a 'b) (cons 'left '())) 'a)
+
+; it is important to understand that we designed the original in a systematic
+; manner and that we were able to transform the first into the second with
+; well-established algebraic laws.
+; If we try to find the simple versions of functions directly, we sooner or
+; later fail to take care of a case in our analysis, and we are guaranteed
+; to produce flawed programs.
