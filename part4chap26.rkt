@@ -78,3 +78,58 @@
     [(empty? names) '()]
     [else (cons (make-phone-record (first names) (first phones))
                 (zip (rest names) (rest phones)))]))
+
+; N is one of:
+; - 0
+; - (add1 N)
+
+; [List-of Symbol] N -> Maybe Symbol
+; extracts the nth symbol from l
+; signals an error if there is no such symbol
+(define (list-pick l n)
+  (cond
+    [(and (= n 0) (empty? l))
+     (error "list too short")]
+    [(and (> n 0) (empty? l))
+     (error "list too short")]
+    [(and (= n 0) (cons? l))
+     (first l)]
+    [(and (> n 0) (cons? l))
+     (list-pick (rest l) (sub1 n))]))
+
+(check-expect (list-pick '(a b c) 2) 'c)
+(check-error (list-pick '() 0) "list too short")
+(check-expect (list-pick (cons 'a '()) 0) 'a)
+(check-error (list-pick '() 3) "list too short")
+(check-error (list-pick (cons 'a '()) 3) "list too short")
+
+; Exercise 375
+(define-struct branch [left right])
+; A TOS is one of:
+; – Symbol
+; – (make-branch TOS TOS)
+ 
+; A Direction is one of:
+; – 'left
+; – 'right
+ 
+; A list of Directions is also called a path. 
+
+; TOS [List-of Direction] -> Maybe Symbol
+(define (tree-pick tos lod)
+  (cond
+    [(and (symbol? tos) (empty? lod))
+     tos]
+    [(and (branch? tos) (empty? lod))
+     (error "not a leaf")]
+    [(and (symbol? tos) (cons? lod))
+     (error "no more depth")]
+    [(and (branch? tos) (cons? lod))
+     (cond
+       [(symbol=? 'left (first lod)) (tree-pick (branch-left tos) (rest lod))]
+       [else (tree-pick (branch-right tos) (rest lod))])]))
+
+(check-expect (tree-pick 'a '()) 'a)
+(check-error (tree-pick (make-branch 'a 'b) '()) "not a leaf")
+(check-error (tree-pick 'a (cons 'left '())) "no more depth")
+(check-expect (tree-pick (make-branch 'a 'b) (cons 'left '())) 'a)
