@@ -113,6 +113,7 @@
 ; A list of Directions is also called a path. 
 
 ; TOS [List-of Direction] -> Maybe Symbol
+#|
 (define (tree-pick tos lod)
   (cond
     [(and (symbol? tos) (empty? lod))
@@ -125,9 +126,10 @@
      (cond
        [(symbol=? 'left (first lod)) (tree-pick (branch-left tos) (rest lod))]
        [else (tree-pick (branch-right tos) (rest lod))])]))
+|#
 
 (check-expect (tree-pick 'a '()) 'a)
-(check-error (tree-pick (make-branch 'a 'b) '()) "not a leaf")
+(check-expect (tree-pick (make-branch 'a 'b) '()) (make-branch 'a 'b))
 (check-error (tree-pick 'a (cons 'left '())) "no more depth")
 (check-expect (tree-pick (make-branch 'a 'b) (cons 'left '())) 'a)
 
@@ -150,3 +152,12 @@
 (check-expect (replace-eol-with (cons 1 '()) '(a)) (cons 1 '(a)))
 (check-expect (replace-eol-with (cons 2 (cons 1 '())) '(a))
               (cons 2 (cons 1 '(a))))
+
+; Exercise 377
+; TOS [List-of Direction] -> Maybe Symbol
+(define (tree-pick tos lod)
+  (cond
+    [(empty? lod) tos]
+    [(symbol? tos) (error "no more depth")]
+    [(symbol=? 'left (first lod)) (tree-pick (branch-left tos) (rest lod))]
+    [else (tree-pick (branch-right tos) (rest lod))]))
