@@ -3,6 +3,7 @@
 #reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname part4chap26) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 ; [List-of Number] [List-of Number] -> [List-of Number]
 ; constructs a new list by replacing '() in front with end
+#|
 (define (replace-eol-with front end)
   (cond
     [(empty? front) end]
@@ -13,6 +14,7 @@
 (check-expect (replace-eol-with (cons 1 '()) '(a)) (cons 1 '(a)))
 (check-expect (replace-eol-with (cons 2 (cons 1 '())) '(a))
               (cons 2 (cons 1 '(a))))
+|#
 
 ; Exercise 372
 ; [List-of Symbol] [List-of Number] -> [List-of (Symbol, Number)]
@@ -88,7 +90,7 @@
 ; signals an error if there is no such symbol
 (define (list-pick l n)
   (cond
-    [(empty? alos) (error "list too short")]
+    [(empty? l) (error "list too short")]
     [(= n 0) (first l)]
     [(> n 0) (list-pick (rest l) (sub1 n))]))
 
@@ -135,3 +137,16 @@
 ; If we try to find the simple versions of functions directly, we sooner or
 ; later fail to take care of a case in our analysis, and we are guaranteed
 ; to produce flawed programs.
+
+; Exercise 376
+; [List-of Number] [List-of Number] -> [List-of Number]
+; constructs a new list by replacing '() in front with end
+(define (replace-eol-with front end)
+  (cond
+    [(empty? front) end]
+    [else (cons (first front) (replace-eol-with (rest front) end))]))
+
+(check-expect (replace-eol-with '() '(a b c)) '(a b c))
+(check-expect (replace-eol-with (cons 1 '()) '(a)) (cons 1 '(a)))
+(check-expect (replace-eol-with (cons 2 (cons 1 '())) '(a))
+              (cons 2 (cons 1 '(a))))
