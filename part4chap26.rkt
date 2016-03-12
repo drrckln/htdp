@@ -161,3 +161,21 @@
     [(symbol? tos) (error "no more depth")]
     [(symbol=? 'left (first lod)) (tree-pick (branch-left tos) (rest lod))]
     [else (tree-pick (branch-right tos) (rest lod))]))
+
+; Exercise 378
+; [List-of Number] [List-of Number] -> [List-of Number]
+; two input lists are sorted in ascending order
+; produces single sorted list of all numbers in the input lists
+(define (merge l1 l2)
+  (cond
+    [(and (empty? l1) (empty? l2)) '()]
+    [(and (cons? l1) (empty? l2)) l1]
+    [(and (empty? l1) (cons? l2)) l2]
+    [(<= (first l1) (first l2))
+     (cons (first l1) (merge (rest l1) l2))]
+    [else (cons (first l2) (merge l1 (rest l2)))]))
+
+(check-expect (merge '() '()) '())
+(check-expect (merge (list 3 4) '()) (list 3 4))
+(check-expect (merge '() (list 3 4)) (list 3 4))
+(check-expect (merge (list 3 5 6) (list 2 4 9)) (list 2 3 4 5 6 9))
