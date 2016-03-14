@@ -179,3 +179,28 @@
 (check-expect (merge (list 3 4) '()) (list 3 4))
 (check-expect (merge '() (list 3 4)) (list 3 4))
 (check-expect (merge (list 3 5 6) (list 2 4 9)) (list 2 3 4 5 6 9))
+
+; Exercise 379
+; [List-of X] Number -> [List-of X]
+(define (drop l n)
+  (cond
+    [(empty? l) '()]
+    [(= n 0) l]
+    [(> n 0) (drop (rest l) (sub1 n))]))
+
+(check-expect (drop (list 3 2 4) 0) (list 3 2 4))
+(check-expect (drop (list 3 2 4) 1) (list 2 4))
+(check-expect (drop (list 3 2 4) 4) '())
+(check-expect (drop '() 0) '())
+(check-expect (drop '() 3) '())
+
+(define (take l n)
+  (cond
+    [(or (= n 0) (empty? l)) '()]
+    [else (cons (first l) (take (rest l) (sub1 n)))]))
+
+(check-expect (take (list 3 2 4) 0) '())
+(check-expect (take (list 3 2 4) 1) (list 3))
+(check-expect (take (list 3 2 4) 4) (list 3 2 4))
+(check-expect (take '() 0) '())
+(check-expect (take '() 3) '())
