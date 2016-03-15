@@ -205,12 +205,16 @@
 (check-expect (take '() 0) '())
 (check-expect (take '() 3) '())
 
+(require 2htdp/universe)
+(require 2htdp/image)
+(require 2htdp/batch-io)
+
 (define LETTERS (explode "abcdefghijklmnopqrstuvwxyz"))
- 
+
 ; A HM-Word is [List-of [Maybe Letter]]
 ; interpretation #false represents a letter to be guessed 
 ; A Letter is member? of LETTERS.
- 
+
 ; HM-Word N -> String
 ; run a simplistic Hangman game, produce the current state of the game
 ; assume the-pick does not contain #false
@@ -241,3 +245,31 @@
   (local ((define l (map (lambda (lt) (if (boolean? lt) "_" lt)) w))
           (define s (implode l)))
     (text s 22 "black")))
+
+; Exercise 380
+; [List-of Letter] HM-Word KeyEvent -> HM-Word
+(define (compare-word word status guess)
+  (local (; HM-Word -> HM-Word
+          (define (update status)
+            (updating word status guess))
+          ; [List-of Letter] HM-Word KeyEvent -> HM-Word
+          (define (updating w s g)
+            (cond
+              [(empty? s) '()]
+              [(not (boolean? (first s)))
+               (cons (first s) (updating (rest w) (rest s) g))]
+              [(string=? g (first w))
+               (cons g (updating (rest w) (rest s) g))]
+              [else (cons #false (updating (rest w) (rest s) g))])))
+    ; -- IN --    
+    (cond
+      [(and (member? guess word)
+            (not (member? guess status)))
+       (update status)]
+      [else status])))
+
+(define DICTIONARY-LOCATION "/usr/share/dict/words") ; on Mac OS X
+(define DICTIONARY-AS-LIST (read-lines DICTIONARY-LOCATION))
+(define DICTIONARY-SIZE (length DICTIONARY-AS-LIST))
+ 
+(play (list-ref DICTIONARY-AS-LIST (random DICTIONARY-SIZE)) 20)
