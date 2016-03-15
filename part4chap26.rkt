@@ -204,3 +204,40 @@
 (check-expect (take (list 3 2 4) 4) (list 3 2 4))
 (check-expect (take '() 0) '())
 (check-expect (take '() 3) '())
+
+(define LETTERS (explode "abcdefghijklmnopqrstuvwxyz"))
+ 
+; A HM-Word is [List-of [Maybe Letter]]
+; interpretation #false represents a letter to be guessed 
+; A Letter is member? of LETTERS.
+ 
+; HM-Word N -> String
+; run a simplistic Hangman game, produce the current state of the game
+; assume the-pick does not contain #false
+(define (play the-pick time-limit)
+  (local ((define the-word  (explode the-pick))
+          (define the-guess (make-list (length the-word) #false))
+ 
+          ; HM-Word -> HM-Word
+          (define (do-nothing s) s)
+ 
+          ; HM-Word KeyEvent -> HM-Word 
+          (define (checked-compare current-status ke)
+            (if (member? ke LETTERS)
+                (compare-word the-word current-status ke)
+                current-status)))
+ 
+    ; the state of the game is a HM-Word
+ 
+    (implode
+     (big-bang the-guess
+       [to-draw render-word]
+       [on-tick do-nothing 1 time-limit]
+       [on-key  checked-compare]))))
+ 
+; HM-Word -> Image
+; render the word, using "_" for places that are #false
+(define (render-word w)
+  (local ((define l (map (lambda (lt) (if (boolean? lt) "_" lt)) w))
+          (define s (implode l)))
+    (text s 22 "black")))
