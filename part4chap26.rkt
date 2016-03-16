@@ -273,3 +273,8 @@
 (define DICTIONARY-SIZE (length DICTIONARY-AS-LIST))
  
 (play (list-ref DICTIONARY-AS-LIST (random DICTIONARY-SIZE)) 20)
+
+; Exercise 381
+; [List-of ER] [List-of PR] -> [List of WR]
+; signals an error if it cannot find an employee record for a punch card
+; or vice versa
