@@ -278,4 +278,16 @@
 ; [List-of ER] [List-of PR] -> [List of WR]
 ; signals an error if it cannot find an employee record for a punch card
 ; or vice versa
-; stomach
+; assumes at most one punch card record per employee number, vice versa
+(define-struct PR [emp hours])
+(define-struct ER [name num rate])
+(define-struct WR [name weekwage])
+
+(define (wages*.v3 loer lopr)
+  (cond
+    [(and (empty? lopr) (empty? loer)) '()]
+    [(or (empty? lopr) (empty? loer)) (error "missing records")]
+    [(= (ER-num loer) (PR-emp lopr))
+     (cons (make-wr (ER-name loer) (* (ER-rate loer) (PR-hours lopr)))
+           (wages*.v3 (rest loer) (rest lopr)))]
+    [else (wages*.v3 loer (reverse (cons (first lopr) (reverse (rest lopr)))))]))
