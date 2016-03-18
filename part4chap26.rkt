@@ -278,3 +278,4 @@
 ; [List-of ER] [List-of PR] -> [List of WR]
 ; signals an error if it cannot find an employee record for a punch card
 ; or vice versa
+; stomach
