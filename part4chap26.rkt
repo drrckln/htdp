@@ -291,3 +291,12 @@
      (cons (make-wr (ER-name loer) (* (ER-rate loer) (PR-hours lopr)))
            (wages*.v3 (rest loer) (rest lopr)))]
     [else (wages*.v3 loer (reverse (cons (first lopr) (reverse (rest lopr)))))]))
+
+; Exercise 382
+(list 5)
+(list 5 17)
+(list 5 17 3)
+
+; LinearCombination [List-of Variable] -> ValueOfCombination
+(define (value lincomb lovar)
+  )
