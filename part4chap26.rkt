@@ -298,5 +298,14 @@
 (list 5 17 3)
 
 ; LinearCombination [List-of Variable] -> ValueOfCombination
+; input lists must be equally long
 (define (value lincomb lovar)
-  )
+  (cond
+    [(empty? lincomb) 0]
+    [else (+ (* (first lincomb)
+                (first lovar))
+             (value (rest lincomb) (rest lovar)))]))
+
+(check-expect (value (list 5) (list 10)) 50)
+(check-expect (value (list 5 17) (list 10 1)) 67)
+(check-expect (value (list 5 17 3) (list 10 1 2)) 73)
