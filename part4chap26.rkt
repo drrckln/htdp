@@ -356,3 +356,25 @@
             (check-names names candidate)))
     ; -- IN --
     (filter checker ll)))
+
+; Exercise 384
+; [List-of ACGT] [List-of ACGT] -> Boolean
+; if pattern is identical to initial part of search-string
+; #true. otherwise #false.
+(define (DNAprefix pattern ss)
+  (cond
+    [(empty? pattern) #true]
+    [(string=? (first pattern) (first ss))
+     (DNAprefix (rest pattern) (rest ss))]
+    [else #false]))
+
+; [List-of ACGT] [List-of ACGT] -> Maybe ACGT
+; like DNAprefix, but returns first item in search-string
+(define (DNAprefix pattern ss)
+  (cond
+    [(empty? pattern) (if (empty? ss)
+                          (error "no DNA letter after")
+                          (first ss))]
+    [(string=? (first pattern) (first ss))
+     (DNAprefix (rest pattern) (rest ss))]
+    [else #false]))
