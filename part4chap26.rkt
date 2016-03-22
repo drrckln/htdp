@@ -309,3 +309,50 @@
 (check-expect (value (list 5) (list 10)) 50)
 (check-expect (value (list 5 17) (list 10 1)) 67)
 (check-expect (value (list 5 17 3) (list 10 1 2)) 73)
+
+; Exercise 383
+; [List-of String] -> [List-of String] 
+; picks a “random” non-identity arrangement of names
+(define (gift-pick names)
+  (random-pick
+    (non-same names (arrangements names))))
+ 
+; [List-of String] -> [List-of [List-of String]]
+; returns all possible permutations of the given list of names
+; see exercise 199
+(define (arrangements names)
+  ...)
+
+; [List-of X] -> X 
+; returns a random item from the list 
+; assume the list is not empty 
+(define (random-pick l)
+  (local (; N [List-of X] -> X
+          ; picks the nth item
+          (define (pick n ls)
+            (cond
+              [(<= n 0) (first ls)]
+              [else (pick (sub1 n) (rest ls))])))
+    ; -- IN --
+    (pick (random (length l)) l)))
+ 
+; [List-of String] [List-of [List-of String]] 
+; -> 
+; [List-of [List-of String]]
+; produces the list of those lists in ll that do not agree 
+; with names at any place 
+(define (non-same names ll)
+  (local (; [List-of String] [List-of String] -> Boolean
+          ; checks if any names are the same in the same place
+          (define (check-names nm poss-nm)
+            (cond
+              [(empty? nm) #true]
+              [(string=? (first nm) (first poss-nm))
+               #false]
+              [else (check-names (rest nm) (poss-nm))]))
+          ; [List-of String] -> Boolean
+          ; uses check-names, just partially applying names
+          (define (checker candidate)
+            (check-names names candidate)))
+    ; -- IN --
+    (filter checker ll)))
