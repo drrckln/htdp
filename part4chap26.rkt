@@ -378,3 +378,20 @@
     [(string=? (first pattern) (first ss))
      (DNAprefix (rest pattern) (rest ss))]
     [else #false]))
+
+; Exercise 385
+; S-expr S-expr -> Boolean
+(define (sexp=? s1 s2)
+  (cond
+    [(and (atom? s1) (atom? s2)) (atom=? s1 s2)]
+    [(and (cons? s1) (cons? s2))
+     (or (sexp=? (first s1) (first s2))
+         (sexp=? (rest s1) (rest s2)))]
+    [else #false]))
+
+; Atom Atom -> Boolean
+(define (atom=? a1 a2)
+  (cond
+    [(number? a1) (= a1 a2)]
+    [(string? a1) (string=? a1 a2)]
+    [(symbol? a1) (symbol=? a1 a2)]))
