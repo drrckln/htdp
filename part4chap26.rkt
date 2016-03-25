@@ -395,3 +395,13 @@
     [(number? a1) (= a1 a2)]
     [(string? a1) (string=? a1 a2)]
     [(symbol? a1) (symbol=? a1 a2)]))
+
+; Exercise 386, rereading Exercise 338
+; Explain the reasoning behind our hint to think of the
+; given expression as an atomic value at first.
+
+; You have two inputs, a BSL-var-expr and an Association
+; List. If you treat the BSL-var-expr as atomic and evaluate
+; it only when the AL is empty, then you guarantee all the
+; substitutions have been applied. Then it's numeric? or not.
+; Easy to apply the evaluation then.
