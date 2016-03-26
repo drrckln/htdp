@@ -405,3 +405,5 @@
 ; it only when the AL is empty, then you guarantee all the
 ; substitutions have been applied. Then it's numeric? or not.
 ; Easy to apply the evaluation then.
+
+; read the summary; chapter 27
