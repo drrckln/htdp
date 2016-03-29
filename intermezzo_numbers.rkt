@@ -29,3 +29,11 @@
 
 (define MAX-POSITIVE (create-inex 99 1 99))
 (define MIN-POSITIVE (create-inex 1 -1 99))
+
+
+(check-expect (inex+ (create-inex 1 1 0) (create-inex 2 1 0))
+              (create-inex 3 1 0))
+(check-expect (inex+ (create-inex 55 1 0) (create-inex 55 1 0))
+              (create-inex 11 1 1))
+(check-expect (inex+ (create-inex 56 1 0) (create-inex 56 1 0))
+              (create-inex 11 1 1))
