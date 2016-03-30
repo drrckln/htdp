@@ -50,3 +50,23 @@
 ; but we can't represent that with Inex
 ; the closest is 19 x 10^4
 ; eg (create-inex 19 1 4)
+
+; Exercise 387
+; Inex Inex -> Inex
+; constraint is same exponent
+(define (inex+ n1 n2)
+  (cond
+    [(and (= 1 (inex-sign n1))
+          (= 99 (inex-exponent n1)))
+     (if (> 99 (+ (inex-mantissa n1) (inex-mantissa n2)))
+         (error "out of bounds")
+         (create-inex (+ (inex-mantissa n1) (inex-mantissa n2))
+                      1
+                      (inex-exponent n1)))]
+    [(< 99 (+ (inex-mantissa n1) (inex-mantissa n2)))
+     (create-inex (/ (+ (inex-mantissa n1) (inex-mantissa n2)) 10)
+                  (inex-sign n1)
+                  (add1 (inex-exponent n1)))]
+    [else (create-inex (+ (inex-mantissa n1) (inex-mantissa n2))
+                       (inex-sign n1)
+                       (inex-exponent n1))]))
