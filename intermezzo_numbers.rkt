@@ -37,13 +37,17 @@
               (create-inex 11 1 1))
 (check-expect (inex+ (create-inex 56 1 0) (create-inex 56 1 0))
               (create-inex 11 1 1))
+(check-expect (inex+ (create-inex 1 1 0) (create-inex 1 -1 1))
+              (create-inex 11 -1 1))
 
+#|
 (check-expect (inex* (create-inex 2 1 4) (create-inex 8 1 10))
               (create-inex 16 1 14))
 (check-expect (inex* (create-inex 20 1 1) (create-inex 5 1 4))
               (create-inex 10 1 6))
 (check-expect (inex* (create-inex 27 -1 1) (create-inex 7 1 4))
               (create-inex 19 1 4))
+|#
 
 ; 27 x 10^-1  *  7 x 10^4
 ; should be 189 x 10^3, or 18.9 * 10^4
@@ -53,20 +57,39 @@
 
 ; Exercise 387
 ; Inex Inex -> Inex
-; constraint is same exponent
+; constraint is exponent differs by one at most
 (define (inex+ n1 n2)
   (cond
-    [(and (= 1 (inex-sign n1))
-          (= 99 (inex-exponent n1)))
-     (if (> 99 (+ (inex-mantissa n1) (inex-mantissa n2)))
-         (error "out of bounds")
-         (create-inex (+ (inex-mantissa n1) (inex-mantissa n2))
-                      1
-                      (inex-exponent n1)))]
-    [(< 99 (+ (inex-mantissa n1) (inex-mantissa n2)))
-     (create-inex (/ (+ (inex-mantissa n1) (inex-mantissa n2)) 10)
-                  (inex-sign n1)
-                  (add1 (inex-exponent n1)))]
-    [else (create-inex (+ (inex-mantissa n1) (inex-mantissa n2))
-                       (inex-sign n1)
-                       (inex-exponent n1))]))
+    [(= (* (inex-sign n1) (inex-mantissa n1))
+        (* (inex-sign n2) (inex-mantissa n2)))
+     (cond
+       [(and (= 1 (inex-sign n1))
+             (= 99 (inex-exponent n1)))
+        (if (> 99 (+ (inex-mantissa n1) (inex-mantissa n2)))
+            (error "out of bounds")
+            (create-inex (+ (inex-mantissa n1) (inex-mantissa n2))
+                         1
+                         (inex-exponent n1)))]
+       [(< 99 (+ (inex-mantissa n1) (inex-mantissa n2)))
+        (create-inex (round (/ (+ (inex-mantissa n1) (inex-mantissa n2)) 10))
+                     (inex-sign n1)
+                     (add1 (inex-exponent n1)))]
+       [else (create-inex (+ (inex-mantissa n1) (inex-mantissa n2))
+                          (inex-sign n1)
+                          (inex-exponent n1))])]
+    [(= (abs (- (* (inex-sign n1) (inex-mantissa n1))
+                (* (inex-sign n2) (inex-mantissa n2))))
+        1)
+     (cond
+       [(positive? (- (* (inex-sign n1) (inex-mantissa n1))
+                      (* (inex-sign n2) (inex-mantissa n2))))
+        (create-inex (+ (* (inex-mantissa n1) 10)
+                        (inex-mantissa n2))
+                     (inex-sign n2)
+                     (inex-exponent n2))]
+       [else (create-inex (round (/ (+ (inex-mantissa n1)
+                                       (* (inex-mantissa n2) 10))
+                                    10))
+                          (inex-sign n1)
+                          (inex-exponent n1))])]
+    [else (error "exponent differs too much")]))
