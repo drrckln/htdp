@@ -109,3 +109,5 @@
                           [(= (inex-exponent num) 0) 1]
                           [(= (inex-exponent num) 1) 0]
                           [else (sub1 (inex-exponent num))])))]))
+
+; will be doing Haskell / Lambda Calculus today
