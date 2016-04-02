@@ -93,3 +93,19 @@
                           (inex-sign n1)
                           (inex-exponent n1))])]
     [else (error "exponent differs too much")]))
+
+; Inex? -> Inex
+; normalizes an Inex if it's not proper
+(define (normalize num)
+  (cond
+    [(<= 0 (inex-mantissa num) 99) num]
+    [else (normalize
+           (create-inex (round (/ (inex-mantissa num) 10))
+                        (cond
+                          [(and (= (inex-sign num) -1) (> (inex-exponent num) 1)) -1]
+                          [else 1])
+                        (cond
+                          [(positive? (inex-sign num)) (add1 (inex-exponent num))]
+                          [(= (inex-exponent num) 0) 1]
+                          [(= (inex-exponent num) 1) 0]
+                          [else (sub1 (inex-exponent num))])))]))
