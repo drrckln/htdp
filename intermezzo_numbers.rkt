@@ -7,6 +7,8 @@
 ; An S is either 1 or -1
 ; An N99 is an N between 0 and 99 inclusive
 
+(define-struct improper-inex [mantissa sign exponent])
+
 ; N Number N -> Inex
 ; make an instance of Inex after checking the arguments
 (define (create-inex m s e)
@@ -14,7 +16,9 @@
     [(and (<= 0 m 99) (<= 0 e 99) (or (= s 1) (= s -1)))
      (make-inex m s e)]
     [else
-     (error 'inex "(<= 0 m 99), s in {+1,-1}, (<= 0 e 99) expected")]))
+     ;(error 'inex "(<= 0 m 99), s in {+1,-1}, (<= 0 e 99) expected")
+     (make-improper-inex m s e)]))
+
  
 ; Inex -> Number
 ; convert an inex into its numeric equivalent 
@@ -60,54 +64,36 @@
 ; constraint is exponent differs by one at most
 (define (inex+ n1 n2)
   (cond
-    [(= (* (inex-sign n1) (inex-mantissa n1))
-        (* (inex-sign n2) (inex-mantissa n2)))
-     (cond
-       [(and (= 1 (inex-sign n1))
-             (= 99 (inex-exponent n1)))
-        (if (> 99 (+ (inex-mantissa n1) (inex-mantissa n2)))
-            (error "out of bounds")
-            (create-inex (+ (inex-mantissa n1) (inex-mantissa n2))
-                         1
-                         (inex-exponent n1)))]
-       [(< 99 (+ (inex-mantissa n1) (inex-mantissa n2)))
-        (create-inex (round (/ (+ (inex-mantissa n1) (inex-mantissa n2)) 10))
-                     (inex-sign n1)
-                     (add1 (inex-exponent n1)))]
-       [else (create-inex (+ (inex-mantissa n1) (inex-mantissa n2))
-                          (inex-sign n1)
-                          (inex-exponent n1))])]
-    [(= (abs (- (* (inex-sign n1) (inex-mantissa n1))
-                (* (inex-sign n2) (inex-mantissa n2))))
-        1)
-     (cond
-       [(positive? (- (* (inex-sign n1) (inex-mantissa n1))
-                      (* (inex-sign n2) (inex-mantissa n2))))
-        (create-inex (+ (* (inex-mantissa n1) 10)
-                        (inex-mantissa n2))
-                     (inex-sign n2)
-                     (inex-exponent n2))]
-       [else (create-inex (round (/ (+ (inex-mantissa n1)
-                                       (* (inex-mantissa n2) 10))
-                                    10))
-                          (inex-sign n1)
-                          (inex-exponent n1))])]
-    [else (error "exponent differs too much")]))
+    [(= (* (inex-sign n1) (inex-exponent n1))
+        (* (inex-sign n2) (inex-exponent n2)))
+     (normalize (create-inex (+ (inex-mantissa n1) (inex-mantissa n2))
+                             (inex-sign n1)
+                             (inex-exponent n1)))]
+    [else (local ((define larger (cond
+                                   [(> (* (inex-sign n1) (inex-exponent n1))
+                                       (* (inex-sign n2) (inex-exponent n2)))
+                                    n1]
+                                   [else n2]))
+                  (define smaller (if (equal? larger n1) n2 n1)))
+            ; -- IN --
+            (normalize (create-inex (+ (* (inex-mantissa larger) 10) (inex-mantissa smaller))
+                                    (inex-sign smaller)
+                                    (inex-exponent smaller))))]))
 
-; Inex? -> Inex
+; Improper-Inex or Inex -> Inex
 ; normalizes an Inex if it's not proper
 (define (normalize num)
   (cond
-    [(<= 0 (inex-mantissa num) 99) num]
+    [(inex? num) num]
     [else (normalize
-           (create-inex (round (/ (inex-mantissa num) 10))
+           (create-inex (round (/ (improper-inex-mantissa num) 10))
                         (cond
-                          [(and (= (inex-sign num) -1) (> (inex-exponent num) 1)) -1]
+                          [(and (= (improper-inex-sign num) -1) (> (improper-inex-exponent num) 1)) -1]
                           [else 1])
                         (cond
-                          [(positive? (inex-sign num)) (add1 (inex-exponent num))]
-                          [(= (inex-exponent num) 0) 1]
-                          [(= (inex-exponent num) 1) 0]
-                          [else (sub1 (inex-exponent num))])))]))
+                          [(positive? (improper-inex-sign num)) (add1 (improper-inex-exponent num))]
+                          [(= (improper-inex-exponent num) 0) 1]
+                          [(= (improper-inex-exponent num) 1) 0]
+                          [else (sub1 (improper-inex-exponent num))])))]))
 
 ; will be doing Haskell / Lambda Calculus today
