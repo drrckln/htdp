@@ -44,14 +44,14 @@
 (check-expect (inex+ (create-inex 1 1 0) (create-inex 1 -1 1))
               (create-inex 11 -1 1))
 
-#|
+
 (check-expect (inex* (create-inex 2 1 4) (create-inex 8 1 10))
               (create-inex 16 1 14))
 (check-expect (inex* (create-inex 20 1 1) (create-inex 5 1 4))
               (create-inex 10 1 6))
 (check-expect (inex* (create-inex 27 -1 1) (create-inex 7 1 4))
               (create-inex 19 1 4))
-|#
+
 
 ; 27 x 10^-1  *  7 x 10^4
 ; should be 189 x 10^3, or 18.9 * 10^4
@@ -97,3 +97,17 @@
                           [else (sub1 (improper-inex-exponent num))])))]))
 
 ; will be doing Haskell / Lambda Calculus today
+
+; Exercise 388
+; Inex Inex -> Inex
+(define (inex* n1 n2)
+  (local ((define newexp (+ (* (inex-sign n1) (inex-exponent n1))
+                            (* (inex-sign n2) (inex-exponent n2))))
+          (define candidate (create-inex (* (inex-mantissa n1) (inex-mantissa n2))
+                                         (if (positive? newexp) 1 -1)
+                                         newexp)))
+    ; -- IN --
+    (cond
+      [(< newexp -99) (error "past lower bound")]
+      [(improper-inex? (normalize candidate)) (error "past upper bound")]
+      [else (normalize candidate)])))
