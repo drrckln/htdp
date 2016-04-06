@@ -111,3 +111,5 @@
       [(< newexp -99) (error "past lower bound")]
       [(improper-inex? (normalize candidate)) (error "past upper bound")]
       [else (normalize candidate)])))
+
+; more haskell tonight
